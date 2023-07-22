@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:rent_management/screens/dashboard_page.dart';
+import 'package:rent_management/screens/flat_page.dart';
 
 import '../classes/flat_info.dart';
 import '../classes/floor_info.dart';
@@ -45,8 +46,16 @@ class _FlatDataPageState extends State<FlatDataPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue.shade300,
-        title: const Center(child: Text('Floor List')),
+        title: Text(
+          'Flat',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.grey[700],
+          ),
+        ),
+        backgroundColor: Colors.white,
+        elevation: 0,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -55,15 +64,6 @@ class _FlatDataPageState extends State<FlatDataPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                'Flat',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey[700],
-                ),
-                textAlign: TextAlign.center,
-              ),
               SizedBox(height: 16),
               TextFormField(
                 keyboardType: TextInputType.name,
@@ -212,7 +212,7 @@ class _FlatDataPageState extends State<FlatDataPage> {
                         });
 
                         // Navigate to the Dashboard and clear the route stack
-                        Get.offAll(Dashboard());
+                        Get.to(FlatPage());
                       }
                     },
                     style: ElevatedButton.styleFrom(

@@ -35,6 +35,7 @@ dependencies:
   flutter_animated_dialog:
   circle_nav_bar:
   get: 
+  intl:
 
   animated_icon_button:
   datetime_picker_formfield_new:

@@ -1,7 +1,5 @@
-import 'dart:async';
 import 'package:bottom_nav_bar/bottom_nav_bar.dart';
 
-import 'package:animated_icon_button/animated_icon_button.dart';
 import 'package:flutter/material.dart';
 import 'package:rent_management/screens/flat_page.dart';
 import 'package:rent_management/screens/tenent_page.dart';

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:rent_management/insert_data/floor.dart';
-import 'package:rent_management/screens/dashboard_page.dart';
 import 'package:rent_management/shared_data/floor_data.dart';
 import 'package:get/get.dart';
 import '../classes/floor_info.dart';
@@ -130,7 +129,7 @@ class _FloorPageState extends State<FloorPage> {
                                           MainAxisAlignment.spaceEvenly,
                                       children: [
                                         Padding(
-                                          padding: const EdgeInsets.all(1.0),
+                                          padding: const EdgeInsets.all(8.0),
                                           child: Container(
                                             height: 60,
                                             child: Card(
@@ -403,7 +402,7 @@ class _FloorPageState extends State<FloorPage> {
                               },
                             );
                           } else {
-                            return Center(child: Text('No floors available.'));
+                            return Center(child: Text('no floors available.'));
                           }
                         },
                       ),

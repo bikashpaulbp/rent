@@ -1,18 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-
-import 'package:provider/provider.dart';
 
 import 'package:rent_management/classes/tenent_info.dart';
 import 'package:rent_management/db_helper.dart';
 import 'package:rent_management/insert_data/tenent.dart';
-import 'package:rent_management/shared_data/flat_data.dart';
-
-import '../classes/flat_info.dart';
-import '../classes/floor_info.dart';
-import '../shared_data/floor_data.dart';
-import 'dashboard_page.dart';
 
 class TenentPage extends StatefulWidget {
   const TenentPage({super.key});
@@ -39,16 +30,22 @@ class _TenentPageState extends State<TenentPage> {
   @override
   void initState() {
     _fetchTenentData();
+    setState(() {});
 
     super.initState();
   }
 
   Future<void> _fetchTenentData() async {
-    tenentStream = await DBHelper.readTenentData().asStream();
+    tenentStream = DBHelper.readTenentData().asStream();
     //  List<FlatInfo> flatList = await DBHelper.readFlatData();
     //   setState(() {
     //     Provider.of<FlatData>(context, listen: false).updateFlatList(flatList);
     //   });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -915,7 +912,6 @@ class _TenentPageState extends State<TenentPage> {
                                                                               )),
                                                                               snackPosition: SnackPosition.BOTTOM,
                                                                               duration: Duration(seconds: 2));
-                                                                          // ignore: use_build_context_synchronously
 
                                                                           setState(
                                                                               () {
@@ -993,7 +989,7 @@ class _TenentPageState extends State<TenentPage> {
                             },
                           );
                         } else {
-                          return const Text('No tenents available.');
+                          return Center(child: Text('no tenents available.'));
                         }
                       },
                     ),

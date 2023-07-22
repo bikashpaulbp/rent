@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:rent_management/screens/dashboard_page.dart';
 import 'package:rent_management/screens/floor_page.dart';
 
@@ -45,24 +44,12 @@ class _FloorDataPageState extends State<FloorDataPage> {
             height: 16,
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              'Enter Floor Name:',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[700],
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 8,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.all(8.0),
             child: TextFormField(
               keyboardType: TextInputType.name,
               controller: _floorController,
               decoration: InputDecoration(
+                labelText: "Floor Name",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -95,7 +82,7 @@ class _FloorDataPageState extends State<FloorDataPage> {
                               )),
                               snackPosition: SnackPosition.BOTTOM,
                               duration: Duration(seconds: 2));
-                          Get.offAll(Dashboard());
+                          Get.to(FloorPage());
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -118,7 +105,6 @@ class _FloorDataPageState extends State<FloorDataPage> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        // Navigate to the Dashboard and clear the route stack
                         Get.offAll(Dashboard());
                       },
                       style: ElevatedButton.styleFrom(

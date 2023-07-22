@@ -1,12 +1,12 @@
-import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:rent_management/classes/rent_info.dart';
 
 import 'package:rent_management/classes/tenent_info.dart';
 import 'package:rent_management/db_helper.dart';
+import 'package:rent_management/insert_data/rent.dart';
 
-import 'dashboard_page.dart';
 
 class MonthlyRent extends StatefulWidget {
   const MonthlyRent({super.key});
@@ -47,18 +47,8 @@ class _MonthlyRentState extends State<MonthlyRent> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 125, 125, 125),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_circle_left_outlined, size: 35),
-          onPressed: () {
-            Navigator.pop(
-              context,
-              MaterialPageRoute(builder: (context) => const Dashboard()),
-            );
-          },
-        ),
-        title: const Center(child: Text('Monthly Rent Process')),
-      ),
+          backgroundColor: const Color.fromARGB(255, 226, 204, 2),
+          title: const Center(child: Text('Monthly Rent List'))),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: SingleChildScrollView(
@@ -66,280 +56,39 @@ class _MonthlyRentState extends State<MonthlyRent> {
             children: [
               Column(
                 children: [
-                  Container(
-                    width: 500,
-                    height: 200,
-                    decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 255, 255, 255),
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color.fromARGB(255, 180, 180, 180)
-                              .withOpacity(0.5),
-                          spreadRadius: 5,
-                          blurRadius: 7,
-                          offset: const Offset(0, 3),
+                  InkWell(
+                    onTap: () {
+                      Get.offAll(RentDataPage());
+                    },
+                    child: Container(
+                      child: Center(
+                        child: Text(
+                          'ADD MONTHLY RENT',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                      ],
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          Column(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: const Color.fromARGB(
-                                        255, 134, 134, 134),
-                                    width: 1.0,
-                                  ),
-                                ),
-                                padding: const EdgeInsets.only(
-                                  left: 105,
-                                  right: 105,
-                                ),
-                                child: const Text(
-                                  'Monthly Rent',
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color.fromARGB(255, 134, 134, 134),
-                                    fontStyle: FontStyle.normal,
-                                  ),
-                                ),
-                              ),
-                              Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      const SizedBox(
-                                        child: Text(
-                                          'Month of Rent',
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            color:
-                                                Color.fromARGB(255, 78, 78, 78),
-                                            fontStyle: FontStyle.normal,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 250,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Column(children: <Widget>[
-                                            DateTimeField(
-                                              decoration: InputDecoration(
-                                                  hintText: 'select month',
-                                                  icon: Icon(
-                                                      Icons.calendar_month)),
-                                              onChanged: (newValue) {
-                                                setState(() {
-                                                  date = newValue.toString();
-                                                  print(date);
-                                                });
-                                              },
-                                              format: format,
-                                              onShowPicker:
-                                                  (context, currentValue) {
-                                                return showDatePicker(
-                                                  context: context,
-                                                  firstDate: DateTime(1900),
-                                                  initialDate: currentValue ??
-                                                      DateTime.now(),
-                                                  lastDate: DateTime(2100),
-                                                );
-                                              },
-                                            ),
-                                          ]),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(right: 3),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    const Spacer(),
-                                    InkWell(
-                                      onTap: () =>  {
-                                        if (date == "")
-                                          {}
-                                        else
-                                          {
-                                            for (var i in tenentList)
-                                              {
-                                                tenentInfo = TenentInfo(
-                                                    floorID: i.floorID,
-                                                    floorName: i.floorName,
-                                                    flatID: i.flatID,
-                                                    flatName: i.flatName,
-                                                    tenentName: i.tenentName,
-                                                    nidNo: i.nidNo,
-                                                    birthCertificateNo:
-                                                        i.birthCertificateNo,
-                                                    mobileNo: i.mobileNo,
-                                                    emgMobileNo: i.emgMobileNo,
-                                                    noOfFamilyMem:
-                                                        i.noOfFamilyMem,
-                                                    rentAmount: i.rentAmount,
-                                                    gasBill: i.gasBill,
-                                                    waterBill: i.waterBill,
-                                                    serviceCharge:
-                                                        i.serviceCharge,
-                                                    totalAmount: i.totalAmount,
-                                                    dateOfIn: i.dateOfIn),
-                                                DBHelper.insertRentData(RentInfo(
-                                                        floorID:
-                                                            tenentInfo!.floorID,
-                                                        floorName: tenentInfo!
-                                                            .floorName,
-                                                        flatID:
-                                                            tenentInfo!.flatID,
-                                                        flatName: tenentInfo!
-                                                            .flatName,
-                                                        tenentID:
-                                                            tenentInfo?.id ?? 0,
-                                                        tenentName: tenentInfo!
-                                                            .tenentName,
-                                                        totalAmount: tenentInfo!
-                                                            .totalAmount,
-                                                        month: date.toString(),
-                                                        isPaid: isPaid))
-                                                    .then((_) => {
-                                                          setState(() {
-                                                            _fetchData();
-                                                          }),
-                                                        }),
-                                              },
-                                          }
-                                      },
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Container(
-                                          width: 100,
-                                          height: 45,
-                                          decoration: const BoxDecoration(
-                                            borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(25),
-                                              bottomLeft: Radius.circular(25),
-                                              topRight: Radius.circular(1),
-                                              bottomRight: Radius.circular(1),
-                                            ),
-                                            color: Color.fromARGB(
-                                                255, 138, 138, 138),
-                                          ),
-                                          child: Container(
-                                            width: 110,
-                                            height: 50,
-                                            decoration: const BoxDecoration(
-                                              borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(25),
-                                                bottomLeft: Radius.circular(25),
-                                                topRight: Radius.circular(1),
-                                                bottomRight:
-                                                    Radius.circular(65),
-                                              ),
-                                              color: Color.fromARGB(
-                                                  255, 101, 99, 99),
-                                            ),
-                                            child: const Stack(
-                                              children: [
-                                                Positioned(
-                                                  bottom: -1,
-                                                  right: -1,
-                                                  child: Icon(
-                                                    Icons.save,
-                                                    size: 17,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                                Positioned(
-                                                  left: 35,
-                                                  top: 15,
-                                                  child: Text(
-                                                    'Save',
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 16,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    InkWell(
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: Container(
-                                        width: 100,
-                                        height: 45,
-                                        decoration: const BoxDecoration(
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(25),
-                                            bottomLeft: Radius.circular(25),
-                                            topRight: Radius.circular(1),
-                                            bottomRight: Radius.circular(1),
-                                          ),
-                                          color: Color.fromARGB(
-                                              255, 138, 138, 138),
-                                        ),
-                                        child: Container(
-                                          width: 110,
-                                          height: 50,
-                                          decoration: const BoxDecoration(
-                                            borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(25),
-                                              bottomLeft: Radius.circular(25),
-                                              topRight: Radius.circular(1),
-                                              bottomRight: Radius.circular(65),
-                                            ),
-                                            color: Color.fromARGB(
-                                                255, 101, 99, 99),
-                                          ),
-                                          child: const Stack(
-                                            children: [
-                                              Positioned(
-                                                bottom: -1,
-                                                right: -1,
-                                                child: Icon(
-                                                  Icons.cancel,
-                                                  size: 17,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                              Positioned(
-                                                left: 25,
-                                                top: 15,
-                                                child: Text(
-                                                  'Cancel',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 16,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
+                      ),
+                      width: 500,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Color.fromARGB(255, 63, 56, 200),
+                            Color(0xFF985EFF),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 3,
+                            blurRadius: 7,
+                            offset: Offset(0, 3),
                           ),
                         ],
                       ),
@@ -355,7 +104,7 @@ class _MonthlyRentState extends State<MonthlyRent> {
                     ),
                   ),
                   SizedBox(
-                    height: 400,
+                    height: 500,
                     child: StreamBuilder<List<RentInfo>>(
                       stream: rentStream,
                       builder: (BuildContext context,
@@ -371,287 +120,369 @@ class _MonthlyRentState extends State<MonthlyRent> {
                               RentInfo rent = rentList[index];
 
                               return ListTile(
-                                title: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Flexible(
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text('ID: ${rent.id}'),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                                'Tenent Name: ${rent.tenentName}'),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                                'Floor Name: ${rent.floorName}'),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                                'Flat Name: ${rent.flatName}'),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                                'Total Amount: ${rent.totalAmount.toString()}'),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                                'Month: ${rent.month.toString()}'),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(rent.isPaid == 0
-                                                ? "Status: Unpaid"
-                                                : "Status: Paid"),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    CircleAvatar(
-                                      radius: 16,
-                                      backgroundColor: rent.isPaid == 1
-                                          ? Color.fromARGB(255, 8, 240, 8)
-                                          : Color.fromARGB(255, 246, 59, 59),
-                                      child: IconButton(
-                                          iconSize: 16,
-                                          color: rent.isPaid == 1
-                                              ? Color.fromARGB(
-                                                  255, 255, 255, 255)
-                                              : Colors.white,
-                                          onPressed: () async {
-                                            isPaid = 1;
-                                            RentInfo updatedRent = RentInfo(
-                                                id: rent.id,
-                                                tenentName: rent.tenentName,
-                                                tenentID: rent.tenentID,
-                                                floorID: rent.floorID,
-                                                floorName: rent.floorName,
-                                                flatID: rent.flatID,
-                                                flatName: rent.flatName,
-                                                month: rent.month,
-                                                totalAmount: rent.totalAmount,
-                                                isPaid: isPaid);
-                                            await DBHelper.updateRent(
-                                                updatedRent);
-
-                                            // ignore: use_build_context_synchronously
-
-                                            setState(() {
-                                              _fetchData();
-                                              isPaid = 0;
-                                            });
-                                          },
-                                          icon: Icon(Icons.paid)),
-                                    ),
-                                    SizedBox(width: 10),
-                                    CircleAvatar(
-                                      radius: 15,
-                                      backgroundColor: const Color.fromARGB(
-                                          255, 145, 145, 145),
-                                      child: IconButton(
-                                          iconSize: 15,
-                                          color: Colors.white,
-                                          onPressed: () {
-                                            _totalAmountController.text =
-                                                rent.totalAmount.toString();
-
-                                            showModalBottomSheet<void>(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return SingleChildScrollView(
-                                                  child: Container(
-                                                    height: 400,
+                                title: Card(
+                                  elevation: 10,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Flexible(
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(5.0),
+                                                child: Text(
+                                                  'ID: ${rent.id}',
+                                                  style: TextStyle(
                                                     color: const Color.fromARGB(
-                                                        255, 255, 255, 255),
-                                                    child: Center(
-                                                      child: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        // mainAxisSize:
-                                                        //     MainAxisSize.min,
-                                                        children: <Widget>[
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(20.0),
-                                                            child: const Text(
-                                                                'Update Your Information'),
-                                                          ),
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(14.0),
-                                                            child: Column(
-                                                              children: [
-                                                                Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .spaceBetween,
+                                                        255, 0, 0, 0),
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(5.0),
+                                                child: Text(
+                                                  'Tenent Name: ${rent.tenentName}',
+                                                  style: TextStyle(
+                                                    color: const Color.fromARGB(
+                                                        255, 0, 0, 0),
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(5.0),
+                                                child: Text(
+                                                  'Floor Name: ${rent.floorName}',
+                                                  style: TextStyle(
+                                                    color: const Color.fromARGB(
+                                                        255, 0, 0, 0),
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(5.0),
+                                                child: Text(
+                                                  'Flat Name: ${rent.flatName}',
+                                                  style: TextStyle(
+                                                    color: const Color.fromARGB(
+                                                        255, 0, 0, 0),
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(5.0),
+                                                child: Text(
+                                                  'Total Amount: ${rent.totalAmount.toString()}',
+                                                  style: TextStyle(
+                                                    color: const Color.fromARGB(
+                                                        255, 0, 0, 0),
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(5.0),
+                                                child: Text(
+                                                  'Month: ${rent.month.toString()}',
+                                                  style: TextStyle(
+                                                    color: const Color.fromARGB(
+                                                        255, 0, 0, 0),
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(5.0),
+                                                child: Text(
+                                                  rent.isPaid == 0
+                                                      ? "Status: Unpaid"
+                                                      : "Status: Paid",
+                                                  style: TextStyle(
+                                                    color: const Color.fromARGB(
+                                                        255, 0, 0, 0),
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        CircleAvatar(
+                                          radius: 16,
+                                          backgroundColor: rent.isPaid == 1
+                                              ? Color.fromARGB(255, 8, 240, 8)
+                                              : Color.fromARGB(
+                                                  255, 246, 59, 59),
+                                          child: IconButton(
+                                              iconSize: 16,
+                                              color: rent.isPaid == 1
+                                                  ? Color.fromARGB(
+                                                      255, 255, 255, 255)
+                                                  : Colors.white,
+                                              onPressed: () async {
+                                                isPaid = 1;
+                                                RentInfo updatedRent = RentInfo(
+                                                    id: rent.id,
+                                                    tenentName: rent.tenentName,
+                                                    tenentID: rent.tenentID,
+                                                    floorID: rent.floorID,
+                                                    floorName: rent.floorName,
+                                                    flatID: rent.flatID,
+                                                    flatName: rent.flatName,
+                                                    month: rent.month,
+                                                    totalAmount:
+                                                        rent.totalAmount,
+                                                    isPaid: isPaid);
+                                                await DBHelper.updateRent(
+                                                    updatedRent);
+                                                Get.snackbar("", "",
+                                                    messageText: Center(
+                                                        child: Text(
+                                                      "status has been changed to paid  \n",
+                                                      style: TextStyle(
+                                                          color: Color.fromARGB(
+                                                              255, 0, 0, 0),
+                                                          fontSize: 20),
+                                                    )),
+                                                    snackPosition:
+                                                        SnackPosition.BOTTOM,
+                                                    duration:
+                                                        Duration(seconds: 2));
+
+                                                setState(() {
+                                                  _fetchData();
+                                                  isPaid = 0;
+                                                });
+                                              },
+                                              icon: Icon(Icons.paid)),
+                                        ),
+                                        SizedBox(width: 10),
+                                        CircleAvatar(
+                                          radius: 15,
+                                          backgroundColor: const Color.fromARGB(
+                                              255, 145, 145, 145),
+                                          child: IconButton(
+                                              iconSize: 15,
+                                              color: Colors.white,
+                                              onPressed: () {
+                                                _totalAmountController.text =
+                                                    rent.totalAmount.toString();
+
+                                                showModalBottomSheet<void>(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return SingleChildScrollView(
+                                                      child: Container(
+                                                        height: 400,
+                                                        color: const Color
+                                                                .fromARGB(
+                                                            255, 255, 255, 255),
+                                                        child: Center(
+                                                          child: Column(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            // mainAxisSize:
+                                                            //     MainAxisSize.min,
+                                                            children: <Widget>[
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                            .all(
+                                                                        20.0),
+                                                                child: const Text(
+                                                                    'Update Your Information'),
+                                                              ),
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                            .all(
+                                                                        14.0),
+                                                                child: Column(
                                                                   children: [
-                                                                    const SizedBox(
-                                                                      child:
-                                                                          Text(
-                                                                        'Total Amount',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          fontSize:
-                                                                              16,
-                                                                          color: Color.fromARGB(
-                                                                              255,
-                                                                              78,
-                                                                              78,
-                                                                              78),
-                                                                          fontStyle:
-                                                                              FontStyle.normal,
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width:
-                                                                          250,
-                                                                      height:
-                                                                          50,
-                                                                      child:
-                                                                          Padding(
-                                                                        padding:
-                                                                            const EdgeInsets.all(8.0),
-                                                                        child:
-                                                                            TextFormField(
-                                                                          keyboardType:
-                                                                              TextInputType.number,
-                                                                          controller:
-                                                                              _totalAmountController,
-                                                                          decoration:
-                                                                              InputDecoration(
-                                                                            border:
-                                                                                OutlineInputBorder(
-                                                                              borderRadius: BorderRadius.circular(10),
+                                                                    Row(
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .spaceBetween,
+                                                                      children: [
+                                                                        const SizedBox(
+                                                                          child:
+                                                                              Text(
+                                                                            'Total Amount',
+                                                                            style:
+                                                                                TextStyle(
+                                                                              fontSize: 16,
+                                                                              color: Color.fromARGB(255, 78, 78, 78),
+                                                                              fontStyle: FontStyle.normal,
                                                                             ),
                                                                           ),
                                                                         ),
-                                                                      ),
+                                                                        SizedBox(
+                                                                          width:
+                                                                              250,
+                                                                          height:
+                                                                              50,
+                                                                          child:
+                                                                              Padding(
+                                                                            padding:
+                                                                                const EdgeInsets.all(8.0),
+                                                                            child:
+                                                                                TextFormField(
+                                                                              keyboardType: TextInputType.number,
+                                                                              controller: _totalAmountController,
+                                                                              decoration: InputDecoration(
+                                                                                border: OutlineInputBorder(
+                                                                                  borderRadius: BorderRadius.circular(10),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ],
                                                                     ),
                                                                   ],
                                                                 ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(8.0),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .end,
-                                                              children: [
-                                                                ElevatedButton(
-                                                                  child: const Text(
-                                                                      'update'),
-                                                                  onPressed:
-                                                                      () async {
-                                                                    RentInfo updatedRent = RentInfo(
-                                                                        id: rent
-                                                                            .id,
-                                                                        tenentName: rent
-                                                                            .tenentName,
-                                                                        tenentID: rent
-                                                                            .tenentID,
-                                                                        floorID:
-                                                                            rent
-                                                                                .floorID,
-                                                                        floorName:
-                                                                            rent
-                                                                                .floorName,
-                                                                        flatID: rent
-                                                                            .flatID,
-                                                                        flatName:
-                                                                            rent
-                                                                                .flatName,
-                                                                        month: rent
-                                                                            .month,
-                                                                        totalAmount:
-                                                                            double.parse(_totalAmountController
-                                                                                .text),
-                                                                        isPaid:
-                                                                            rent.isPaid);
-                                                                    await DBHelper
-                                                                        .updateRent(
+                                                              ),
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                            .all(
+                                                                        8.0),
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .end,
+                                                                  children: [
+                                                                    ElevatedButton(
+                                                                      child: const Text(
+                                                                          'update'),
+                                                                      onPressed:
+                                                                          () async {
+                                                                        RentInfo updatedRent = RentInfo(
+                                                                            id: rent
+                                                                                .id,
+                                                                            tenentName:
+                                                                                rent.tenentName,
+                                                                            tenentID: rent.tenentID,
+                                                                            floorID: rent.floorID,
+                                                                            floorName: rent.floorName,
+                                                                            flatID: rent.flatID,
+                                                                            flatName: rent.flatName,
+                                                                            month: rent.month,
+                                                                            totalAmount: double.parse(_totalAmountController.text),
+                                                                            isPaid: rent.isPaid);
+                                                                        await DBHelper.updateRent(
                                                                             updatedRent);
+                                                                        Get.snackbar(
+                                                                            "",
+                                                                            "",
+                                                                            messageText: Center(
+                                                                                child: Text(
+                                                                              "updated successfully  \n",
+                                                                              style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 20),
+                                                                            )),
+                                                                            snackPosition: SnackPosition.BOTTOM,
+                                                                            duration: Duration(seconds: 2));
 
-                                                                    // ignore: use_build_context_synchronously
+                                                                        setState(
+                                                                            () {
+                                                                          _fetchData();
 
-                                                                    setState(
-                                                                        () {
-                                                                      _fetchData();
-
-                                                                      Navigator.pop(
-                                                                          context);
-                                                                    });
-                                                                  },
+                                                                          Navigator.pop(
+                                                                              context);
+                                                                        });
+                                                                      },
+                                                                    ),
+                                                                    SizedBox(
+                                                                      width: 20,
+                                                                    ),
+                                                                    ElevatedButton(
+                                                                      child: const Text(
+                                                                          'Cancel'),
+                                                                      onPressed:
+                                                                          () =>
+                                                                              Navigator.pop(context),
+                                                                    ),
+                                                                  ],
                                                                 ),
-                                                                SizedBox(
-                                                                  width: 20,
-                                                                ),
-                                                                ElevatedButton(
-                                                                  child: const Text(
-                                                                      'Cancel'),
-                                                                  onPressed: () =>
-                                                                      Navigator.pop(
-                                                                          context),
-                                                                ),
-                                                              ],
-                                                            ),
+                                                              ),
+                                                            ],
                                                           ),
-                                                        ],
+                                                        ),
                                                       ),
-                                                    ),
-                                                  ),
+                                                    );
+                                                  },
                                                 );
                                               },
-                                            );
-                                          },
-                                          icon: Icon(Icons.edit)),
+                                              icon: Icon(Icons.edit)),
+                                        ),
+                                        SizedBox(width: 10),
+                                        CircleAvatar(
+                                          radius: 15,
+                                          backgroundColor: const Color.fromARGB(
+                                              255, 145, 145, 145),
+                                          child: IconButton(
+                                              iconSize: 15,
+                                              color: Colors.white,
+                                              onPressed: () async {
+                                                int? id = rent.id;
+                                                await DBHelper.deleteRent(id);
+                                                Get.snackbar("", "",
+                                                    messageText: Center(
+                                                        child: Text(
+                                                      "deleted successfully  \n",
+                                                      style: TextStyle(
+                                                          color: Color.fromARGB(
+                                                              255, 0, 0, 0),
+                                                          fontSize: 20),
+                                                    )),
+                                                    snackPosition:
+                                                        SnackPosition.BOTTOM,
+                                                    duration:
+                                                        Duration(seconds: 1));
+                                                setState(() {
+                                                  _fetchData();
+                                                });
+                                              },
+                                              icon: Icon(Icons.delete)),
+                                        ),
+                                      ],
                                     ),
-                                    SizedBox(width: 10),
-                                    CircleAvatar(
-                                      radius: 15,
-                                      backgroundColor: const Color.fromARGB(
-                                          255, 145, 145, 145),
-                                      child: IconButton(
-                                          iconSize: 15,
-                                          color: Colors.white,
-                                          onPressed: () async {
-                                            int? id = rent.id;
-                                            await DBHelper.deleteRent(id);
-                                            setState(() {
-                                              _fetchData();
-                                            });
-                                          },
-                                          icon: Icon(Icons.delete)),
-                                    ),
-                                  ],
+                                  ),
                                 ),
                               );
                             },
                           );
                         } else {
-                          return const Text('No rents available.');
+                          return Center(
+                              child: Text('no  monthly rents available.'));
                         }
                       },
                     ),

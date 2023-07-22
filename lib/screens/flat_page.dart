@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:rent_management/classes/floor_info.dart';
-import 'package:rent_management/screens/dashboard_page.dart';
-import 'package:rent_management/shared_data/floor_data.dart';
 
 import '../classes/flat_info.dart';
 import '../db_helper.dart';
 import 'package:provider/provider.dart';
 
 import '../insert_data/flat.dart';
-import '../insert_data/floor.dart';
 import '../shared_data/flat_data.dart';
 
 class FlatPage extends StatefulWidget {
@@ -697,7 +692,7 @@ class _FlatPageState extends State<FlatPage> {
                               },
                             );
                           } else {
-                            return const Text('No flats available.');
+                            return Center(child: Text('No flats available.'));
                           }
                         },
                       ),
