@@ -19,8 +19,16 @@ class DBHelper {
         floorName TEXT)''');
 
     await db.execute('''CREATE TABLE flat (
-      id INTEGER PRIMARY KEY AUTOINCREMENT, floorId INTEGER, floorName TEXT,
-      flatName TEXT, noOfMasterbedRoom INTEGER, noOfBedroom INTEGER, flatSide TEXT,  noOfWashroom INTEGER, flatSize INTEGER
+
+      id INTEGER PRIMARY KEY AUTOINCREMENT, 
+      floorId INTEGER, 
+      floorName TEXT,
+      flatName TEXT, 
+      noOfMasterbedRoom INTEGER, 
+      noOfBedroom INTEGER, 
+      flatSide TEXT,  
+      noOfWashroom INTEGER, 
+      flatSize INTEGER NULL
       )''');
 
     await db.execute('''CREATE TABLE rent (
@@ -44,18 +52,18 @@ class DBHelper {
       flatID INTEGER,
       flatName TEXT,
       tenentName TEXT,
-      nidNo INTEGER,
-      passportNo TEXT,
-      birthCertificateNo INTEGER,
-      mobileNo INTEGER,
-      emgMobileNo INTEGER,
-      noOfFamilyMem INTEGER,
+      nidNo INTEGER NULL,
+      passportNo TEXT NULL,
+      birthCertificateNo INTEGER NULL,
+      mobileNo INTEGER NULL,
+      emgMobileNo INTEGER NULL,
+      noOfFamilyMem INTEGER NULL,
       dateOfIn TEXT,
       rentAmount DOUBLE,
-      gasBill DOUBLE,
-      waterBill DOUBLE,
-      serviceCharge DOUBLE,
-      totalAmount DOUBLE
+      gasBill DOUBLE NULL,
+      waterBill DOUBLE NULL,
+      serviceCharge DOUBLE NULL,
+      totalAmount DOUBLE 
       )''');
   }
 

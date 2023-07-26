@@ -109,6 +109,10 @@ class _TenentDataPageState extends State<TenentDataPage> {
                         controller: _tenentNameController,
                         decoration: InputDecoration(
                           labelText: 'Tenent Name',
+                          suffix: Text(
+                            '*',
+                            style: TextStyle(color: Colors.red),
+                          ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -122,6 +126,10 @@ class _TenentDataPageState extends State<TenentDataPage> {
                           return DropdownButtonFormField<int>(
                             isExpanded: true,
                             decoration: InputDecoration(
+                              suffix: Text(
+                                '*',
+                                style: TextStyle(color: Colors.red),
+                              ),
                               labelText: 'Floor',
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
@@ -156,6 +164,10 @@ class _TenentDataPageState extends State<TenentDataPage> {
                           return DropdownButtonFormField<int>(
                             isExpanded: true,
                             decoration: InputDecoration(
+                              suffix: Text(
+                                '*',
+                                style: TextStyle(color: Colors.red),
+                              ),
                               labelText: 'Flat',
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
@@ -253,6 +265,10 @@ class _TenentDataPageState extends State<TenentDataPage> {
                         keyboardType: TextInputType.number,
                         controller: _rentAmountController,
                         decoration: InputDecoration(
+                          suffix: Text(
+                            '*',
+                            style: TextStyle(color: Colors.red),
+                          ),
                           labelText: 'Rent Amount',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -295,6 +311,10 @@ class _TenentDataPageState extends State<TenentDataPage> {
                       SizedBox(height: 8),
                       DateTimeField(
                         decoration: InputDecoration(
+                            suffix: Text(
+                              '*',
+                              style: TextStyle(color: Colors.red),
+                            ),
                             labelText: 'select date and month of in',
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10)),
@@ -339,23 +359,21 @@ class _TenentDataPageState extends State<TenentDataPage> {
                           ),
                         ),
                         onPressed: () async => {
-                          if (_tenentNameController.text.isEmpty ||
-                              _nidNoController.text.isEmpty ||
-                              _passportNoController.text.isEmpty ||
-                              _mobileNoController.text.isEmpty ||
-                              _emgMobileNoController.text.isEmpty ||
-                              _noOfFamilyMemController.text.isEmpty ||
-                              _rentAmountController.text.isEmpty ||
-                              _gasBillController.text.isEmpty ||
-                              _waterBillController.text.isEmpty ||
-                              _serviceChargeController.text.isEmpty ||
-                              date == "" ||
-                              selectedFloorId == null ||
-                              selectedFloorName == "" ||
-                              selectedFlatId == null ||
-                              selectedFlatName == "")
-                            {}
-                          else
+                          if (_tenentNameController.text.isNotEmpty &&
+                              // _nidNoController.text.isEmpty ||
+                              // _passportNoController.text.isEmpty ||
+                              // _mobileNoController.text.isEmpty ||
+                              // _emgMobileNoController.text.isEmpty ||
+                              // _noOfFamilyMemController.text.isEmpty ||
+                              _rentAmountController.text.isNotEmpty &&
+                              // _gasBillController.text.isEmpty ||
+                              // _waterBillController.text.isEmpty ||
+                              // _serviceChargeController.text.isEmpty ||
+                              date != "" &&
+                              selectedFloorId != null &&
+                              selectedFloorName != "" &&
+                              selectedFlatId != null &&
+                              selectedFlatName != "")
                             {
                               await DBHelper.insertTenentData(TenentInfo(
                                   tenentName: _tenentNameController.text,
@@ -363,29 +381,38 @@ class _TenentDataPageState extends State<TenentDataPage> {
                                   floorName: selectedFloorName.toString(),
                                   flatID: selectedFlatId!,
                                   flatName: selectedFlatName!,
-                                  nidNo: int.parse(_nidNoController.text),
-                                  passportNo: _passportNoController.text,
-                                  birthCertificateNo: int.parse(
-                                      _birthCertificateNoController.text),
-                                  mobileNo: int.parse(_mobileNoController.text),
-                                  emgMobileNo:
-                                      int.parse(_emgMobileNoController.text),
-                                  noOfFamilyMem:
-                                      int.parse(_noOfFamilyMemController.text),
+                                  nidNo: _nidNoController.text.isNotEmpty
+                                      ? int.parse(_nidNoController.text)
+                                      : null,
+                                  passportNo: _passportNoController.text.isNotEmpty
+                                      ? _passportNoController.text
+                                      : null,
+                                  birthCertificateNo: _birthCertificateNoController.text.isNotEmpty
+                                      ? int.parse(
+                                          _birthCertificateNoController.text)
+                                      : null,
+                                  mobileNo: _mobileNoController.text.isNotEmpty
+                                      ? int.parse(_mobileNoController.text)
+                                      : null,
+                                  emgMobileNo: _emgMobileNoController.text.isNotEmpty
+                                      ? int.parse(_emgMobileNoController.text)
+                                      : null,
+                                  noOfFamilyMem: _noOfFamilyMemController.text.isNotEmpty
+                                      ? int.parse(_noOfFamilyMemController.text)
+                                      : null,
                                   rentAmount:
                                       double.parse(_rentAmountController.text),
-                                  gasBill:
-                                      double.parse(_gasBillController.text),
-                                  waterBill:
-                                      double.parse(_waterBillController.text),
-                                  serviceCharge: double.parse(
-                                      _serviceChargeController.text),
-                                  totalAmount: double.parse(
-                                          _rentAmountController.text) +
-                                      double.parse(_gasBillController.text) +
-                                      double.parse(_waterBillController.text) +
-                                      double.parse(
-                                          _serviceChargeController.text),
+                                  gasBill: _gasBillController.text.isNotEmpty
+                                      ? double.parse(_gasBillController.text)
+                                      : null,
+                                  waterBill: _waterBillController.text.isNotEmpty
+                                      ? double.parse(_waterBillController.text)
+                                      : null,
+                                  serviceCharge:
+                                      _serviceChargeController.text.isNotEmpty
+                                          ? double.parse(_serviceChargeController.text)
+                                          : null,
+                                  totalAmount: double.parse(_rentAmountController.text) + (_gasBillController.text.isNotEmpty ? double.parse(_gasBillController.text) : 0) + (_waterBillController.text.isNotEmpty ? double.parse(_waterBillController.text) : 0) + (_serviceChargeController.text.isNotEmpty ? double.parse(_serviceChargeController.text) : 0),
                                   dateOfIn: date.toString())),
                               setState(() {
                                 _fetchTenentData();
@@ -418,6 +445,19 @@ class _TenentDataPageState extends State<TenentDataPage> {
                                   snackPosition: SnackPosition.BOTTOM,
                                   duration: Duration(seconds: 2)),
                               Get.to(TenentPage())
+                            }
+                          else
+                            {
+                              Get.snackbar("", "",
+                                  messageText: Center(
+                                      child: Text(
+                                    "please fill up all * marked field\n",
+                                    style: TextStyle(
+                                        color: Color.fromARGB(255, 255, 22, 22),
+                                        fontSize: 20),
+                                  )),
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  duration: Duration(seconds: 2))
                             }
                         },
                       ),

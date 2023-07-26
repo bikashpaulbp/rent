@@ -225,19 +225,6 @@ class _FlatPageState extends State<FlatPage> {
                                                 padding:
                                                     const EdgeInsets.all(5.0),
                                                 child: Text(
-                                                  'Flat Size(Sqf): ${flat.flatSize.toString()}',
-                                                  style: TextStyle(
-                                                    color: const Color.fromARGB(
-                                                        255, 0, 0, 0),
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.all(5.0),
-                                                child: Text(
                                                   'Flat Side: ${flat.flatSide.toString()}',
                                                   style: TextStyle(
                                                     color: const Color.fromARGB(
@@ -251,7 +238,7 @@ class _FlatPageState extends State<FlatPage> {
                                                 padding:
                                                     const EdgeInsets.all(5.0),
                                                 child: Text(
-                                                  'Flat Side: ${flat.floorId}',
+                                                  'Flat Size(Sqf): ${flat.flatSize.toString()}',
                                                   style: TextStyle(
                                                     color: const Color.fromARGB(
                                                         255, 0, 0, 0),
@@ -260,11 +247,6 @@ class _FlatPageState extends State<FlatPage> {
                                                   ),
                                                 ),
                                               ),
-                                              // Padding(
-                                              //   padding: const EdgeInsets.all(8.0),
-                                              //   child: Text(
-                                              //       'Rent Amount:     ${flat.rentAmount.toString()}'),
-                                              // ),
                                             ],
                                           ),
                                         ),

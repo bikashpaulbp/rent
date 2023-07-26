@@ -66,8 +66,7 @@ class _FloorDataPageState extends State<FloorDataPage> {
                   children: [
                     ElevatedButton(
                       onPressed: () async {
-                        if (_floorController.text == "") {
-                        } else {
+                        if (_floorController.text.isNotEmpty) {
                           await DBHelper.insertFloorData(
                             Floor(floorName: _floorController.text),
                           );
@@ -83,6 +82,17 @@ class _FloorDataPageState extends State<FloorDataPage> {
                               snackPosition: SnackPosition.BOTTOM,
                               duration: Duration(seconds: 2));
                           Get.to(FloorPage());
+                        } else {
+                          Get.snackbar("", "",
+                              messageText: Center(
+                                  child: Text(
+                                " please provide floor name\n",
+                                style: TextStyle(
+                                    color: Color.fromARGB(233, 216, 41, 41),
+                                    fontSize: 20),
+                              )),
+                              snackPosition: SnackPosition.BOTTOM,
+                              duration: Duration(seconds: 2));
                         }
                       },
                       style: ElevatedButton.styleFrom(

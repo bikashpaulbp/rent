@@ -8,7 +8,7 @@ class FlatInfo {
   String flatSide;
 
   int noOfWashroom;
-  int flatSize; 
+  int? flatSize;
 
   FlatInfo({
     this.id,
@@ -19,7 +19,7 @@ class FlatInfo {
     required this.noOfBedroom,
     required this.flatSide,
     required this.noOfWashroom,
-    required this.flatSize,
+    this.flatSize,
   });
 
   Map<String, dynamic> toJson() {

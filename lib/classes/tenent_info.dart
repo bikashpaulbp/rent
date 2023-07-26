@@ -5,16 +5,16 @@ class TenentInfo {
   int flatID;
   String flatName;
   String tenentName;
-  int nidNo;
+  int? nidNo;
   String? passportNo;
-  int birthCertificateNo;
-  int mobileNo;
-  int emgMobileNo;
-  int noOfFamilyMem;
+  int? birthCertificateNo;
+  int? mobileNo;
+  int? emgMobileNo;
+  int? noOfFamilyMem;
   double rentAmount;
-  double gasBill;
-  double waterBill;
-  double serviceCharge;
+  double? gasBill;
+  double? waterBill;
+  double? serviceCharge;
   double totalAmount;
   String dateOfIn;
 
@@ -25,16 +25,16 @@ class TenentInfo {
       required this.flatID,
       required this.flatName,
       required this.tenentName,
-      required this.nidNo,
+      this.nidNo,
       this.passportNo,
-      required this.birthCertificateNo,
-      required this.mobileNo,
-      required this.emgMobileNo,
-      required this.noOfFamilyMem,
+      this.birthCertificateNo,
+      this.mobileNo,
+      this.emgMobileNo,
+      this.noOfFamilyMem,
       required this.rentAmount,
-      required this.gasBill,
-      required this.waterBill,
-      required this.serviceCharge,
+      this.gasBill,
+      this.waterBill,
+      this.serviceCharge,
       required this.totalAmount,
       required this.dateOfIn});
 

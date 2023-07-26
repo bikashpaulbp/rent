@@ -69,6 +69,10 @@ class _FlatDataPageState extends State<FlatDataPage> {
                 keyboardType: TextInputType.name,
                 controller: _flatNameController,
                 decoration: InputDecoration(
+                  suffix: Text(
+                    '*',
+                    style: TextStyle(color: Colors.red),
+                  ),
                   labelText: 'Flat Name',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -83,6 +87,10 @@ class _FlatDataPageState extends State<FlatDataPage> {
                   return DropdownButtonFormField<int>(
                     isExpanded: true,
                     decoration: InputDecoration(
+                      suffix: Text(
+                        '*',
+                        style: TextStyle(color: Colors.red),
+                      ),
                       labelText: 'Floor',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
@@ -112,6 +120,10 @@ class _FlatDataPageState extends State<FlatDataPage> {
                 keyboardType: TextInputType.number,
                 controller: _noOfMasterbedRoomController,
                 decoration: InputDecoration(
+                  suffix: Text(
+                    '*',
+                    style: TextStyle(color: Colors.red),
+                  ),
                   labelText: 'No. Of Master Bedroom',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -123,6 +135,10 @@ class _FlatDataPageState extends State<FlatDataPage> {
                 keyboardType: TextInputType.number,
                 controller: _noOfBedroomController,
                 decoration: InputDecoration(
+                  suffix: Text(
+                    '*',
+                    style: TextStyle(color: Colors.red),
+                  ),
                   labelText: 'No. Of Bedroom',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -134,6 +150,10 @@ class _FlatDataPageState extends State<FlatDataPage> {
                 keyboardType: TextInputType.name,
                 controller: _flatSideController,
                 decoration: InputDecoration(
+                  suffix: Text(
+                    '*',
+                    style: TextStyle(color: Colors.red),
+                  ),
                   labelText: 'Flat Side',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -145,6 +165,10 @@ class _FlatDataPageState extends State<FlatDataPage> {
                 keyboardType: TextInputType.number,
                 controller: _noOfWashroomController,
                 decoration: InputDecoration(
+                  suffix: Text(
+                    '*',
+                    style: TextStyle(color: Colors.red),
+                  ),
                   labelText: 'No. Of Washroom',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -172,17 +196,18 @@ class _FlatDataPageState extends State<FlatDataPage> {
                           _noOfMasterbedRoomController.text.isNotEmpty &&
                           _flatSideController.text.isNotEmpty &&
                           _noOfWashroomController.text.isNotEmpty &&
-                          _flatSizeController.text.isNotEmpty &&
                           _noOfBedroomController.text.isNotEmpty &&
+                          // _flatSizeController.text.isNotEmpty &&
                           selectedFloorId != null &&
-                          selectedFloorName == "") {
-                      } else {
+                          selectedFloorName != "") {
                         await DBHelper.insertFlatData(FlatInfo(
                           floorId: selectedFloorId!,
                           floorName: selectedFloorName!,
                           flatName: _flatNameController.text,
                           flatSide: _flatSideController.text,
-                          flatSize: int.parse(_flatSizeController.text),
+                          flatSize: _flatSizeController.text.isNotEmpty
+                              ? int.parse(_flatSizeController.text)
+                              : null,
                           noOfBedroom: int.parse(_noOfBedroomController.text),
                           noOfMasterbedRoom:
                               int.parse(_noOfMasterbedRoomController.text),
@@ -192,7 +217,7 @@ class _FlatDataPageState extends State<FlatDataPage> {
                         Get.snackbar("", "",
                             messageText: Center(
                                 child: Text(
-                              "saved successfully  \n",
+                              "saved successfully\n",
                               style: TextStyle(
                                   color: Color.fromARGB(255, 0, 0, 0),
                                   fontSize: 20),
@@ -211,8 +236,18 @@ class _FlatDataPageState extends State<FlatDataPage> {
                           selectedFloorName = "";
                         });
 
-                        // Navigate to the Dashboard and clear the route stack
                         Get.to(FlatPage());
+                      } else {
+                        Get.snackbar("", "",
+                            messageText: Center(
+                                child: Text(
+                              " please fill up all * marked field\n",
+                              style: TextStyle(
+                                  color: Color.fromARGB(255, 255, 22, 22),
+                                  fontSize: 20),
+                            )),
+                            snackPosition: SnackPosition.BOTTOM,
+                            duration: Duration(seconds: 2));
                       }
                     },
                     style: ElevatedButton.styleFrom(
