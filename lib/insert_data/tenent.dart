@@ -54,10 +54,6 @@ class _TenentDataPageState extends State<TenentDataPage> {
 
   Future<void> _fetchTenentData() async {
     tenentStream = await DBHelper.readTenentData().asStream();
-    //  List<FlatInfo> flatList = await DBHelper.readFlatData();
-    //   setState(() {
-    //     Provider.of<FlatData>(context, listen: false).updateFlatList(flatList);
-    //   });
   }
 
   @override

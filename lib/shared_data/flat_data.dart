@@ -11,4 +11,8 @@ class FlatData extends ChangeNotifier {
       notifyListeners();
     });
   }
+
+  flatListNew() {
+    return _flatList.length;
+  }
 }

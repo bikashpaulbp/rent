@@ -12,4 +12,8 @@ class FloorData extends ChangeNotifier {
       notifyListeners();
     });
   }
+
+  floorListNew() {
+    return _floorList.length;
+  }
 }

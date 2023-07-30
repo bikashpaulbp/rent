@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 import 'package:rent_management/classes/tenent_info.dart';
 import 'package:rent_management/db_helper.dart';
 import 'package:rent_management/insert_data/tenent.dart';
+
+import '../shared_data/tenent_data.dart';
 
 class TenentPage extends StatefulWidget {
   const TenentPage({super.key});
@@ -37,10 +40,12 @@ class _TenentPageState extends State<TenentPage> {
 
   Future<void> _fetchTenentData() async {
     tenentStream = DBHelper.readTenentData().asStream();
-    //  List<FlatInfo> flatList = await DBHelper.readFlatData();
-    //   setState(() {
-    //     Provider.of<FlatData>(context, listen: false).updateFlatList(flatList);
-    //   });
+    List<TenentInfo> tenantList = await DBHelper.readTenentData();
+
+    setState(() {
+      Provider.of<TenantData>(context, listen: false)
+          .updateTenantList(tenantList);
+    });
   }
 
   @override

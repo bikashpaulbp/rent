@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:rent_management/screens/monthly_rent_page.dart';
+import 'package:rent_management/shared_data/rent_data.dart';
 
 import '../classes/rent_info.dart';
 import '../classes/tenent_info.dart';
@@ -22,10 +23,11 @@ class _RentDataPageState extends State<RentDataPage> {
   TenentInfo? tenentInfo;
   List<TenentInfo> tenentList = [];
 
-
   final format = DateFormat("yyyy-MM-dd");
 
   String? date;
+
+ 
 
   int isPaid = 0;
 
@@ -97,9 +99,7 @@ class _RentDataPageState extends State<RentDataPage> {
               children: [
                 ElevatedButton(
                   onPressed: () => {
-                    if (date == "")
-                      {}
-                    else
+                    if (date != "" && tenentList.isNotEmpty)
                       {
                         for (var i in tenentList)
                           {
@@ -132,6 +132,7 @@ class _RentDataPageState extends State<RentDataPage> {
                                     isPaid: isPaid))
                                 .then((_) => {
                                       setState(() {
+                                        
                                         _fetchData();
                                       }),
                                     }),
@@ -147,6 +148,19 @@ class _RentDataPageState extends State<RentDataPage> {
                             )),
                             snackPosition: SnackPosition.BOTTOM,
                             duration: Duration(seconds: 2)),
+                      }
+                    else
+                      {
+                        Get.snackbar("", "",
+                            messageText: Center(
+                                child: Text(
+                              "please add tenant and select month\n",
+                              style: TextStyle(
+                                  color: Color.fromARGB(255, 255, 22, 22),
+                                  fontSize: 20),
+                            )),
+                            snackPosition: SnackPosition.BOTTOM,
+                            duration: Duration(seconds: 2))
                       }
                   },
                   style: ElevatedButton.styleFrom(

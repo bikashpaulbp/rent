@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:rent_management/classes/rent_info.dart';
 
 import 'package:rent_management/classes/tenent_info.dart';
 import 'package:rent_management/db_helper.dart';
 import 'package:rent_management/insert_data/rent.dart';
 
+import '../shared_data/rent_data.dart';
 
 class MonthlyRent extends StatefulWidget {
   const MonthlyRent({super.key});
@@ -30,17 +32,18 @@ class _MonthlyRentState extends State<MonthlyRent> {
 
   @override
   void initState() {
-    setState(() {
-      _fetchData();
-    });
+    _fetchData();
 
     super.initState();
   }
 
   Future<void> _fetchData() async {
-    rentStream = DBHelper.readRentData().asStream();
-
+    List<RentInfo> rentList = await DBHelper.readRentData();
     tenentList = await DBHelper.readTenentData();
+    rentStream = DBHelper.readRentData().asStream();
+    setState(() {
+      Provider.of<RentData>(context, listen: false).updateRentList(rentList);
+    });
   }
 
   @override
@@ -246,7 +249,7 @@ class _MonthlyRentState extends State<MonthlyRent> {
                                                       255, 255, 255, 255)
                                                   : Colors.white,
                                               onPressed: () async {
-                                                isPaid = 1;
+                                                isPaid = (isPaid == 0 ? 1 : 0);
                                                 RentInfo updatedRent = RentInfo(
                                                     id: rent.id,
                                                     tenentName: rent.tenentName,
@@ -263,13 +266,30 @@ class _MonthlyRentState extends State<MonthlyRent> {
                                                     updatedRent);
                                                 Get.snackbar("", "",
                                                     messageText: Center(
-                                                        child: Text(
-                                                      "status has been changed to paid  \n",
-                                                      style: TextStyle(
-                                                          color: Color.fromARGB(
-                                                              255, 0, 0, 0),
-                                                          fontSize: 20),
-                                                    )),
+                                                      child: isPaid == 1
+                                                          ? Text(
+                                                              "status has been changed to paid  \n",
+                                                              style: TextStyle(
+                                                                  color: Color
+                                                                      .fromARGB(
+                                                                          255,
+                                                                          0,
+                                                                          0,
+                                                                          0),
+                                                                  fontSize: 20),
+                                                            )
+                                                          : Text(
+                                                              "status has been changed to unpaid  \n",
+                                                              style: TextStyle(
+                                                                  color: Color
+                                                                      .fromARGB(
+                                                                          255,
+                                                                          0,
+                                                                          0,
+                                                                          0),
+                                                                  fontSize: 20),
+                                                            ),
+                                                    ),
                                                     snackPosition:
                                                         SnackPosition.BOTTOM,
                                                     duration:
@@ -277,7 +297,6 @@ class _MonthlyRentState extends State<MonthlyRent> {
 
                                                 setState(() {
                                                   _fetchData();
-                                                  isPaid = 0;
                                                 });
                                               },
                                               icon: Icon(Icons.paid)),

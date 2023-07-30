@@ -5,6 +5,8 @@ import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:provider/provider.dart';
 import 'package:rent_management/shared_data/flat_data.dart';
 import 'package:rent_management/shared_data/floor_data.dart';
+import 'package:rent_management/shared_data/rent_data.dart';
+import 'package:rent_management/shared_data/tenent_data.dart';
 
 import 'package:rent_management/splash_screen.dart';
 
@@ -13,6 +15,8 @@ void main() {
     providers: [
       ChangeNotifierProvider(create: (context) => FloorData()),
       ChangeNotifierProvider(create: (context) => FlatData()),
+      ChangeNotifierProvider(create: (context) => TenantData()),
+      ChangeNotifierProvider(create: (context) => RentData()),
     ],
     child: const MyApp(),
   ));

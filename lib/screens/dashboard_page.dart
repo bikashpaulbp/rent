@@ -48,7 +48,7 @@ class _DashboardState extends State<Dashboard> {
           child: BottomNavBar(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             itemCornerRadius: 15,
-            backgroundColor: const Color.fromARGB(157, 255, 193, 7),
+            backgroundColor: Color.fromARGB(255, 255, 7, 234),
             containerPadding: EdgeInsets.all(3),
             curve: Curves.easeInOutCubicEmphasized,
             showElevation: true,
@@ -69,7 +69,7 @@ class _DashboardState extends State<Dashboard> {
                 icon: const Icon(Icons.stairs),
                 activeColor: Colors.white,
                 inactiveColor: Colors.black,
-                activeBackgroundColor: const Color.fromARGB(255, 229, 115, 115),
+                activeBackgroundColor: Color.fromARGB(255, 224, 108, 62),
               ),
               BottomNavBarItem(
                 title: 'Flat',
