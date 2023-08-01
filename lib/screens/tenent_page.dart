@@ -153,21 +153,21 @@ class _TenentPageState extends State<TenentPage> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(5.0),
-                                                  child: Text(
-                                                    'ID: ${tenent.id}',
-                                                    style: TextStyle(
-                                                      color:
-                                                          const Color.fromARGB(
-                                                              255, 0, 0, 0),
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ),
+                                                // Padding(
+                                                //   padding:
+                                                //       const EdgeInsets.all(5.0),
+                                                //   child: Text(
+                                                //     'ID: ${tenent.id}',
+                                                //     style: TextStyle(
+                                                //       color:
+                                                //           const Color.fromARGB(
+                                                //               255, 0, 0, 0),
+                                                //       fontSize: 16,
+                                                //       fontWeight:
+                                                //           FontWeight.bold,
+                                                //     ),
+                                                //   ),
+                                                // ),
                                                 Padding(
                                                   padding:
                                                       const EdgeInsets.all(5.0),
@@ -183,21 +183,21 @@ class _TenentPageState extends State<TenentPage> {
                                                     ),
                                                   ),
                                                 ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(5.0),
-                                                  child: Text(
-                                                    'Floor Name: ${tenent.floorName}',
-                                                    style: TextStyle(
-                                                      color:
-                                                          const Color.fromARGB(
-                                                              255, 0, 0, 0),
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ),
+                                                // Padding(
+                                                //   padding:
+                                                //       const EdgeInsets.all(5.0),
+                                                //   child: Text(
+                                                //     'Floor Name: ${tenent.floorName}',
+                                                //     style: TextStyle(
+                                                //       color:
+                                                //           const Color.fromARGB(
+                                                //               255, 0, 0, 0),
+                                                //       fontSize: 16,
+                                                //       fontWeight:
+                                                //           FontWeight.bold,
+                                                //     ),
+                                                //   ),
+                                                // ),
                                                 Padding(
                                                   padding:
                                                       const EdgeInsets.all(5.0),
@@ -232,7 +232,7 @@ class _TenentPageState extends State<TenentPage> {
                                                   padding:
                                                       const EdgeInsets.all(5.0),
                                                   child: Text(
-                                                    'NID : ${tenent.nidNo.toString()}',
+                                                    'NID : ${tenent.nidNo == 0 ? "" : tenent.nidNo.toString()}',
                                                     style: TextStyle(
                                                       color:
                                                           const Color.fromARGB(
@@ -247,7 +247,7 @@ class _TenentPageState extends State<TenentPage> {
                                                   padding:
                                                       const EdgeInsets.all(5.0),
                                                   child: Text(
-                                                    'Passport : ${tenent.passportNo.toString()}',
+                                                    'Passport : ${tenent.passportNo == "" ? "" : tenent.passportNo.toString()}',
                                                     style: TextStyle(
                                                       color:
                                                           const Color.fromARGB(
@@ -262,7 +262,7 @@ class _TenentPageState extends State<TenentPage> {
                                                   padding:
                                                       const EdgeInsets.all(5.0),
                                                   child: Text(
-                                                    'BirthCertificate: ${tenent.birthCertificateNo.toString()}',
+                                                    'BirthCertificate: ${tenent.birthCertificateNo == 0 ? "" : tenent.birthCertificateNo.toString()}',
                                                     style: TextStyle(
                                                       color:
                                                           const Color.fromARGB(
@@ -277,7 +277,7 @@ class _TenentPageState extends State<TenentPage> {
                                                   padding:
                                                       const EdgeInsets.all(5.0),
                                                   child: Text(
-                                                    'Mobile: ${tenent.mobileNo.toString()}',
+                                                    'Mobile: ${tenent.mobileNo == 0 ? "" : tenent.mobileNo.toString()}',
                                                     style: TextStyle(
                                                       color:
                                                           const Color.fromARGB(
@@ -292,7 +292,7 @@ class _TenentPageState extends State<TenentPage> {
                                                   padding:
                                                       const EdgeInsets.all(5.0),
                                                   child: Text(
-                                                    'Emergency Mobile: ${tenent.emgMobileNo.toString()}',
+                                                    'Emergency Mobile: ${tenent.emgMobileNo == 0 ? "" : tenent.emgMobileNo.toString()}',
                                                     style: TextStyle(
                                                       color:
                                                           const Color.fromARGB(
@@ -307,7 +307,7 @@ class _TenentPageState extends State<TenentPage> {
                                                   padding:
                                                       const EdgeInsets.all(5.0),
                                                   child: Text(
-                                                    'Family Members: ${tenent.noOfFamilyMem.toString()}',
+                                                    'Family Members: ${tenent.noOfFamilyMem == 0 ? "" : tenent.noOfFamilyMem.toString()}',
                                                     style: TextStyle(
                                                       color:
                                                           const Color.fromARGB(
@@ -337,7 +337,7 @@ class _TenentPageState extends State<TenentPage> {
                                                   padding:
                                                       const EdgeInsets.all(5.0),
                                                   child: Text(
-                                                    'Gas Bill: ${tenent.gasBill.toString()}',
+                                                    'Gas Bill: ${tenent.gasBill == 0 ? "" : tenent.gasBill.toString()}',
                                                     style: TextStyle(
                                                       color:
                                                           const Color.fromARGB(
@@ -352,7 +352,7 @@ class _TenentPageState extends State<TenentPage> {
                                                   padding:
                                                       const EdgeInsets.all(5.0),
                                                   child: Text(
-                                                    'Water Bill: ${tenent.waterBill.toString()}',
+                                                    'Water Bill: ${tenent.waterBill == 0 ? "" : tenent.waterBill.toString()}',
                                                     style: TextStyle(
                                                       color:
                                                           const Color.fromARGB(
@@ -367,7 +367,7 @@ class _TenentPageState extends State<TenentPage> {
                                                   padding:
                                                       const EdgeInsets.all(5.0),
                                                   child: Text(
-                                                    'Service Charge: ${tenent.serviceCharge.toString()}',
+                                                    'Service Charge: ${tenent.serviceCharge == 0 ? "" : tenent.serviceCharge.toString()}',
                                                     style: TextStyle(
                                                       color:
                                                           const Color.fromARGB(
@@ -889,8 +889,8 @@ class _TenentPageState extends State<TenentPage> {
                                                                           TenentInfo updatedTenent = TenentInfo(
                                                                               id: tenent.id,
                                                                               tenentName: _newTenentNameController.text,
-                                                                              floorID: tenent.floorID,
-                                                                              floorName: tenent.floorName,
+                                                                              // floorID: tenent.floorID,
+                                                                              // floorName: tenent.floorName,
                                                                               flatID: tenent.flatID,
                                                                               flatName: tenent.flatName,
                                                                               nidNo: int.parse(_newNidNoController.text),

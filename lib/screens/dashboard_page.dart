@@ -48,7 +48,7 @@ class _DashboardState extends State<Dashboard> {
           child: BottomNavBar(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             itemCornerRadius: 15,
-            backgroundColor: Color.fromARGB(255, 255, 7, 234),
+            backgroundColor: Color.fromARGB(255, 168, 172, 255),
             containerPadding: EdgeInsets.all(3),
             curve: Curves.easeInOutCubicEmphasized,
             showElevation: true,
@@ -76,14 +76,14 @@ class _DashboardState extends State<Dashboard> {
                 icon: const Icon(Icons.home),
                 activeColor: Colors.white,
                 inactiveColor: Colors.black,
-                activeBackgroundColor: Colors.blue.shade300,
+                activeBackgroundColor: const Color.fromARGB(255, 73, 173, 255),
               ),
               BottomNavBarItem(
                 title: 'Tenent',
                 icon: const Icon(Icons.people_alt),
                 inactiveColor: Colors.black,
                 activeColor: Colors.white,
-                activeBackgroundColor: Colors.green.shade300,
+                activeBackgroundColor: Color.fromARGB(255, 102, 240, 109),
               ),
               BottomNavBarItem(
                 title: 'Rent',

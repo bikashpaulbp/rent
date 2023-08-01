@@ -22,12 +22,11 @@ class _RentDataPageState extends State<RentDataPage> {
   late Stream<List<RentInfo>> rentStream = const Stream.empty();
   TenentInfo? tenentInfo;
   List<TenentInfo> tenentList = [];
-
-  final format = DateFormat("yyyy-MM-dd");
-
+  List<RentInfo> rentList = [];
+  DateTime dateTime = DateTime(2023, 1, 1);
+  final format = DateFormat("dd MMM y");
+  DateTime rentMonth = DateTime(1990, 1, 1);
   String? date;
-
- 
 
   int isPaid = 0;
 
@@ -42,6 +41,7 @@ class _RentDataPageState extends State<RentDataPage> {
 
   Future<void> _fetchData() async {
     rentStream = DBHelper.readRentData().asStream();
+    rentList = await DBHelper.readRentData();
 
     tenentList = await DBHelper.readTenentData();
   }
@@ -74,8 +74,8 @@ class _RentDataPageState extends State<RentDataPage> {
                   labelText: "select month", icon: Icon(Icons.calendar_month)),
               onChanged: (newValue) {
                 setState(() {
-                  date = newValue.toString();
-                  print(date);
+                  dateTime = newValue!;
+                  date = format.format(dateTime);
                 });
               },
               format: format,
@@ -101,53 +101,70 @@ class _RentDataPageState extends State<RentDataPage> {
                   onPressed: () => {
                     if (date != "" && tenentList.isNotEmpty)
                       {
-                        for (var i in tenentList)
+                        for (RentInfo rentInfo in rentList)
+                          {rentMonth = format.parse(rentInfo.month)},
+                        if (rentMonth.month == dateTime.month)
                           {
-                            tenentInfo = TenentInfo(
-                                floorID: i.floorID,
-                                floorName: i.floorName,
-                                flatID: i.flatID,
-                                flatName: i.flatName,
-                                tenentName: i.tenentName,
-                                nidNo: i.nidNo,
-                                birthCertificateNo: i.birthCertificateNo,
-                                mobileNo: i.mobileNo,
-                                emgMobileNo: i.emgMobileNo,
-                                noOfFamilyMem: i.noOfFamilyMem,
-                                rentAmount: i.rentAmount,
-                                gasBill: i.gasBill,
-                                waterBill: i.waterBill,
-                                serviceCharge: i.serviceCharge,
-                                totalAmount: i.totalAmount,
-                                dateOfIn: i.dateOfIn),
-                            DBHelper.insertRentData(RentInfo(
-                                    floorID: tenentInfo!.floorID,
-                                    floorName: tenentInfo!.floorName,
-                                    flatID: tenentInfo!.flatID,
-                                    flatName: tenentInfo!.flatName,
-                                    tenentID: tenentInfo?.id ?? 0,
-                                    tenentName: tenentInfo!.tenentName,
-                                    totalAmount: tenentInfo!.totalAmount,
-                                    month: date.toString(),
-                                    isPaid: isPaid))
-                                .then((_) => {
-                                      setState(() {
-                                        
-                                        _fetchData();
-                                      }),
-                                    }),
-                          },
-                        Get.to(MonthlyRent()),
-                        Get.snackbar("", "",
-                            messageText: Center(
-                                child: Text(
-                              "saved successfully  \n",
-                              style: TextStyle(
-                                  color: Color.fromARGB(255, 0, 0, 0),
-                                  fontSize: 20),
-                            )),
-                            snackPosition: SnackPosition.BOTTOM,
-                            duration: Duration(seconds: 2)),
+                            Get.snackbar("", "",
+                                messageText: Center(
+                                    child: Text(
+                                  "rent already added for selected month\n",
+                                  style: TextStyle(
+                                      color: Color.fromARGB(255, 255, 22, 22),
+                                      fontSize: 20),
+                                )),
+                                snackPosition: SnackPosition.BOTTOM,
+                                duration: Duration(seconds: 2))
+                          }
+                        else
+                          {
+                            for (var i in tenentList)
+                              {
+                                tenentInfo = TenentInfo(
+                                    // floorID: i.floorID,
+                                    // floorName: i.floorName,
+                                    flatID: i.flatID,
+                                    flatName: i.flatName,
+                                    tenentName: i.tenentName,
+                                    nidNo: i.nidNo,
+                                    birthCertificateNo: i.birthCertificateNo,
+                                    mobileNo: i.mobileNo,
+                                    emgMobileNo: i.emgMobileNo,
+                                    noOfFamilyMem: i.noOfFamilyMem,
+                                    rentAmount: i.rentAmount,
+                                    gasBill: i.gasBill,
+                                    waterBill: i.waterBill,
+                                    serviceCharge: i.serviceCharge,
+                                    totalAmount: i.totalAmount,
+                                    dateOfIn: i.dateOfIn),
+                                DBHelper.insertRentData(RentInfo(
+                                        // floorID: tenentInfo!.floorID,
+                                        // floorName: tenentInfo!.floorName,
+                                        flatID: tenentInfo!.flatID,
+                                        flatName: tenentInfo!.flatName,
+                                        tenentID: tenentInfo?.id ?? 0,
+                                        tenentName: tenentInfo!.tenentName,
+                                        totalAmount: tenentInfo!.totalAmount,
+                                        month: date.toString(),
+                                        isPaid: isPaid))
+                                    .then((_) => {
+                                          setState(() {
+                                            _fetchData();
+                                          }),
+                                        }),
+                                Get.to(MonthlyRent()),
+                              },
+                            Get.snackbar("", "",
+                                messageText: Center(
+                                    child: Text(
+                                  "saved successfully  \n",
+                                  style: TextStyle(
+                                      color: Color.fromARGB(255, 0, 0, 0),
+                                      fontSize: 20),
+                                )),
+                                snackPosition: SnackPosition.BOTTOM,
+                                duration: Duration(seconds: 2)),
+                          }
                       }
                     else
                       {

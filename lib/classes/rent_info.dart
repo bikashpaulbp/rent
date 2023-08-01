@@ -1,7 +1,7 @@
 class RentInfo {
   int? id;
-  int floorID;
-  String floorName;
+  // int floorID;
+  // String floorName;
   int flatID;
   String flatName;
   int tenentID;
@@ -12,8 +12,8 @@ class RentInfo {
 
   RentInfo({
     this.id,
-    required this.floorID,
-    required this.floorName,
+    // required this.floorID,
+    // required this.floorName,
     required this.flatID,
     required this.flatName,
     required this.tenentID,
@@ -26,8 +26,8 @@ class RentInfo {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'floorID': floorID,
-      'floorName': floorName,
+      // 'floorID': floorID,
+      // 'floorName': floorName,
       'flatID': flatID,
       'flatName': flatName,
       'tenentID': tenentID,
@@ -40,8 +40,8 @@ class RentInfo {
 
   factory RentInfo.fromJson(Map<String, dynamic> json) => RentInfo(
         id: json['id'],
-        floorID: json['floorID'],
-        floorName: json['floorName'],
+        // floorID: json['floorID'],
+        // floorName: json['floorName'],
         flatID: json['flatID'],
         flatName: json['flatName'],
         tenentID: json['tenentID'],

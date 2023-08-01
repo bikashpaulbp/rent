@@ -9,8 +9,8 @@ import 'classes/tenent_info.dart';
 class DBHelper {
   static Future<Database> initDB() async {
     var dpPath = await getDatabasesPath();
-    String path = join(dpPath, 'rentmanagement.db');
-    return await openDatabase(path, version: 2, onCreate: _onCreate);
+    String path = join(dpPath, 'rentmanagement_a.db');
+    return await openDatabase(path, version: 1, onCreate: _onCreate);
   }
 
   static Future _onCreate(Database db, int version) async {
@@ -34,8 +34,6 @@ class DBHelper {
     await db.execute('''CREATE TABLE rent (
 
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      floorID INTEGER,
-      floorName TEXT,
       flatID INTEGER,
       flatName TEXT,
       tenentID INTEGER,
@@ -47,8 +45,6 @@ class DBHelper {
 
     await db.execute('''CREATE TABLE tenent (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      floorID INTEGER,
-      floorName TEXT,
       flatID INTEGER,
       flatName TEXT,
       tenentName TEXT,

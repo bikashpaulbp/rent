@@ -140,19 +140,19 @@ class _MonthlyRentState extends State<MonthlyRent> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.all(5.0),
-                                                child: Text(
-                                                  'ID: ${rent.id}',
-                                                  style: TextStyle(
-                                                    color: const Color.fromARGB(
-                                                        255, 0, 0, 0),
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ),
+                                              // Padding(
+                                              //   padding:
+                                              //       const EdgeInsets.all(5.0),
+                                              //   child: Text(
+                                              //     'ID: ${rent.id}',
+                                              //     style: TextStyle(
+                                              //       color: const Color.fromARGB(
+                                              //           255, 0, 0, 0),
+                                              //       fontSize: 16,
+                                              //       fontWeight: FontWeight.bold,
+                                              //     ),
+                                              //   ),
+                                              // ),
                                               Padding(
                                                 padding:
                                                     const EdgeInsets.all(5.0),
@@ -166,19 +166,19 @@ class _MonthlyRentState extends State<MonthlyRent> {
                                                   ),
                                                 ),
                                               ),
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.all(5.0),
-                                                child: Text(
-                                                  'Floor Name: ${rent.floorName}',
-                                                  style: TextStyle(
-                                                    color: const Color.fromARGB(
-                                                        255, 0, 0, 0),
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ),
+                                              // Padding(
+                                              //   padding:
+                                              //       const EdgeInsets.all(5.0),
+                                              //   child: Text(
+                                              //     'Floor Name: ${rent.floorName}',
+                                              //     style: TextStyle(
+                                              //       color: const Color.fromARGB(
+                                              //           255, 0, 0, 0),
+                                              //       fontSize: 16,
+                                              //       fontWeight: FontWeight.bold,
+                                              //     ),
+                                              //   ),
+                                              // ),
                                               Padding(
                                                 padding:
                                                     const EdgeInsets.all(5.0),
@@ -254,8 +254,8 @@ class _MonthlyRentState extends State<MonthlyRent> {
                                                     id: rent.id,
                                                     tenentName: rent.tenentName,
                                                     tenentID: rent.tenentID,
-                                                    floorID: rent.floorID,
-                                                    floorName: rent.floorName,
+                                                    // floorID: rent.floorID,
+                                                    // floorName: rent.floorName,
                                                     flatID: rent.flatID,
                                                     flatName: rent.flatName,
                                                     month: rent.month,
@@ -405,13 +405,11 @@ class _MonthlyRentState extends State<MonthlyRent> {
                                                                       onPressed:
                                                                           () async {
                                                                         RentInfo updatedRent = RentInfo(
-                                                                            id: rent
-                                                                                .id,
-                                                                            tenentName:
-                                                                                rent.tenentName,
+                                                                            id: rent.id,
+                                                                            tenentName: rent.tenentName,
                                                                             tenentID: rent.tenentID,
-                                                                            floorID: rent.floorID,
-                                                                            floorName: rent.floorName,
+                                                                            // floorID: rent.floorID,
+                                                                            // floorName: rent.floorName,
                                                                             flatID: rent.flatID,
                                                                             flatName: rent.flatName,
                                                                             month: rent.month,

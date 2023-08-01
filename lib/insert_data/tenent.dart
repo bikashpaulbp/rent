@@ -6,6 +6,7 @@ import 'package:get/get_navigation/src/snackbar/snackbar.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:rent_management/screens/tenent_page.dart';
+import 'package:rent_management/shared_data/tenent_data.dart';
 import '../classes/flat_info.dart';
 import '../classes/floor_info.dart';
 import '../classes/tenent_info.dart';
@@ -42,9 +43,11 @@ class _TenentDataPageState extends State<TenentDataPage> {
   final TextEditingController _serviceChargeController =
       TextEditingController();
 
-  final format = DateFormat("yyyy-MM-dd");
   late Stream<List<TenentInfo>> tenentStream = const Stream.empty();
+  DateTime dateTime = DateTime(2023, 1, 1);
+  final format = DateFormat("dd MMM y");
   String? date;
+  bool ifFlatIDMatch = false;
   @override
   void initState() {
     _fetchTenentData();
@@ -53,7 +56,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
   }
 
   Future<void> _fetchTenentData() async {
-    tenentStream = await DBHelper.readTenentData().asStream();
+    tenentStream = DBHelper.readTenentData().asStream();
   }
 
   @override
@@ -114,44 +117,44 @@ class _TenentDataPageState extends State<TenentDataPage> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 8),
-                      Consumer<FloorData>(
-                        builder: (context, floorData, child) {
-                          List<Floor> floorList = floorData.floorList;
+                      // SizedBox(height: 8),
+                      // Consumer<FloorData>(
+                      //   builder: (context, floorData, child) {
+                      //     List<Floor> floorList = floorData.floorList;
 
-                          return DropdownButtonFormField<int>(
-                            isExpanded: true,
-                            decoration: InputDecoration(
-                              suffix: Text(
-                                '*',
-                                style: TextStyle(color: Colors.red),
-                              ),
-                              labelText: 'Floor',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            disabledHint: Text('Add Floor First'),
-                            value: selectedFloorId,
-                            onChanged: (int? value) {
-                              setState(() {
-                                selectedFloorId = value!;
-                                selectedFloorName = floorList
-                                    .firstWhere(
-                                        (floor) => floor.id == selectedFloorId)
-                                    .floorName;
-                              });
-                            },
-                            items: floorList
-                                .map<DropdownMenuItem<int>>((Floor floor) {
-                              return DropdownMenuItem<int>(
-                                value: floor.id,
-                                child: Text(floor.floorName),
-                              );
-                            }).toList(),
-                          );
-                        },
-                      ),
+                      //     return DropdownButtonFormField<int>(
+                      //       isExpanded: true,
+                      //       decoration: InputDecoration(
+                      //         suffix: Text(
+                      //           '*',
+                      //           style: TextStyle(color: Colors.red),
+                      //         ),
+                      //         labelText: 'Floor',
+                      //         border: OutlineInputBorder(
+                      //           borderRadius: BorderRadius.circular(10),
+                      //         ),
+                      //       ),
+                      //       disabledHint: Text('Add Floor First'),
+                      //       value: selectedFloorId,
+                      //       onChanged: (int? value) {
+                      //         setState(() {
+                      //           selectedFloorId = value!;
+                      //           selectedFloorName = floorList
+                      //               .firstWhere(
+                      //                   (floor) => floor.id == selectedFloorId)
+                      //               .floorName;
+                      //         });
+                      //       },
+                      //       items: floorList
+                      //           .map<DropdownMenuItem<int>>((Floor floor) {
+                      //         return DropdownMenuItem<int>(
+                      //           value: floor.id,
+                      //           child: Text(floor.floorName),
+                      //         );
+                      //       }).toList(),
+                      //     );
+                      //   },
+                      // ),
                       SizedBox(height: 8),
                       Consumer<FlatData>(
                         builder: (context, flatData, child) {
@@ -179,6 +182,23 @@ class _TenentDataPageState extends State<TenentDataPage> {
                                         (flat) => flat.id == selectedFlatId)
                                     .flatName;
                               });
+                              ifFlatIDMatch = Provider.of<TenantData>(context,
+                                      listen: false)
+                                  .tenantList
+                                  .any((e) => e.flatID == selectedFlatId);
+                              if (ifFlatIDMatch) {
+                                Get.snackbar("", "",
+                                    messageText: Center(
+                                        child: Text(
+                                      "selected flat already \nadded to another tenant\n",
+                                      style: TextStyle(
+                                          color:
+                                              Color.fromARGB(255, 255, 22, 22),
+                                          fontSize: 20),
+                                    )),
+                                    snackPosition: SnackPosition.BOTTOM,
+                                    duration: Duration(seconds: 2));
+                              }
                             },
                             items: flatList
                                 .map<DropdownMenuItem<int>>((FlatInfo flat) {
@@ -317,7 +337,8 @@ class _TenentDataPageState extends State<TenentDataPage> {
                             icon: Icon(Icons.calendar_month)),
                         onChanged: (newValue) {
                           setState(() {
-                            date = newValue.toString();
+                            dateTime = newValue!;
+                            date = format.format(dateTime);
                           });
                         },
                         format: format,
@@ -366,49 +387,56 @@ class _TenentDataPageState extends State<TenentDataPage> {
                               // _waterBillController.text.isEmpty ||
                               // _serviceChargeController.text.isEmpty ||
                               date != "" &&
-                              selectedFloorId != null &&
-                              selectedFloorName != "" &&
+                              // selectedFloorId != null &&
+                              // selectedFloorName != "" &&
                               selectedFlatId != null &&
-                              selectedFlatName != "")
+                              selectedFlatName != "" &&
+                              ifFlatIDMatch == false)
                             {
                               await DBHelper.insertTenentData(TenentInfo(
                                   tenentName: _tenentNameController.text,
-                                  floorID: selectedFloorId!,
-                                  floorName: selectedFloorName.toString(),
+                                  // floorID: selectedFloorId!,
+                                  // floorName: selectedFloorName.toString(),
                                   flatID: selectedFlatId!,
                                   flatName: selectedFlatName!,
                                   nidNo: _nidNoController.text.isNotEmpty
                                       ? int.parse(_nidNoController.text)
-                                      : null,
+                                      : 0,
                                   passportNo: _passportNoController.text.isNotEmpty
                                       ? _passportNoController.text
-                                      : null,
+                                      : "",
                                   birthCertificateNo: _birthCertificateNoController.text.isNotEmpty
                                       ? int.parse(
                                           _birthCertificateNoController.text)
-                                      : null,
+                                      : 0,
                                   mobileNo: _mobileNoController.text.isNotEmpty
                                       ? int.parse(_mobileNoController.text)
-                                      : null,
+                                      : 0,
                                   emgMobileNo: _emgMobileNoController.text.isNotEmpty
                                       ? int.parse(_emgMobileNoController.text)
-                                      : null,
+                                      : 0,
                                   noOfFamilyMem: _noOfFamilyMemController.text.isNotEmpty
                                       ? int.parse(_noOfFamilyMemController.text)
-                                      : null,
+                                      : 0,
                                   rentAmount:
                                       double.parse(_rentAmountController.text),
                                   gasBill: _gasBillController.text.isNotEmpty
                                       ? double.parse(_gasBillController.text)
-                                      : null,
+                                      : 0,
                                   waterBill: _waterBillController.text.isNotEmpty
                                       ? double.parse(_waterBillController.text)
-                                      : null,
+                                      : 0,
                                   serviceCharge:
                                       _serviceChargeController.text.isNotEmpty
-                                          ? double.parse(_serviceChargeController.text)
-                                          : null,
-                                  totalAmount: double.parse(_rentAmountController.text) + (_gasBillController.text.isNotEmpty ? double.parse(_gasBillController.text) : 0) + (_waterBillController.text.isNotEmpty ? double.parse(_waterBillController.text) : 0) + (_serviceChargeController.text.isNotEmpty ? double.parse(_serviceChargeController.text) : 0),
+                                          ? double.parse(
+                                              _serviceChargeController.text)
+                                          : 0,
+                                  totalAmount: double.parse(_rentAmountController.text) +
+                                      (_gasBillController.text.isNotEmpty
+                                          ? double.parse(_gasBillController.text)
+                                          : 0) +
+                                      (_waterBillController.text.isNotEmpty ? double.parse(_waterBillController.text) : 0) +
+                                      (_serviceChargeController.text.isNotEmpty ? double.parse(_serviceChargeController.text) : 0),
                                   dateOfIn: date.toString())),
                               setState(() {
                                 _fetchTenentData();
@@ -444,16 +472,34 @@ class _TenentDataPageState extends State<TenentDataPage> {
                             }
                           else
                             {
-                              Get.snackbar("", "",
-                                  messageText: Center(
-                                      child: Text(
-                                    "please fill up all * marked field\n",
-                                    style: TextStyle(
-                                        color: Color.fromARGB(255, 255, 22, 22),
-                                        fontSize: 20),
-                                  )),
-                                  snackPosition: SnackPosition.BOTTOM,
-                                  duration: Duration(seconds: 2))
+                              if (ifFlatIDMatch)
+                                {
+                                  Get.snackbar("", "",
+                                      messageText: Center(
+                                          child: Text(
+                                        "please change flat\n",
+                                        style: TextStyle(
+                                            color: Color.fromARGB(
+                                                255, 255, 22, 22),
+                                            fontSize: 20),
+                                      )),
+                                      snackPosition: SnackPosition.BOTTOM,
+                                      duration: Duration(seconds: 2))
+                                }
+                              else
+                                {
+                                  Get.snackbar("", "",
+                                      messageText: Center(
+                                          child: Text(
+                                        "please fill up all * marked field\n",
+                                        style: TextStyle(
+                                            color: Color.fromARGB(
+                                                255, 255, 22, 22),
+                                            fontSize: 20),
+                                      )),
+                                      snackPosition: SnackPosition.BOTTOM,
+                                      duration: Duration(seconds: 2))
+                                },
                             }
                         },
                       ),

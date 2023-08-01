@@ -79,7 +79,7 @@ class _FlatDataPageState extends State<FlatDataPage> {
                   ),
                 ),
               ),
-              SizedBox(height: 8),
+              SizedBox(height: 8), 
               Consumer<FloorData>(
                 builder: (context, floorData, child) {
                   List<Floor> floorList = floorData.floorList;
@@ -207,7 +207,7 @@ class _FlatDataPageState extends State<FlatDataPage> {
                           flatSide: _flatSideController.text,
                           flatSize: _flatSizeController.text.isNotEmpty
                               ? int.parse(_flatSizeController.text)
-                              : null,
+                              : 0,
                           noOfBedroom: int.parse(_noOfBedroomController.text),
                           noOfMasterbedRoom:
                               int.parse(_noOfMasterbedRoomController.text),

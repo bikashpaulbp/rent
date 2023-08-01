@@ -145,29 +145,29 @@ class _FloorPageState extends State<FloorPage> {
                                                     RichText(
                                                       text: TextSpan(
                                                         children: [
-                                                          TextSpan(
-                                                            text: 'ID: ',
-                                                            style: TextStyle(
-                                                              color: const Color
-                                                                      .fromARGB(
-                                                                  255, 0, 0, 0),
-                                                              fontSize: 18,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                            ),
-                                                          ),
-                                                          TextSpan(
-                                                            text: '${floor.id}',
-                                                            style: TextStyle(
-                                                              color:
-                                                                  Colors.black,
-                                                              fontSize: 18,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                            ),
-                                                          ),
+                                                          // TextSpan(
+                                                          //   text: 'ID: ',
+                                                          //   style: TextStyle(
+                                                          //     color: const Color
+                                                          //             .fromARGB(
+                                                          //         255, 0, 0, 0),
+                                                          //     fontSize: 18,
+                                                          //     fontWeight:
+                                                          //         FontWeight
+                                                          //             .bold,
+                                                          //   ),
+                                                          // ),
+                                                          // TextSpan(
+                                                          //   text: '${floor.id}',
+                                                          //   style: TextStyle(
+                                                          //     color:
+                                                          //         Colors.black,
+                                                          //     fontSize: 18,
+                                                          //     fontWeight:
+                                                          //         FontWeight
+                                                          //             .bold,
+                                                          //   ),
+                                                          // ),
                                                         ],
                                                       ),
                                                     ),
