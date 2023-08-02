@@ -76,6 +76,8 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                             snapshot.data!.isNotEmpty) {
                           List<RentInfo> rentList = snapshot.data!;
 
+                         
+
                           return ListView.builder(
                             itemCount: rentList.length,
                             itemBuilder: (BuildContext context, int index) {

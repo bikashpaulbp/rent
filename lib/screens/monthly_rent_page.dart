@@ -68,7 +68,7 @@ class _MonthlyRentState extends State<MonthlyRent> {
                       child: Container(
                         child: Center(
                           child: Text(
-                            'ADD MONTHLY RENT',
+                            'ADD RENT',
                             style: TextStyle(
                               color: Color.fromARGB(255, 230, 229, 222),
                               fontSize: 14,
@@ -76,7 +76,7 @@ class _MonthlyRentState extends State<MonthlyRent> {
                             ),
                           ),
                         ),
-                        width: 150,
+                        width: 100,
                         height: 25,
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
