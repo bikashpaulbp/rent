@@ -55,7 +55,54 @@ class _MonthlyRentState extends State<MonthlyRent> {
         child: Scaffold(
           appBar: AppBar(
               backgroundColor: const Color.fromARGB(255, 226, 204, 2),
-              title: Center(child: Text('Monthly Rent List')),
+              title: Center(
+                  child: Column(
+                children: [
+                  Text('Monthly Rent List'),
+                  Padding(
+                    padding: const EdgeInsets.all(3.0),
+                    child: InkWell(
+                      onTap: () {
+                        Get.offAll(RentDataPage());
+                      },
+                      child: Container(
+                        child: Center(
+                          child: Text(
+                            'ADD MONTHLY RENT',
+                            style: TextStyle(
+                              color: Color.fromARGB(255, 230, 229, 222),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                        width: 150,
+                        height: 25,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Color.fromARGB(255, 63, 56, 200),
+                              Color(0xFF985EFF),
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Color.fromARGB(255, 241, 225, 99)
+                                  .withOpacity(0.5),
+                              spreadRadius: 3,
+                              blurRadius: 7,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )),
               bottom: TabBar(tabs: [
                 Tab(text: "All Rent"),
                 Tab(

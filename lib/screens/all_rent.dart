@@ -58,44 +58,7 @@ class _AllRentState extends State<AllRent> {
             children: [
               Column(
                 children: [
-                  InkWell(
-                    onTap: () {
-                      Get.offAll(RentDataPage());
-                    },
-                    child: Container(
-                      child: Center(
-                        child: Text(
-                          'ADD MONTHLY RENT',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                      width: 500,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Color.fromARGB(255, 63, 56, 200),
-                            Color(0xFF985EFF),
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 3,
-                            blurRadius: 7,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  
                   const SizedBox(height: 10),
                   const Text(
                     'Rent',
