@@ -54,55 +54,22 @@ class _MonthlyRentState extends State<MonthlyRent> {
         length: 2,
         child: Scaffold(
           appBar: AppBar(
-              backgroundColor: const Color.fromARGB(255, 226, 204, 2),
-              title: Center(
-                  child: Column(
+              backgroundColor: Color.fromARGB(255, 226, 155, 2),
+              title: Row(
                 children: [
-                  Text('Monthly Rent List'),
-                  Padding(
-                    padding: const EdgeInsets.all(3.0),
-                    child: InkWell(
-                      onTap: () {
+                  Center(child: Text('Monthly Rent List')),
+                  Spacer(),
+                  ElevatedButton.icon(
+                      style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStatePropertyAll(Colors.amber)),
+                      onPressed: () {
                         Get.offAll(RentDataPage());
                       },
-                      child: Container(
-                        child: Center(
-                          child: Text(
-                            'ADD RENT',
-                            style: TextStyle(
-                              color: Color.fromARGB(255, 230, 229, 222),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                        width: 100,
-                        height: 25,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Color.fromARGB(255, 63, 56, 200),
-                              Color(0xFF985EFF),
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color.fromARGB(255, 241, 225, 99)
-                                  .withOpacity(0.5),
-                              spreadRadius: 3,
-                              blurRadius: 7,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+                      icon: Icon(Icons.add),
+                      label: Text("add monthly rent"))
                 ],
-              )),
+              ),
               bottom: TabBar(tabs: [
                 Tab(text: "All Rent"),
                 Tab(
