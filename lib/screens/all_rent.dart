@@ -58,7 +58,6 @@ class _AllRentState extends State<AllRent> {
             children: [
               Column(
                 children: [
-                  
                   const SizedBox(height: 10),
                   const Text(
                     'Rent',
@@ -198,6 +197,7 @@ class _AllRentState extends State<AllRent> {
                                             ],
                                           ),
                                         ),
+                                        SizedBox(width: 50),
                                         CircleAvatar(
                                           radius: 16,
                                           backgroundColor: rent.isPaid == 1
@@ -263,7 +263,7 @@ class _AllRentState extends State<AllRent> {
                                               },
                                               icon: Icon(Icons.paid)),
                                         ),
-                                        SizedBox(width: 10),
+                                        SizedBox(width: 2),
                                         CircleAvatar(
                                           radius: 15,
                                           backgroundColor: const Color.fromARGB(
@@ -422,7 +422,7 @@ class _AllRentState extends State<AllRent> {
                                               },
                                               icon: Icon(Icons.edit)),
                                         ),
-                                        SizedBox(width: 10),
+                                        SizedBox(width: 2),
                                         CircleAvatar(
                                           radius: 15,
                                           backgroundColor: const Color.fromARGB(

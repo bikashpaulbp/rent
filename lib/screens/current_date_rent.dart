@@ -29,6 +29,17 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
   String? date;
 
   int isPaid = 0;
+  DateTime now = DateTime.now();
+  int? currentYear;
+  int? currentMonth;
+
+  bool isRentCurrentMonth(
+      RentInfo rentInfo, int currentYear, int currentMonth) {
+    DateTime date = DateFormat("dd MMM y").parse(rentInfo.month);
+    int year = date.year;
+    int month = date.month;
+    return year == currentYear && month == currentMonth;
+  }
 
   @override
   void initState() {
@@ -74,10 +85,12 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                         if (snapshot.hasData &&
                             snapshot.data != null &&
                             snapshot.data!.isNotEmpty) {
-                          List<RentInfo> rentList = snapshot.data!;
-
-                         
-
+                          List<RentInfo> rentList = snapshot.data!
+                              .where((rent) => isRentCurrentMonth(
+                                  rent,
+                                  currentYear = now.year,
+                                  currentMonth = now.month))
+                              .toList();
                           return ListView.builder(
                             itemCount: rentList.length,
                             itemBuilder: (BuildContext context, int index) {
@@ -197,6 +210,9 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                             ],
                                           ),
                                         ),
+                                        SizedBox(
+                                          width: 50,
+                                        ),
                                         CircleAvatar(
                                           radius: 16,
                                           backgroundColor: rent.isPaid == 1
@@ -262,7 +278,7 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                               },
                                               icon: Icon(Icons.paid)),
                                         ),
-                                        SizedBox(width: 10),
+                                        SizedBox(width: 2),
                                         CircleAvatar(
                                           radius: 15,
                                           backgroundColor: const Color.fromARGB(
@@ -421,7 +437,7 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                               },
                                               icon: Icon(Icons.edit)),
                                         ),
-                                        SizedBox(width: 10),
+                                        SizedBox(width: 2),
                                         CircleAvatar(
                                           radius: 15,
                                           backgroundColor: const Color.fromARGB(
