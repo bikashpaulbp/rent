@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -56,18 +58,22 @@ class _MonthlyRentState extends State<MonthlyRent> {
           appBar: AppBar(
               backgroundColor: Color.fromARGB(255, 226, 155, 2),
               title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Center(child: Text('Monthly Rent List')),
-                  Spacer(),
-                  ElevatedButton.icon(
-                      style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStatePropertyAll(Colors.amber)),
-                      onPressed: () {
-                        Get.offAll(RentDataPage());
-                      },
-                      icon: Icon(Icons.add),
-                      label: Text("add monthly rent"))
+                  SizedBox(
+                    height: 30,
+                    width: 120,
+                    child: ElevatedButton.icon(
+                        style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStatePropertyAll(Colors.amber)),
+                        onPressed: () {
+                          Get.offAll(RentDataPage());
+                        },
+                        icon: Icon(Icons.add),
+                        label: Text("add rent")),
+                  )
                 ],
               ),
               bottom: TabBar(tabs: [
