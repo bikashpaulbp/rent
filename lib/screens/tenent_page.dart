@@ -56,9 +56,19 @@ class _TenentPageState extends State<TenentPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: CircleAvatar(
+        backgroundColor: Color.fromARGB(255, 197, 197, 197),
+        child: IconButton(
+          onPressed: () {
+            Get.offAll(TenentDataPage());
+          },
+          icon: Icon(Icons.add),
+          color: Color.fromARGB(255, 255, 255, 255),
+        ),
+      ),
       appBar: AppBar(
         backgroundColor: Colors.green.shade300,
-        title: const Center(child: Text('Tenent List')),
+        title: const Center(child: Text('Tenant List')),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -67,47 +77,8 @@ class _TenentPageState extends State<TenentPage> {
             children: [
               Column(
                 children: [
-                  InkWell(
-                    onTap: () {
-                      Get.offAll(TenentDataPage());
-                    },
-                    child: Container(
-                      child: Center(
-                        child: Text(
-                          'ADD TENENT',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                      width: 500,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Color.fromARGB(255, 63, 56, 200),
-                            Color(0xFF985EFF),
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 3,
-                            blurRadius: 7,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
                   const Text(
-                    'Tenents',
+                    'Tenants',
                     style: TextStyle(
                       fontSize: 16,
                       color: Color.fromARGB(255, 78, 78, 78),
@@ -116,7 +87,7 @@ class _TenentPageState extends State<TenentPage> {
                   ),
                   const SizedBox(height: 10),
                   SizedBox(
-                    height: 500,
+                    height: 570,
                     child: StreamBuilder<List<TenentInfo>>(
                       stream: tenentStream,
                       builder: (BuildContext context,

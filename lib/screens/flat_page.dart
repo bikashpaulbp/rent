@@ -49,6 +49,16 @@ class _FlatPageState extends State<FlatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: CircleAvatar(
+        backgroundColor: Color.fromARGB(255, 197, 197, 197),
+        child: IconButton(
+          onPressed: () {
+            Get.offAll(FlatDataPage());
+          },
+          icon: Icon(Icons.add),
+          color: Color.fromARGB(255, 255, 255, 255),
+        ),
+      ),
       appBar: AppBar(
         backgroundColor: Colors.blue.shade300,
         title: const Center(child: Text('Flat List')),
@@ -56,49 +66,11 @@ class _FlatPageState extends State<FlatPage> {
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
           child: Column(
             children: [
-              InkWell(
-                onTap: () {
-                  Get.offAll(FlatDataPage());
-                },
-                child: Container(
-                  child: Center(
-                    child: Text(
-                      'ADD FLAT',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  width: 500,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Color.fromARGB(255, 63, 56, 200),
-                        Color(0xFF985EFF),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 3,
-                        blurRadius: 7,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
               Column(
                 children: [
-                  const SizedBox(height: 10),
                   const Text(
                     'Flats',
                     style: TextStyle(
@@ -111,7 +83,7 @@ class _FlatPageState extends State<FlatPage> {
                     padding: const EdgeInsets.all(1.0),
                     child: SizedBox(
                       width: 400,
-                      height: 500,
+                      height: 570,
                       child: StreamBuilder<List<FlatInfo>>(
                         stream: flatStream,
                         builder: (BuildContext context,

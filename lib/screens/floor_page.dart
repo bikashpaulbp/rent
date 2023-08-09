@@ -42,6 +42,16 @@ class _FloorPageState extends State<FloorPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: CircleAvatar(
+        backgroundColor: Color.fromARGB(255, 197, 197, 197),
+        child: IconButton(
+          onPressed: () {
+            Get.offAll(FloorDataPage());
+          },
+          icon: Icon(Icons.add),
+          color: Color.fromARGB(255, 255, 255, 255),
+        ),
+      ),
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 229, 115, 115),
         title: const Center(child: Text('Floor List')),
@@ -53,45 +63,6 @@ class _FloorPageState extends State<FloorPage> {
             children: [
               Column(
                 children: [
-                  InkWell(
-                    onTap: () {
-                      Get.offAll(FloorDataPage());
-                    },
-                    child: Container(
-                      child: Center(
-                        child: Text(
-                          'ADD FLOOR',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                      width: 500,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Color.fromARGB(255, 63, 56, 200),
-                            Color(0xFF985EFF),
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 3,
-                            blurRadius: 7,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 10),
                   Text(
                     'Floors',
                     style: TextStyle(
@@ -104,7 +75,7 @@ class _FloorPageState extends State<FloorPage> {
                     padding: const EdgeInsets.all(1.0),
                     child: Container(
                       width: 500,
-                      height: 500,
+                      height: 570,
                       child: StreamBuilder<List<Floor>>(
                         stream: floorStream,
                         builder: (BuildContext context,
@@ -173,7 +144,7 @@ class _FloorPageState extends State<FloorPage> {
                                                     ),
                                                     SizedBox(width: 15),
                                                     SizedBox(
-                                                      width: 190,
+                                                      width: 220,
                                                       child: RichText(
                                                         text: TextSpan(
                                                           children: [
