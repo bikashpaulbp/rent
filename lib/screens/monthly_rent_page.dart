@@ -55,6 +55,13 @@ class _MonthlyRentState extends State<MonthlyRent> {
     return DefaultTabController(
         length: 2,
         child: Scaffold(
+          floatingActionButton: CircleAvatar(
+              backgroundColor: Color.fromARGB(255, 197, 197, 197),
+              child: IconButton(
+                onPressed: () {},
+                icon: Icon(Icons.add),
+                color: Color.fromARGB(255, 255, 255, 255),
+              )),
           appBar: AppBar(
               backgroundColor: Color.fromARGB(255, 226, 155, 2),
               title: Row(

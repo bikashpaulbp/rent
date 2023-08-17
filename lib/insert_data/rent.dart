@@ -49,6 +49,7 @@ class _RentDataPageState extends State<RentDataPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
       appBar: AppBar(
         title: Text(
           'Month of Rent',

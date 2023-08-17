@@ -77,7 +77,7 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                     ),
                   ),
                   SizedBox(
-                    height: 500,
+                    height: 510,
                     child: StreamBuilder<List<RentInfo>>(
                       stream: rentStream,
                       builder: (BuildContext context,

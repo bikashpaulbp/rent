@@ -68,7 +68,7 @@ class _AllRentState extends State<AllRent> {
                     ),
                   ),
                   SizedBox(
-                    height: 500,
+                    height: 510,
                     child: StreamBuilder<List<RentInfo>>(
                       stream: rentStream,
                       builder: (BuildContext context,
