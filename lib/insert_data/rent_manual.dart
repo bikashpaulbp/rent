@@ -1,21 +1,16 @@
 import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:rent_management/classes/rent_info.dart';
-import 'package:rent_management/insert_data/tenent.dart';
 
 import '../classes/flat_info.dart';
-import '../classes/floor_info.dart';
 import '../classes/tenent_info.dart';
 import '../db_helper.dart';
 import '../screens/dashboard_page.dart';
 import '../screens/monthly_rent_page.dart';
-import '../screens/tenent_page.dart';
 import '../shared_data/flat_data.dart';
-import '../shared_data/floor_data.dart';
 import '../shared_data/tenent_data.dart';
 
 class RentManual extends StatefulWidget {

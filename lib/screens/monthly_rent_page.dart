@@ -1,4 +1,3 @@
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -27,7 +26,6 @@ class _MonthlyRentState extends State<MonthlyRent> {
   TenentInfo? tenentInfo;
   List<TenentInfo> tenentList = [];
 
-  final _totalAmountController = TextEditingController();
 
   final format = DateFormat("yyyy-MM-dd");
 

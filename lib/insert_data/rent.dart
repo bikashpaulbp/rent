@@ -4,8 +4,6 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:rent_management/screens/monthly_rent_page.dart';
-import 'package:rent_management/shared_data/rent_data.dart';
-
 import '../classes/rent_info.dart';
 import '../classes/tenent_info.dart';
 import '../db_helper.dart';
