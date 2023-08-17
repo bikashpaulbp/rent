@@ -17,4 +17,8 @@ class TenantData extends ChangeNotifier {
   tenantListNew() {
     return _tenantList.length;
   }
+
+  firstWhere(bool Function(dynamic tenant) param0) {}
+
+  where(bool Function(dynamic e) param0) {}
 }
