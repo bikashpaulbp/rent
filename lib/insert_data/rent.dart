@@ -1,7 +1,6 @@
 import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:rent_management/screens/monthly_rent_page.dart';
 import '../classes/rent_info.dart';
