@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Rent Management - For Ashek Mahmud',
-      home: SplashScreen(),
+      home: SplashScreen()
     );
   }
 }
