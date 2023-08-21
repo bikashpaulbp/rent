@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Rent Management - For Ashek Mahmud',
+      title: 'Rent Management - For Ashek Mahmud', 
       home: SplashScreen()
     );
   }
