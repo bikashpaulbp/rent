@@ -75,7 +75,7 @@ class _FloorPageState extends State<FloorPage> {
                     padding: const EdgeInsets.all(1.0),
                     child: Container(
                       width: 500,
-                      height: 570,
+                      height: MediaQuery.of(context).size.height * 0.74,
                       child: StreamBuilder<List<Floor>>(
                         stream: floorStream,
                         builder: (BuildContext context,
@@ -153,7 +153,7 @@ class _FloorPageState extends State<FloorPage> {
                                                                   'Floor Name: ',
                                                               style: TextStyle(
                                                                 color: const Color
-                                                                        .fromARGB(
+                                                                    .fromARGB(
                                                                     255,
                                                                     0,
                                                                     0,
@@ -212,8 +212,9 @@ class _FloorPageState extends State<FloorPage> {
                                                                               .start,
                                                                       children: <Widget>[
                                                                         Padding(
-                                                                          padding:
-                                                                              const EdgeInsets.all(20.0),
+                                                                          padding: const EdgeInsets
+                                                                              .all(
+                                                                              20.0),
                                                                           child:
                                                                               Text(
                                                                             'Update Your Information',
@@ -225,8 +226,9 @@ class _FloorPageState extends State<FloorPage> {
                                                                           ),
                                                                         ),
                                                                         Padding(
-                                                                          padding:
-                                                                              const EdgeInsets.all(14.0),
+                                                                          padding: const EdgeInsets
+                                                                              .all(
+                                                                              14.0),
                                                                           child:
                                                                               Row(
                                                                             mainAxisAlignment:
@@ -262,8 +264,9 @@ class _FloorPageState extends State<FloorPage> {
                                                                           ),
                                                                         ),
                                                                         Padding(
-                                                                          padding:
-                                                                              const EdgeInsets.all(8.0),
+                                                                          padding: const EdgeInsets
+                                                                              .all(
+                                                                              8.0),
                                                                           child:
                                                                               Row(
                                                                             mainAxisAlignment:

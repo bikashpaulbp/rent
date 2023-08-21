@@ -68,7 +68,7 @@ class _AllRentState extends State<AllRent> {
                     ),
                   ),
                   SizedBox(
-                    height: 510,
+                    height: MediaQuery.of(context).size.height * 0.65,
                     child: StreamBuilder<List<RentInfo>>(
                       stream: rentStream,
                       builder: (BuildContext context,
@@ -283,7 +283,7 @@ class _AllRentState extends State<AllRent> {
                                                       child: Container(
                                                         height: 400,
                                                         color: const Color
-                                                                .fromARGB(
+                                                            .fromARGB(
                                                             255, 255, 255, 255),
                                                         child: Center(
                                                           child: Column(
@@ -296,7 +296,7 @@ class _AllRentState extends State<AllRent> {
                                                               Padding(
                                                                 padding:
                                                                     const EdgeInsets
-                                                                            .all(
+                                                                        .all(
                                                                         20.0),
                                                                 child: const Text(
                                                                     'Update Your Information'),
@@ -304,7 +304,7 @@ class _AllRentState extends State<AllRent> {
                                                               Padding(
                                                                 padding:
                                                                     const EdgeInsets
-                                                                            .all(
+                                                                        .all(
                                                                         14.0),
                                                                 child: Column(
                                                                   children: [
@@ -354,7 +354,7 @@ class _AllRentState extends State<AllRent> {
                                                               Padding(
                                                                 padding:
                                                                     const EdgeInsets
-                                                                            .all(
+                                                                        .all(
                                                                         8.0),
                                                                 child: Row(
                                                                   mainAxisAlignment:

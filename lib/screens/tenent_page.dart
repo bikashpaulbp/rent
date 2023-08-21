@@ -87,7 +87,7 @@ class _TenentPageState extends State<TenentPage> {
                   ),
                   const SizedBox(height: 10),
                   SizedBox(
-                    height: 570,
+                    height: MediaQuery.of(context).size.height * 0.72,
                     child: StreamBuilder<List<TenentInfo>>(
                       stream: tenentStream,
                       builder: (BuildContext context,
@@ -105,7 +105,7 @@ class _TenentPageState extends State<TenentPage> {
                               return ListTile(
                                 title: Container(
                                   width: 500,
-                                  height: 510,
+                                  height: 500,
                                   child: Card(
                                     elevation: 10,
                                     child: Padding(
@@ -420,7 +420,7 @@ class _TenentPageState extends State<TenentPage> {
                                                         child: Container(
                                                           height: 900,
                                                           color: const Color
-                                                                  .fromARGB(255,
+                                                              .fromARGB(255,
                                                               255, 255, 255),
                                                           child: Center(
                                                             child: Column(
@@ -431,7 +431,7 @@ class _TenentPageState extends State<TenentPage> {
                                                                 Padding(
                                                                   padding:
                                                                       const EdgeInsets
-                                                                              .all(
+                                                                          .all(
                                                                           20.0),
                                                                   child: const Text(
                                                                       'Update Your Information'),
@@ -439,7 +439,7 @@ class _TenentPageState extends State<TenentPage> {
                                                                 Padding(
                                                                   padding:
                                                                       const EdgeInsets
-                                                                              .all(
+                                                                          .all(
                                                                           14.0),
                                                                   child: Column(
                                                                     children: [
@@ -845,7 +845,7 @@ class _TenentPageState extends State<TenentPage> {
                                                                 Padding(
                                                                   padding:
                                                                       const EdgeInsets
-                                                                              .all(
+                                                                          .all(
                                                                           8.0),
                                                                   child: Row(
                                                                     mainAxisAlignment:

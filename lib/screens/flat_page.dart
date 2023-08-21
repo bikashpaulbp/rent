@@ -83,7 +83,7 @@ class _FlatPageState extends State<FlatPage> {
                     padding: const EdgeInsets.all(1.0),
                     child: SizedBox(
                       width: 400,
-                      height: 570,
+                      height: MediaQuery.of(context).size.height * 0.72,
                       child: StreamBuilder<List<FlatInfo>>(
                         stream: flatStream,
                         builder: (BuildContext context,
@@ -261,7 +261,7 @@ class _FlatPageState extends State<FlatPage> {
                                                         child: Container(
                                                           height: 700,
                                                           color: const Color
-                                                                  .fromARGB(255,
+                                                              .fromARGB(255,
                                                               255, 255, 255),
                                                           child: Center(
                                                             child: Column(
@@ -274,7 +274,7 @@ class _FlatPageState extends State<FlatPage> {
                                                                 Padding(
                                                                   padding:
                                                                       const EdgeInsets
-                                                                              .all(
+                                                                          .all(
                                                                           20.0),
                                                                   child: const Text(
                                                                       'Update Your Information'),
@@ -282,7 +282,7 @@ class _FlatPageState extends State<FlatPage> {
                                                                 Padding(
                                                                   padding:
                                                                       const EdgeInsets
-                                                                              .all(
+                                                                          .all(
                                                                           14.0),
                                                                   child: Column(
                                                                     children: [
@@ -508,7 +508,7 @@ class _FlatPageState extends State<FlatPage> {
                                                                 Padding(
                                                                   padding:
                                                                       const EdgeInsets
-                                                                              .all(
+                                                                          .all(
                                                                           8.0),
                                                                   child: Row(
                                                                     mainAxisAlignment:
