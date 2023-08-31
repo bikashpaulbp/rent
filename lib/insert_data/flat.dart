@@ -64,12 +64,12 @@ class _FlatDataPageState extends State<FlatDataPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               TextFormField(
                 keyboardType: TextInputType.name,
                 controller: _flatNameController,
                 decoration: InputDecoration(
-                  suffix: Text(
+                  suffix: const Text(
                     '*',
                     style: TextStyle(color: Colors.red),
                   ),
@@ -79,7 +79,7 @@ class _FlatDataPageState extends State<FlatDataPage> {
                   ),
                 ),
               ),
-              SizedBox(height: 8), 
+              const SizedBox(height: 8), 
               Consumer<FloorData>(
                 builder: (context, floorData, child) {
                   List<Floor> floorList = floorData.floorList;
@@ -87,7 +87,7 @@ class _FlatDataPageState extends State<FlatDataPage> {
                   return DropdownButtonFormField<int>(
                     isExpanded: true,
                     decoration: InputDecoration(
-                      suffix: Text(
+                      suffix: const Text(
                         '*',
                         style: TextStyle(color: Colors.red),
                       ),
@@ -96,7 +96,7 @@ class _FlatDataPageState extends State<FlatDataPage> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    disabledHint: Text('Add Floor First'),
+                    disabledHint: const Text('Add Floor First'),
                     value: selectedFloorId,
                     onChanged: (int? value) {
                       setState(() {
@@ -115,12 +115,12 @@ class _FlatDataPageState extends State<FlatDataPage> {
                   );
                 },
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               TextFormField(
                 keyboardType: TextInputType.number,
                 controller: _noOfMasterbedRoomController,
                 decoration: InputDecoration(
-                  suffix: Text(
+                  suffix: const Text(
                     '*',
                     style: TextStyle(color: Colors.red),
                   ),
@@ -130,12 +130,12 @@ class _FlatDataPageState extends State<FlatDataPage> {
                   ),
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               TextFormField(
                 keyboardType: TextInputType.number,
                 controller: _noOfBedroomController,
                 decoration: InputDecoration(
-                  suffix: Text(
+                  suffix: const Text(
                     '*',
                     style: TextStyle(color: Colors.red),
                   ),
@@ -145,12 +145,12 @@ class _FlatDataPageState extends State<FlatDataPage> {
                   ),
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               TextFormField(
                 keyboardType: TextInputType.name,
                 controller: _flatSideController,
                 decoration: InputDecoration(
-                  suffix: Text(
+                  suffix: const Text(
                     '*',
                     style: TextStyle(color: Colors.red),
                   ),
@@ -160,12 +160,12 @@ class _FlatDataPageState extends State<FlatDataPage> {
                   ),
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               TextFormField(
                 keyboardType: TextInputType.number,
                 controller: _noOfWashroomController,
                 decoration: InputDecoration(
-                  suffix: Text(
+                  suffix: const Text(
                     '*',
                     style: TextStyle(color: Colors.red),
                   ),
@@ -175,7 +175,7 @@ class _FlatDataPageState extends State<FlatDataPage> {
                   ),
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               TextFormField(
                 keyboardType: TextInputType.number,
                 controller: _flatSizeController,
@@ -186,7 +186,7 @@ class _FlatDataPageState extends State<FlatDataPage> {
                   ),
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -215,7 +215,7 @@ class _FlatDataPageState extends State<FlatDataPage> {
                         ));
 
                         Get.snackbar("", "",
-                            messageText: Center(
+                            messageText: const Center(
                                 child: Text(
                               "saved successfully\n",
                               style: TextStyle(
@@ -223,7 +223,7 @@ class _FlatDataPageState extends State<FlatDataPage> {
                                   fontSize: 20),
                             )),
                             snackPosition: SnackPosition.BOTTOM,
-                            duration: Duration(seconds: 2));
+                            duration: const Duration(seconds: 2));
 
                         setState(() {
                           _flatNameController.clear();
@@ -236,10 +236,10 @@ class _FlatDataPageState extends State<FlatDataPage> {
                           selectedFloorName = "";
                         });
 
-                        Get.to(FlatPage());
+                        Get.to(const FlatPage());
                       } else {
                         Get.snackbar("", "",
-                            messageText: Center(
+                            messageText: const Center(
                                 child: Text(
                               " please fill up all * marked field\n",
                               style: TextStyle(
@@ -247,7 +247,7 @@ class _FlatDataPageState extends State<FlatDataPage> {
                                   fontSize: 20),
                             )),
                             snackPosition: SnackPosition.BOTTOM,
-                            duration: Duration(seconds: 2));
+                            duration: const Duration(seconds: 2));
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -260,7 +260,7 @@ class _FlatDataPageState extends State<FlatDataPage> {
                         vertical: 12,
                       ),
                     ),
-                    child: Text(
+                    child: const Text(
                       'Save',
                       style: TextStyle(
                         color: Colors.white,
@@ -270,7 +270,7 @@ class _FlatDataPageState extends State<FlatDataPage> {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      Get.offAll(Dashboard());
+                      Get.offAll(const Dashboard());
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
@@ -282,7 +282,7 @@ class _FlatDataPageState extends State<FlatDataPage> {
                         vertical: 12,
                       ),
                     ),
-                    child: Text(
+                    child: const Text(
                       'Cancel',
                       style: TextStyle(
                         color: Colors.white,

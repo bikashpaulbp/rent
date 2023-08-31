@@ -1,4 +1,5 @@
 import 'package:path/path.dart';
+import 'package:rent_management/classes/deposit.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'classes/flat_info.dart';
@@ -61,6 +62,20 @@ class DBHelper {
       serviceCharge DOUBLE NULL,
       totalAmount DOUBLE 
       )''');
+
+    await db.execute(''' CREATE TABLE deposit(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+  rentID INTEGER,
+   rentMonth TEXT,
+  tenantID INTEGER,
+   tenantName TEXT,
+  flatID INTEGER,
+  flatName TEXT,
+   totalAmount DOUBLE,
+  depositAmount DOUBLE,
+  dueAmount DOUBLE,
+   date TEXT
+    )''');
   }
 
 //floor part
@@ -163,5 +178,31 @@ class DBHelper {
   static Future<int> deleteRent(int? id) async {
     Database db = await DBHelper.initDB();
     return await db.delete('rent', where: 'id = ?', whereArgs: [id]);
+  }
+
+  // deposit part
+  static Future<int> insertDepositData(Deposit deposit) async {
+    Database db = await DBHelper.initDB();
+    return await db.insert('deposit', deposit.toJson());
+  }
+
+  static Future<List<Deposit>> readDepositData() async {
+    Database db = await DBHelper.initDB();
+    var deposit = await db.query('deposit');
+    List<Deposit> depositList = deposit.isNotEmpty
+        ? deposit.map((e) => Deposit.fromJson(e)).toList()
+        : [];
+    return depositList;
+  }
+
+  static Future<int> updateDeposit(Deposit deposit) async {
+    Database db = await DBHelper.initDB();
+    return await db.update('deposit', deposit.toJson(),
+        where: 'id = ?', whereArgs: [deposit.id]);
+  }
+
+  static Future<int> deleteDeposit(int? id) async {
+    Database db = await DBHelper.initDB();
+    return await db.delete('deposit', where: 'id = ?', whereArgs: [id]);
   }
 }

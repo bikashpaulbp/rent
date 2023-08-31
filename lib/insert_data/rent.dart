@@ -62,13 +62,13 @@ class _RentDataPageState extends State<RentDataPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          SizedBox(
+          const SizedBox(
             height: 16,
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: DateTimeField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                   labelText: "select month", icon: Icon(Icons.calendar_month)),
               onChanged: (newValue) {
                 setState(() {
@@ -87,7 +87,7 @@ class _RentDataPageState extends State<RentDataPage> {
               },
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 30,
           ),
           Padding(
@@ -104,7 +104,7 @@ class _RentDataPageState extends State<RentDataPage> {
                         if (rentMonth.month == dateTime.month)
                           {
                             Get.snackbar("", "",
-                                messageText: Center(
+                                messageText: const Center(
                                     child: Text(
                                   "rent already added for selected month\n",
                                   style: TextStyle(
@@ -112,7 +112,7 @@ class _RentDataPageState extends State<RentDataPage> {
                                       fontSize: 20),
                                 )),
                                 snackPosition: SnackPosition.BOTTOM,
-                                duration: Duration(seconds: 2))
+                                duration: const Duration(seconds: 2))
                           }
                         else
                           {
@@ -150,10 +150,10 @@ class _RentDataPageState extends State<RentDataPage> {
                                             _fetchData();
                                           }),
                                         }),
-                                Get.to(MonthlyRent()),
+                                Get.to(const MonthlyRent()),
                               },
                             Get.snackbar("", "",
-                                messageText: Center(
+                                messageText: const Center(
                                     child: Text(
                                   "saved successfully  \n",
                                   style: TextStyle(
@@ -161,13 +161,13 @@ class _RentDataPageState extends State<RentDataPage> {
                                       fontSize: 20),
                                 )),
                                 snackPosition: SnackPosition.BOTTOM,
-                                duration: Duration(seconds: 2)),
+                                duration: const Duration(seconds: 2)),
                           }
                       }
                     else
                       {
                         Get.snackbar("", "",
-                            messageText: Center(
+                            messageText: const Center(
                                 child: Text(
                               "please add tenant and select month\n",
                               style: TextStyle(
@@ -175,7 +175,7 @@ class _RentDataPageState extends State<RentDataPage> {
                                   fontSize: 20),
                             )),
                             snackPosition: SnackPosition.BOTTOM,
-                            duration: Duration(seconds: 2))
+                            duration: const Duration(seconds: 2))
                       }
                   },
                   style: ElevatedButton.styleFrom(
@@ -188,7 +188,7 @@ class _RentDataPageState extends State<RentDataPage> {
                       vertical: 12,
                     ),
                   ),
-                  child: Text(
+                  child: const Text(
                     'Save',
                     style: TextStyle(
                       color: Colors.white,
@@ -198,7 +198,7 @@ class _RentDataPageState extends State<RentDataPage> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    Get.offAll(Dashboard());
+                    Get.offAll(const Dashboard());
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
@@ -210,7 +210,7 @@ class _RentDataPageState extends State<RentDataPage> {
                       vertical: 12,
                     ),
                   ),
-                  child: Text(
+                  child: const Text(
                     'Cancel',
                     style: TextStyle(
                       color: Colors.white,

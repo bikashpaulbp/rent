@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../classes/rent_info.dart';
 import '../classes/tenent_info.dart';
 import '../db_helper.dart';
-import '../insert_data/rent.dart';
 import '../shared_data/rent_data.dart';
 
 class CurrentMonthRent extends StatefulWidget {
@@ -61,7 +59,7 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(8.0),
         child: SingleChildScrollView(
           child: Column(
             children: [
@@ -132,8 +130,8 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                     const EdgeInsets.all(5.0),
                                                 child: Text(
                                                   'Tenent Name: ${rent.tenentName}',
-                                                  style: TextStyle(
-                                                    color: const Color.fromARGB(
+                                                  style: const TextStyle(
+                                                    color: Color.fromARGB(
                                                         255, 0, 0, 0),
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.bold,
@@ -158,8 +156,8 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                     const EdgeInsets.all(5.0),
                                                 child: Text(
                                                   'Flat Name: ${rent.flatName}',
-                                                  style: TextStyle(
-                                                    color: const Color.fromARGB(
+                                                  style: const TextStyle(
+                                                    color: Color.fromARGB(
                                                         255, 0, 0, 0),
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.bold,
@@ -171,8 +169,8 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                     const EdgeInsets.all(5.0),
                                                 child: Text(
                                                   'Total Amount: ${rent.totalAmount.toString()}',
-                                                  style: TextStyle(
-                                                    color: const Color.fromARGB(
+                                                  style: const TextStyle(
+                                                    color: Color.fromARGB(
                                                         255, 0, 0, 0),
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.bold,
@@ -184,8 +182,8 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                     const EdgeInsets.all(5.0),
                                                 child: Text(
                                                   'Month: ${rent.month.toString()}',
-                                                  style: TextStyle(
-                                                    color: const Color.fromARGB(
+                                                  style: const TextStyle(
+                                                    color: Color.fromARGB(
                                                         255, 0, 0, 0),
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.bold,
@@ -199,8 +197,8 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                   rent.isPaid == 0
                                                       ? "Status: Unpaid"
                                                       : "Status: Paid",
-                                                  style: TextStyle(
-                                                    color: const Color.fromARGB(
+                                                  style: const TextStyle(
+                                                    color: Color.fromARGB(
                                                         255, 0, 0, 0),
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.bold,
@@ -210,19 +208,19 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                             ],
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 50,
                                         ),
                                         CircleAvatar(
                                           radius: 16,
                                           backgroundColor: rent.isPaid == 1
-                                              ? Color.fromARGB(255, 8, 240, 8)
-                                              : Color.fromARGB(
+                                              ? const Color.fromARGB(255, 8, 240, 8)
+                                              : const Color.fromARGB(
                                                   255, 246, 59, 59),
                                           child: IconButton(
                                               iconSize: 16,
                                               color: rent.isPaid == 1
-                                                  ? Color.fromARGB(
+                                                  ? const Color.fromARGB(
                                                       255, 255, 255, 255)
                                                   : Colors.white,
                                               onPressed: () async {
@@ -244,7 +242,7 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                 Get.snackbar("", "",
                                                     messageText: Center(
                                                       child: isPaid == 1
-                                                          ? Text(
+                                                          ? const Text(
                                                               "status has been changed to paid  \n",
                                                               style: TextStyle(
                                                                   color: Color
@@ -255,7 +253,7 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                                           0),
                                                                   fontSize: 20),
                                                             )
-                                                          : Text(
+                                                          : const Text(
                                                               "status has been changed to unpaid  \n",
                                                               style: TextStyle(
                                                                   color: Color
@@ -270,15 +268,15 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                     snackPosition:
                                                         SnackPosition.BOTTOM,
                                                     duration:
-                                                        Duration(seconds: 2));
+                                                        const Duration(seconds: 2));
 
                                                 setState(() {
                                                   _fetchData();
                                                 });
                                               },
-                                              icon: Icon(Icons.paid)),
+                                              icon: const Icon(Icons.paid)),
                                         ),
-                                        SizedBox(width: 2),
+                                        const SizedBox(width: 2),
                                         CircleAvatar(
                                           radius: 15,
                                           backgroundColor: const Color.fromARGB(
@@ -308,12 +306,12 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                             // mainAxisSize:
                                                             //     MainAxisSize.min,
                                                             children: <Widget>[
-                                                              Padding(
+                                                              const Padding(
                                                                 padding:
-                                                                    const EdgeInsets
+                                                                    EdgeInsets
                                                                             .all(
                                                                         20.0),
-                                                                child: const Text(
+                                                                child: Text(
                                                                     'Update Your Information'),
                                                               ),
                                                               Padding(
@@ -397,13 +395,13 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                                         Get.snackbar(
                                                                             "",
                                                                             "",
-                                                                            messageText: Center(
+                                                                            messageText: const Center(
                                                                                 child: Text(
                                                                               "updated successfully  \n",
                                                                               style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 20),
                                                                             )),
                                                                             snackPosition: SnackPosition.BOTTOM,
-                                                                            duration: Duration(seconds: 2));
+                                                                            duration: const Duration(seconds: 2));
 
                                                                         setState(
                                                                             () {
@@ -414,7 +412,7 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                                         });
                                                                       },
                                                                     ),
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                       width: 20,
                                                                     ),
                                                                     ElevatedButton(
@@ -435,9 +433,9 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                   },
                                                 );
                                               },
-                                              icon: Icon(Icons.edit)),
+                                              icon: const Icon(Icons.edit)),
                                         ),
-                                        SizedBox(width: 2),
+                                        const SizedBox(width: 2),
                                         CircleAvatar(
                                           radius: 15,
                                           backgroundColor: const Color.fromARGB(
@@ -449,7 +447,7 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                 int? id = rent.id;
                                                 await DBHelper.deleteRent(id);
                                                 Get.snackbar("", "",
-                                                    messageText: Center(
+                                                    messageText: const Center(
                                                         child: Text(
                                                       "deleted successfully  \n",
                                                       style: TextStyle(
@@ -460,12 +458,12 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                     snackPosition:
                                                         SnackPosition.BOTTOM,
                                                     duration:
-                                                        Duration(seconds: 1));
+                                                        const Duration(seconds: 1));
                                                 setState(() {
                                                   _fetchData();
                                                 });
                                               },
-                                              icon: Icon(Icons.delete)),
+                                              icon: const Icon(Icons.delete)),
                                         ),
                                       ],
                                     ),
@@ -475,7 +473,7 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                             },
                           );
                         } else {
-                          return Center(
+                          return const Center(
                               child: Text('no  monthly rents available.'));
                         }
                       },

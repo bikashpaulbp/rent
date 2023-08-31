@@ -96,7 +96,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
             children: [
               Column(
                 children: [
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Column(
                     children: [
                       TextFormField(
@@ -104,7 +104,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
                         controller: _tenentNameController,
                         decoration: InputDecoration(
                           labelText: 'Tenent Name',
-                          suffix: Text(
+                          suffix: const Text(
                             '*',
                             style: TextStyle(color: Colors.red),
                           ),
@@ -151,7 +151,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
                       //     );
                       //   },
                       // ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Consumer<FlatData>(
                         builder: (context, flatData, child) {
                           List<FlatInfo> flatList = flatData.flatList;
@@ -159,7 +159,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
                           return DropdownButtonFormField<int>(
                             isExpanded: true,
                             decoration: InputDecoration(
-                              suffix: Text(
+                              suffix: const Text(
                                 '*',
                                 style: TextStyle(color: Colors.red),
                               ),
@@ -168,7 +168,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
                                 borderRadius: BorderRadius.circular(10),
                               ),
                             ),
-                            disabledHint: Text('Add Flat First'),
+                            disabledHint: const Text('Add Flat First'),
                             value: selectedFlatId,
                             onChanged: (int? value) {
                               setState(() {
@@ -184,7 +184,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
                                   .any((e) => e.flatID == selectedFlatId);
                               if (ifFlatIDMatch) {
                                 Get.snackbar("", "",
-                                    messageText: Center(
+                                    messageText: const Center(
                                         child: Text(
                                       "selected flat already \nadded to another tenant\n",
                                       style: TextStyle(
@@ -193,7 +193,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
                                           fontSize: 20),
                                     )),
                                     snackPosition: SnackPosition.BOTTOM,
-                                    duration: Duration(seconds: 2));
+                                    duration: const Duration(seconds: 2));
                               }
                             },
                             items: flatList
@@ -206,7 +206,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
                           );
                         },
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       TextFormField(
                         keyboardType: TextInputType.number,
                         controller: _nidNoController,
@@ -217,7 +217,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       TextFormField(
                         keyboardType: TextInputType.name,
                         controller: _passportNoController,
@@ -228,7 +228,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       TextFormField(
                         keyboardType: TextInputType.number,
                         controller: _birthCertificateNoController,
@@ -239,7 +239,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       TextFormField(
                         keyboardType: TextInputType.number,
                         controller: _mobileNoController,
@@ -250,7 +250,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       TextFormField(
                         keyboardType: TextInputType.number,
                         controller: _emgMobileNoController,
@@ -261,7 +261,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       TextFormField(
                         keyboardType: TextInputType.number,
                         controller: _noOfFamilyMemController,
@@ -272,12 +272,12 @@ class _TenentDataPageState extends State<TenentDataPage> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       TextFormField(
                         keyboardType: TextInputType.number,
                         controller: _rentAmountController,
                         decoration: InputDecoration(
-                          suffix: Text(
+                          suffix: const Text(
                             '*',
                             style: TextStyle(color: Colors.red),
                           ),
@@ -287,7 +287,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       TextFormField(
                         keyboardType: TextInputType.number,
                         controller: _gasBillController,
@@ -298,7 +298,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       TextFormField(
                         keyboardType: TextInputType.number,
                         controller: _waterBillController,
@@ -309,7 +309,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       TextFormField(
                         keyboardType: TextInputType.number,
                         controller: _serviceChargeController,
@@ -320,17 +320,17 @@ class _TenentDataPageState extends State<TenentDataPage> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       DateTimeField(
                         decoration: InputDecoration(
-                            suffix: Text(
+                            suffix: const Text(
                               '*',
                               style: TextStyle(color: Colors.red),
                             ),
                             labelText: 'select date and month of in',
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10)),
-                            icon: Icon(Icons.calendar_month)),
+                            icon: const Icon(Icons.calendar_month)),
                         onChanged: (newValue) {
                           setState(() {
                             dateTime = newValue!;
@@ -349,7 +349,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -364,7 +364,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
                             vertical: 12,
                           ),
                         ),
-                        child: Text(
+                        child: const Text(
                           'Save',
                           style: TextStyle(
                             color: Colors.white,
@@ -455,7 +455,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
                                 selectedFloorName = "";
                               }),
                               Get.snackbar("", "",
-                                  messageText: Center(
+                                  messageText: const Center(
                                       child: Text(
                                     "saved successfully  \n",
                                     style: TextStyle(
@@ -463,15 +463,15 @@ class _TenentDataPageState extends State<TenentDataPage> {
                                         fontSize: 20),
                                   )),
                                   snackPosition: SnackPosition.BOTTOM,
-                                  duration: Duration(seconds: 2)),
-                              Get.to(TenentPage())
+                                  duration: const Duration(seconds: 2)),
+                              Get.to(const TenentPage())
                             }
                           else
                             {
                               if (ifFlatIDMatch)
                                 {
                                   Get.snackbar("", "",
-                                      messageText: Center(
+                                      messageText: const Center(
                                           child: Text(
                                         "please change flat\n",
                                         style: TextStyle(
@@ -480,12 +480,12 @@ class _TenentDataPageState extends State<TenentDataPage> {
                                             fontSize: 20),
                                       )),
                                       snackPosition: SnackPosition.BOTTOM,
-                                      duration: Duration(seconds: 2))
+                                      duration: const Duration(seconds: 2))
                                 }
                               else
                                 {
                                   Get.snackbar("", "",
-                                      messageText: Center(
+                                      messageText: const Center(
                                           child: Text(
                                         "please fill up all * marked field\n",
                                         style: TextStyle(
@@ -494,14 +494,14 @@ class _TenentDataPageState extends State<TenentDataPage> {
                                             fontSize: 20),
                                       )),
                                       snackPosition: SnackPosition.BOTTOM,
-                                      duration: Duration(seconds: 2))
+                                      duration: const Duration(seconds: 2))
                                 },
                             }
                         },
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          Get.offAll(Dashboard());
+                          Get.offAll(const Dashboard());
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,
@@ -513,7 +513,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
                             vertical: 12,
                           ),
                         ),
-                        child: Text(
+                        child: const Text(
                           'Cancel',
                           style: TextStyle(
                             color: Colors.white,

@@ -75,7 +75,7 @@ class _RentManualState extends State<RentManual> {
             children: [
               Column(
                 children: [
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Column(
                     children: [
                       Consumer<FlatData>(
@@ -85,7 +85,7 @@ class _RentManualState extends State<RentManual> {
                           return DropdownButtonFormField<int>(
                             isExpanded: true,
                             decoration: InputDecoration(
-                              suffix: Text(
+                              suffix: const Text(
                                 '*',
                                 style: TextStyle(color: Colors.red),
                               ),
@@ -94,7 +94,7 @@ class _RentManualState extends State<RentManual> {
                                 borderRadius: BorderRadius.circular(10),
                               ),
                             ),
-                            disabledHint: Text('Add Flat First'),
+                            disabledHint: const Text('Add Flat First'),
                             value: selectedFlatId,
                             onChanged: (int? value) {
                               setState(() {
@@ -115,7 +115,7 @@ class _RentManualState extends State<RentManual> {
                           );
                         },
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Consumer<TenantData>(
                         builder: (context, tenantData, child) {
                           List<TenentInfo> tenantList = tenantData.tenantList;
@@ -123,7 +123,7 @@ class _RentManualState extends State<RentManual> {
                           return DropdownButtonFormField<int>(
                             isExpanded: true,
                             decoration: InputDecoration(
-                              suffix: Text(
+                              suffix: const Text(
                                 '*',
                                 style: TextStyle(color: Colors.red),
                               ),
@@ -132,7 +132,7 @@ class _RentManualState extends State<RentManual> {
                                 borderRadius: BorderRadius.circular(10),
                               ),
                             ),
-                            disabledHint: Text('Add Tenant First'),
+                            disabledHint: const Text('Add Tenant First'),
                             value: selectedTenantId,
                             onChanged: (int? value) {
                               setState(() {
@@ -153,12 +153,12 @@ class _RentManualState extends State<RentManual> {
                           );
                         },
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       TextFormField(
                         keyboardType: TextInputType.number,
                         controller: _totalAmountController,
                         decoration: InputDecoration(
-                          suffix: Text(
+                          suffix: const Text(
                             '*',
                             style: TextStyle(color: Colors.red),
                           ),
@@ -168,17 +168,17 @@ class _RentManualState extends State<RentManual> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       DateTimeField(
                         decoration: InputDecoration(
-                            suffix: Text(
+                            suffix: const Text(
                               '*',
                               style: TextStyle(color: Colors.red),
                             ),
                             labelText: 'select month of rent',
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10)),
-                            icon: Icon(Icons.calendar_month)),
+                            icon: const Icon(Icons.calendar_month)),
                         onChanged: (newValue) {
                           setState(() {
                             dateTime = newValue!;
@@ -197,7 +197,7 @@ class _RentManualState extends State<RentManual> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -212,7 +212,7 @@ class _RentManualState extends State<RentManual> {
                             vertical: 12,
                           ),
                         ),
-                        child: Text(
+                        child: const Text(
                           'Save',
                           style: TextStyle(
                             color: Colors.white,
@@ -247,7 +247,7 @@ class _RentManualState extends State<RentManual> {
                                 selectedFlatId = null;
                               }),
                               Get.snackbar("", "",
-                                  messageText: Center(
+                                  messageText: const Center(
                                       child: Text(
                                     "saved successfully  \n",
                                     style: TextStyle(
@@ -255,13 +255,13 @@ class _RentManualState extends State<RentManual> {
                                         fontSize: 20),
                                   )),
                                   snackPosition: SnackPosition.BOTTOM,
-                                  duration: Duration(seconds: 2)),
-                              Get.to(MonthlyRent()),
+                                  duration: const Duration(seconds: 2)),
+                              Get.to(const MonthlyRent()),
                             }
                           else
                             {
                               Get.snackbar("", "",
-                                  messageText: Center(
+                                  messageText: const Center(
                                       child: Text(
                                     "please fill up all * marked field\n",
                                     style: TextStyle(
@@ -269,13 +269,13 @@ class _RentManualState extends State<RentManual> {
                                         fontSize: 20),
                                   )),
                                   snackPosition: SnackPosition.BOTTOM,
-                                  duration: Duration(seconds: 2))
+                                  duration: const Duration(seconds: 2))
                             }
                         },
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          Get.offAll(Dashboard());
+                          Get.offAll(const Dashboard());
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,
@@ -287,7 +287,7 @@ class _RentManualState extends State<RentManual> {
                             vertical: 12,
                           ),
                         ),
-                        child: Text(
+                        child: const Text(
                           'Cancel',
                           style: TextStyle(
                             color: Colors.white,

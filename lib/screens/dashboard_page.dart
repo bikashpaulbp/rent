@@ -22,7 +22,8 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _body(),
+      body: Container(
+          height: MediaQuery.sizeOf(context).height * 1.0, child: _body()),
       bottomNavigationBar: _bottomNavBar(),
     );
   }
@@ -48,8 +49,8 @@ class _DashboardState extends State<Dashboard> {
           child: BottomNavBar(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             itemCornerRadius: 15,
-            backgroundColor: Color.fromARGB(255, 168, 172, 255),
-            containerPadding: EdgeInsets.all(3),
+            backgroundColor: const Color.fromARGB(255, 168, 172, 255),
+            containerPadding: const EdgeInsets.all(3),
             curve: Curves.easeInOutCubicEmphasized,
             showElevation: true,
             selectedIndex: _currentIndex,
@@ -62,14 +63,14 @@ class _DashboardState extends State<Dashboard> {
                 icon: const Icon(Icons.dashboard),
                 activeColor: Colors.white,
                 inactiveColor: Colors.black,
-                activeBackgroundColor: Color.fromARGB(217, 74, 54, 255),
+                activeBackgroundColor: const Color.fromARGB(217, 74, 54, 255),
               ),
               BottomNavBarItem(
                 title: 'Floor',
                 icon: const Icon(Icons.stairs),
                 activeColor: Colors.white,
                 inactiveColor: Colors.black,
-                activeBackgroundColor: Color.fromARGB(255, 224, 108, 62),
+                activeBackgroundColor: const Color.fromARGB(255, 224, 108, 62),
               ),
               BottomNavBarItem(
                 title: 'Flat',
@@ -83,7 +84,7 @@ class _DashboardState extends State<Dashboard> {
                 icon: const Icon(Icons.people_alt),
                 inactiveColor: Colors.black,
                 activeColor: Colors.white,
-                activeBackgroundColor: Color.fromARGB(255, 102, 240, 109),
+                activeBackgroundColor: const Color.fromARGB(255, 102, 240, 109),
               ),
               BottomNavBarItem(
                 title: 'Rent',

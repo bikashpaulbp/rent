@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -25,7 +24,6 @@ class _MonthlyRentState extends State<MonthlyRent> {
   late Stream<List<RentInfo>> rentStream = const Stream.empty();
   TenentInfo? tenentInfo;
   List<TenentInfo> tenentList = [];
-
 
   final format = DateFormat("yyyy-MM-dd");
 
@@ -55,42 +53,42 @@ class _MonthlyRentState extends State<MonthlyRent> {
         length: 2,
         child: Scaffold(
           floatingActionButton: CircleAvatar(
-              backgroundColor: Color.fromARGB(255, 197, 197, 197),
+              backgroundColor: const Color.fromARGB(255, 66, 129, 247),
               child: IconButton(
                 onPressed: () {
-                  Get.offAll(RentDataPage());
+                  Get.offAll(const RentDataPage());
                 },
-                icon: Icon(Icons.add),
-                color: Color.fromARGB(255, 255, 255, 255),
+                icon: const Icon(Icons.add),
+                color: const Color.fromARGB(255, 255, 255, 255),
               )),
           appBar: AppBar(
-              backgroundColor: Color.fromARGB(255, 226, 155, 2),
+              backgroundColor: const Color.fromARGB(255, 226, 155, 2),
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Center(child: Text('Monthly Rent List')),
+                  const Center(child: Text('Monthly Rent List')),
                   SizedBox(
                     height: 30,
                     width: 120,
                     child: ElevatedButton.icon(
-                        style: ButtonStyle(
+                        style: const ButtonStyle(
                             backgroundColor:
                                 MaterialStatePropertyAll(Colors.amber)),
                         onPressed: () {
-                          Get.offAll(RentManual());
+                          Get.offAll(const RentManual());
                         },
-                        icon: Icon(Icons.add),
-                        label: Text("manually")),
+                        icon: const Icon(Icons.add),
+                        label: const Text("manually")),
                   )
                 ],
               ),
-              bottom: TabBar(tabs: [
+              bottom: const TabBar(tabs: [
                 Tab(text: "All Rent"),
                 Tab(
                   text: "Current Month Rent",
                 )
               ])),
-          body: TabBarView(children: [AllRent(), CurrentMonthRent()]),
+          body: const TabBarView(children: [AllRent(), CurrentMonthRent()]),
         ));
   }
 }

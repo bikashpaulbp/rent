@@ -40,7 +40,7 @@ class _FloorDataPageState extends State<FloorDataPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          SizedBox(
+          const SizedBox(
             height: 16,
           ),
           Padding(
@@ -72,7 +72,7 @@ class _FloorDataPageState extends State<FloorDataPage> {
                           );
                           _floorController.clear();
                           Get.snackbar("", "",
-                              messageText: Center(
+                              messageText: const Center(
                                   child: Text(
                                 "saved successfully  \n",
                                 style: TextStyle(
@@ -80,11 +80,11 @@ class _FloorDataPageState extends State<FloorDataPage> {
                                     fontSize: 20),
                               )),
                               snackPosition: SnackPosition.BOTTOM,
-                              duration: Duration(seconds: 2));
-                          Get.to(FloorPage());
+                              duration: const Duration(seconds: 2));
+                          Get.to(const FloorPage());
                         } else {
                           Get.snackbar("", "",
-                              messageText: Center(
+                              messageText: const Center(
                                   child: Text(
                                 " please provide floor name\n",
                                 style: TextStyle(
@@ -92,7 +92,7 @@ class _FloorDataPageState extends State<FloorDataPage> {
                                     fontSize: 20),
                               )),
                               snackPosition: SnackPosition.BOTTOM,
-                              duration: Duration(seconds: 2));
+                              duration: const Duration(seconds: 2));
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -105,7 +105,7 @@ class _FloorDataPageState extends State<FloorDataPage> {
                           vertical: 12,
                         ),
                       ),
-                      child: Text(
+                      child: const Text(
                         'Save',
                         style: TextStyle(
                           color: Colors.white,
@@ -115,7 +115,7 @@ class _FloorDataPageState extends State<FloorDataPage> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        Get.offAll(Dashboard());
+                        Get.offAll(const Dashboard());
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
@@ -127,7 +127,7 @@ class _FloorDataPageState extends State<FloorDataPage> {
                           vertical: 12,
                         ),
                       ),
-                      child: Text(
+                      child: const Text(
                         'Cancel',
                         style: TextStyle(
                           color: Colors.white,

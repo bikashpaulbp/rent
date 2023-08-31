@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:rent_management/shared_data/rent_data.dart';
 import 'package:sqflite/sqflite.dart';
@@ -37,7 +36,7 @@ class _CountPageState extends State<CountPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 94, 91, 255),
+        backgroundColor: const Color.fromARGB(255, 94, 91, 255),
         title: const Center(child: Text('Dashboard')),
       ),
       body: Container(
@@ -63,7 +62,7 @@ class _CountPageState extends State<CountPage> {
                                   builder: (context, floorData, _) {
                                 return Text(
                                   "Total Floor \n${floorData.floorListNew()}",
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 24, color: Colors.white),
                                   textAlign: TextAlign.center,
                                 );
@@ -71,7 +70,7 @@ class _CountPageState extends State<CountPage> {
                             ),
                             height: 150,
                             decoration: BoxDecoration(
-                                color: Color.fromARGB(255, 19, 255, 212),
+                                color: const Color.fromARGB(255, 19, 255, 212),
                                 borderRadius: BorderRadius.circular(10)),
                           ),
                         ),
@@ -91,7 +90,7 @@ class _CountPageState extends State<CountPage> {
                                   builder: (context, flatData, _) {
                                 return Text(
                                   "Total Flat \n${flatData.flatListNew()}",
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 24, color: Colors.white),
                                   textAlign: TextAlign.center,
                                 );
@@ -126,7 +125,7 @@ class _CountPageState extends State<CountPage> {
                                   builder: (context, tenantData, _) {
                                 return Text(
                                   "Total Tenant \n${tenantData.tenantListNew()}",
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 24, color: Colors.white),
                                   textAlign: TextAlign.center,
                                 );
@@ -158,7 +157,7 @@ class _CountPageState extends State<CountPage> {
 
                                 return Text(
                                   "Total Unpaid \n${unpaidCount}",
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 24, color: Colors.white),
                                   textAlign: TextAlign.center,
                                 );
@@ -166,7 +165,7 @@ class _CountPageState extends State<CountPage> {
                             ),
                             height: 150,
                             decoration: BoxDecoration(
-                                color: Color.fromARGB(255, 255, 202, 56),
+                                color: const Color.fromARGB(255, 255, 202, 56),
                                 borderRadius: BorderRadius.circular(10)),
                           ),
                         ),
