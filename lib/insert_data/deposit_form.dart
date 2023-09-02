@@ -221,7 +221,7 @@ class _DepositDataPageState extends State<DepositDataPage> {
                                                   depositAmountTextControlller
                                                       .text)),
                                           date: date)),
-                                      Get.offAll(const MonthlyRent()),
+                                      Get.to(const MonthlyRent()),
                                       _fetchData(),
                                       Get.snackbar("", "",
                                           messageText: const Center(
@@ -253,7 +253,7 @@ class _DepositDataPageState extends State<DepositDataPage> {
                               ),
                               ElevatedButton(
                                 onPressed: () {
-                                  Get.offAll(const MonthlyRent());
+                                  Get.offAll(const Dashboard());
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.red,
