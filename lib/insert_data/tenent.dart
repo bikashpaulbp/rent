@@ -37,7 +37,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
   final TextEditingController _gasBillController = TextEditingController();
   final TextEditingController _waterBillController = TextEditingController();
   final TextEditingController _serviceChargeController =
-      TextEditingController();
+      TextEditingController(); 
 
   late Stream<List<TenentInfo>> tenentStream = const Stream.empty();
   DateTime dateTime = DateTime(2023, 1, 1);

@@ -6,9 +6,9 @@ class Deposit {
   String tenantName;
   int flatID;
   String flatName;
-  int totalAmount;
-  int depositAmount;
-  int dueAmount;
+  double totalAmount;
+  double depositAmount;
+  double dueAmount;
   String date;
 
   Deposit(

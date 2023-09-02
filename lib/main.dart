@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:provider/provider.dart';
+import 'package:rent_management/shared_data/deposit_data.dart';
 import 'package:rent_management/shared_data/flat_data.dart';
 import 'package:rent_management/shared_data/floor_data.dart';
 import 'package:rent_management/shared_data/rent_data.dart';
@@ -17,6 +18,7 @@ void main() {
       ChangeNotifierProvider(create: (context) => FlatData()),
       ChangeNotifierProvider(create: (context) => TenantData()),
       ChangeNotifierProvider(create: (context) => RentData()),
+      ChangeNotifierProvider(create: (context) => DepositData()),
     ],
     child: const MyApp(),
   ));
@@ -28,10 +30,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Rent Management - For Ashek Mahmud', 
-      home: SplashScreen()
-    );
+        debugShowCheckedModeBanner: false,
+        title: 'Rent Management - For Ashek Mahmud',
+        home: SplashScreen());
   }
 }
 

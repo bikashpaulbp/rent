@@ -71,9 +71,9 @@ class DBHelper {
    tenantName TEXT,
   flatID INTEGER,
   flatName TEXT,
-   totalAmount DOUBLE,
-  depositAmount DOUBLE,
-  dueAmount DOUBLE,
+   totalAmount DOUBLE NULL,
+  depositAmount DOUBLE NULL,
+  dueAmount DOUBLE NULL,
    date TEXT
     )''');
   }
@@ -136,7 +136,7 @@ class DBHelper {
 
   static Future<List<TenentInfo>> readTenentData() async {
     Database db = await DBHelper.initDB();
-    var tenent = await db.query('tenent');
+    var tenent = await db.query('tenent', orderBy: 'id');
     List<TenentInfo> tenentList = tenent.isNotEmpty
         ? tenent.map((e) => TenentInfo.fromJson(e)).toList()
         : [];
@@ -163,7 +163,7 @@ class DBHelper {
 
   static Future<List<RentInfo>> readRentData() async {
     Database db = await DBHelper.initDB();
-    var rent = await db.query('rent');
+    var rent = await db.query('rent', orderBy: 'id');
     List<RentInfo> rentList =
         rent.isNotEmpty ? rent.map((e) => RentInfo.fromJson(e)).toList() : [];
     return rentList;
@@ -188,7 +188,7 @@ class DBHelper {
 
   static Future<List<Deposit>> readDepositData() async {
     Database db = await DBHelper.initDB();
-    var deposit = await db.query('deposit');
+    var deposit = await db.query('deposit', orderBy: 'id, flatID, tenantID');
     List<Deposit> depositList = deposit.isNotEmpty
         ? deposit.map((e) => Deposit.fromJson(e)).toList()
         : [];
