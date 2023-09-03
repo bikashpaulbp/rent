@@ -23,6 +23,7 @@ class _RentDataPageState extends State<RentDataPage> {
   DateTime dateTime = DateTime(2023, 1, 1);
   final format = DateFormat("dd MMM y");
   DateTime rentMonth = DateTime(1990, 1, 1);
+  DateTime rentYear = DateTime(1990, 1, 1);
   String? date;
 
   int isPaid = 0;
@@ -46,7 +47,6 @@ class _RentDataPageState extends State<RentDataPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       appBar: AppBar(
         title: Text(
           'Month of Rent',
@@ -100,8 +100,12 @@ class _RentDataPageState extends State<RentDataPage> {
                     if (date != "" && tenentList.isNotEmpty)
                       {
                         for (RentInfo rentInfo in rentList)
-                          {rentMonth = format.parse(rentInfo.month)},
-                        if (rentMonth.month == dateTime.month)
+                          {
+                            rentMonth = format.parse(rentInfo.month),
+                            rentYear = format.parse(rentInfo.month)
+                          },
+                        if (rentMonth.month == dateTime.month &&
+                            rentYear.year == dateTime.year)
                           {
                             Get.snackbar("", "",
                                 messageText: const Center(

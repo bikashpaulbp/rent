@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:rent_management/classes/deposit.dart';
 import 'package:rent_management/classes/rent_info.dart';
 import 'package:rent_management/db_helper.dart';
-import 'package:rent_management/insert_data/rent.dart';
 import 'package:rent_management/screens/dashboard_page.dart';
 import 'package:rent_management/screens/monthly_rent_page.dart';
-import 'package:rent_management/shared_data/deposit_data.dart';
 import 'package:rent_management/shared_data/rent_data.dart';
 
 // ignore: must_be_immutable
@@ -36,7 +33,10 @@ class _DepositDataPageState extends State<DepositDataPage> {
 
   List<RentInfo> rentList = [];
   List<Deposit> depositList = [];
+
+  double? lastDepositAmount;
   double? dueAmount;
+  double totalDeposit = 0.0;
 
   @override
   void initState() {
@@ -52,11 +52,17 @@ class _DepositDataPageState extends State<DepositDataPage> {
     List<Deposit> depositList = await DBHelper.readDepositData();
     List<Deposit> newDepositList =
         depositList.where((e) => e.rentID == widget.rentID).toList();
-    double lastDeposit =
+
+    lastDepositAmount =
         newDepositList.isEmpty ? 0.0 : newDepositList.last.depositAmount;
-    dueAmount = rentInfo.totalAmount - lastDeposit;
-    dueAmountTextControlller.text =
-        (newDepositList.isEmpty ? rentInfo.totalAmount : dueAmount).toString();
+
+    for (var item in newDepositList) {
+      totalDeposit = totalDeposit + item.depositAmount;
+    }
+
+    dueAmount = rentInfo.totalAmount - totalDeposit;
+
+    dueAmountTextControlller.text = dueAmount.toString();
   }
 
   @override
@@ -68,12 +74,12 @@ class _DepositDataPageState extends State<DepositDataPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Deposit',
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: const Color.fromARGB(255, 255, 255, 255),
+            color: Color.fromARGB(255, 255, 255, 255),
           ),
         ),
         backgroundColor: Colors.yellow,
@@ -89,15 +95,14 @@ class _DepositDataPageState extends State<DepositDataPage> {
                 RentInfo? rentInfo =
                     rentData.rentList.firstWhere((e) => e.id == widget.rentID);
 
-                // depositedAmount =
-                //     rentInfo.totalAmount - (deposit?.depositAmount ?? 0.0);
+             
 
                 rentMonthTextController.text = rentInfo.month;
                 tenantNameTextControlller.text = rentInfo.tenentName;
                 flatNameTextControlller.text = rentInfo.flatName;
                 totalAmountTextControlller.text =
                     rentInfo.totalAmount.toString();
-                // dueAmountTextControlller.text = depositedAmount.toString();
+            
 
                 return Container(
                   child: Column(
@@ -216,10 +221,11 @@ class _DepositDataPageState extends State<DepositDataPage> {
                                           depositAmount: double.parse(
                                               depositAmountTextControlller
                                                   .text),
-                                          dueAmount: (rentInfo.totalAmount -
-                                              double.parse(
-                                                  depositAmountTextControlller
-                                                      .text)),
+                                          dueAmount: rentInfo.totalAmount -
+                                              (totalDeposit +
+                                                  double.parse(
+                                                      depositAmountTextControlller
+                                                          .text)),
                                           date: date)),
                                       Get.to(const MonthlyRent()),
                                       _fetchData(),
