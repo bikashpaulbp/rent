@@ -189,7 +189,7 @@ class _CountPageState extends State<CountPage> {
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
                   // width: MediaQuery.sizeOf(context).width * 1.0,
-                  height: 90,
+                  height: 100,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
@@ -208,6 +208,7 @@ class _CountPageState extends State<CountPage> {
                                 icon: Icon(Icons.history),
                               ),
                             ),
+                            SizedBox(height: 5),
                             Center(
                               child: Text(
                                 'Deposit History',
@@ -220,7 +221,7 @@ class _CountPageState extends State<CountPage> {
                           ],
                         ),
                         SizedBox(
-                          width: 10,
+                          width: 30,
                         ),
                         Column(
                           children: [
@@ -237,6 +238,7 @@ class _CountPageState extends State<CountPage> {
                                 ),
                               ),
                             ),
+                            SizedBox(height: 5),
                             Center(
                               child: Text(
                                 'Not Decided',
@@ -249,7 +251,7 @@ class _CountPageState extends State<CountPage> {
                           ],
                         ),
                         SizedBox(
-                          width: 15,
+                          width: 30,
                         ),
                         Column(
                           children: [
@@ -266,6 +268,7 @@ class _CountPageState extends State<CountPage> {
                                 ),
                               ),
                             ),
+                            SizedBox(height: 5),
                             Center(
                               child: Text(
                                 'Not Decided',
@@ -278,7 +281,7 @@ class _CountPageState extends State<CountPage> {
                           ],
                         ),
                         SizedBox(
-                          width: 15,
+                          width: 30,
                         ),
                         Column(
                           children: [
@@ -295,6 +298,7 @@ class _CountPageState extends State<CountPage> {
                                 ),
                               ),
                             ),
+                            SizedBox(height: 5),
                             Center(
                               child: Text(
                                 'Not Decided',
@@ -307,7 +311,7 @@ class _CountPageState extends State<CountPage> {
                           ],
                         ),
                         SizedBox(
-                          width: 15,
+                          width: 30,
                         ),
                         Column(
                           children: [
@@ -324,6 +328,7 @@ class _CountPageState extends State<CountPage> {
                                 ),
                               ),
                             ),
+                            SizedBox(height: 5),
                             Center(
                               child: Text(
                                 'Not Decided',
@@ -336,7 +341,7 @@ class _CountPageState extends State<CountPage> {
                           ],
                         ),
                         SizedBox(
-                          width: 15,
+                          width: 30,
                         ),
                         Column(
                           children: [
@@ -353,6 +358,7 @@ class _CountPageState extends State<CountPage> {
                                 ),
                               ),
                             ),
+                            SizedBox(height: 5),
                             Center(
                               child: Text(
                                 'Not Decided',
