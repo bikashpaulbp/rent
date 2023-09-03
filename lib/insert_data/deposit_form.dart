@@ -95,14 +95,11 @@ class _DepositDataPageState extends State<DepositDataPage> {
                 RentInfo? rentInfo =
                     rentData.rentList.firstWhere((e) => e.id == widget.rentID);
 
-             
-
                 rentMonthTextController.text = rentInfo.month;
                 tenantNameTextControlller.text = rentInfo.tenentName;
                 flatNameTextControlller.text = rentInfo.flatName;
                 totalAmountTextControlller.text =
                     rentInfo.totalAmount.toString();
-            
 
                 return Container(
                   child: Column(
