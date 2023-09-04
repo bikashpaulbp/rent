@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:rent_management/classes/deposit.dart';
 import 'package:rent_management/insert_data/deposit_form.dart';
 
 import '../classes/rent_info.dart';
@@ -31,6 +32,11 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
   DateTime now = DateTime.now();
   int? currentYear;
   int? currentMonth;
+
+  String dateofPayment = DateFormat('dd MMM y').format(DateTime.now());
+
+  final TextEditingController confirmTextEditingController =
+      TextEditingController();
 
   bool isRentCurrentMonth(
       RentInfo rentInfo, int currentYear, int currentMonth) {
@@ -136,7 +142,7 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                         255, 0, 0, 0),
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.bold,
-                                                   ),
+                                                  ),
                                                 ),
                                               ),
                                               // Padding(
@@ -211,7 +217,7 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                         ),
                                         const SizedBox(
                                           width: 50,
-                                        ), 
+                                        ),
                                         Column(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
@@ -242,65 +248,103 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                                   .fromARGB(255,
                                                                   255, 255, 255)
                                                               : Colors.white,
-                                                          onPressed: () async {
-                                                            isPaid =
-                                                                (isPaid == 0
-                                                                    ? 1
-                                                                    : 0);
-                                                            RentInfo
-                                                                updatedRent =
-                                                                RentInfo(
-                                                                    id: rent.id,
-                                                                    tenentName: rent
-                                                                        .tenentName,
-                                                                    tenentID: rent
-                                                                        .tenentID,
-                                                                    // floorID: rent.floorID,
-                                                                    // floorName: rent.floorName,
-                                                                    flatID: rent
-                                                                        .flatID,
-                                                                    flatName: rent
-                                                                        .flatName,
-                                                                    month: rent
-                                                                        .month,
-                                                                    totalAmount:
-                                                                        rent
-                                                                            .totalAmount,
-                                                                    isPaid:
-                                                                        isPaid);
-                                                            await DBHelper
-                                                                .updateRent(
-                                                                    updatedRent);
-                                                            Get.snackbar("", "",
-                                                                messageText:
-                                                                    Center(
-                                                                  child: isPaid ==
-                                                                          1
-                                                                      ? const Text(
-                                                                          "status has been changed to paid  \n",
-                                                                          style: TextStyle(
-                                                                              color: Color.fromARGB(255, 0, 0, 0),
-                                                                              fontSize: 20),
-                                                                        )
-                                                                      : const Text(
-                                                                          "status has been changed to unpaid  \n",
-                                                                          style: TextStyle(
-                                                                              color: Color.fromARGB(255, 0, 0, 0),
-                                                                              fontSize: 20),
-                                                                        ),
-                                                                ),
-                                                                snackPosition:
-                                                                    SnackPosition
-                                                                        .BOTTOM,
-                                                                duration:
-                                                                    const Duration(
-                                                                        seconds:
-                                                                            2));
+                                                          onPressed:
+                                                              rent.isPaid == 0
+                                                                  ? () async {
+                                                                      showDialog(
+                                                                        context:
+                                                                            context,
+                                                                        builder:
+                                                                            (BuildContext context) =>
+                                                                                AlertDialog(
+                                                                          actions: <Widget>[
+                                                                            Center(
+                                                                              child: Container(
+                                                                                width: 300,
+                                                                                height: 200,
+                                                                                color: Colors.white,
+                                                                                child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                                                                  Padding(
+                                                                                    padding: const EdgeInsets.all(8.0),
+                                                                                    child: Center(child: Text('please type CONFIRM')),
+                                                                                  ),
+                                                                                  SizedBox(height: 20),
+                                                                                  TextFormField(
+                                                                                    controller: confirmTextEditingController,
+                                                                                    keyboardType: TextInputType.name,
+                                                                                    decoration: InputDecoration(
+                                                                                      labelText: 'CONFIRM',
+                                                                                      border: OutlineInputBorder(
+                                                                                        borderRadius: BorderRadius.circular(10),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                  SizedBox(height: 30),
+                                                                                  Row(
+                                                                                    mainAxisAlignment: MainAxisAlignment.end,
+                                                                                    children: [
+                                                                                      ElevatedButton(
+                                                                                          onPressed: () async {
+                                                                                            if (confirmTextEditingController.text == "CONFIRM") {
+                                                                                              isPaid = 1;
+                                                                                              RentInfo updatedRent = RentInfo(
+                                                                                                  id: rent.id,
+                                                                                                  tenentName: rent.tenentName,
+                                                                                                  tenentID: rent.tenentID,
+                                                                                                  // floorID: rent.floorID,
+                                                                                                  // floorName: rent.floorName,
+                                                                                                  flatID: rent.flatID,
+                                                                                                  flatName: rent.flatName,
+                                                                                                  month: rent.month,
+                                                                                                  totalAmount: rent.totalAmount,
+                                                                                                  isPaid: 1);
+                                                                                              Deposit deposit = Deposit(rentID: rent.id!, rentMonth: rent.month, tenantID: rent.tenentID, tenantName: rent.tenentName, flatID: rent.flatID, flatName: rent.flatName, totalAmount: rent.totalAmount, depositAmount: rent.totalAmount, dueAmount: 0.0, date: dateofPayment);
+                                                                                              Navigator.of(context).pop();
 
-                                                            setState(() {
-                                                              _fetchData();
-                                                            });
-                                                          },
+                                                                                              await DBHelper.updateRent(updatedRent);
+                                                                                              await DBHelper.insertDepositData(deposit);
+                                                                                              Get.snackbar("", "",
+                                                                                                  messageText: Center(
+                                                                                                      child: const Text(
+                                                                                                    "status has been changed to paid  \n",
+                                                                                                    style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 20),
+                                                                                                  )),
+                                                                                                  snackPosition: SnackPosition.BOTTOM,
+                                                                                                  duration: const Duration(seconds: 2));
+
+                                                                                              setState(() {
+                                                                                                _fetchData();
+                                                                                              });
+                                                                                            } else {
+                                                                                              Get.snackbar("", "",
+                                                                                                  messageText: Center(
+                                                                                                      child: const Text(
+                                                                                                    "please type CONFIRM  \n",
+                                                                                                    style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 20),
+                                                                                                  )),
+                                                                                                  snackPosition: SnackPosition.BOTTOM,
+                                                                                                  duration: const Duration(seconds: 2));
+                                                                                            }
+                                                                                          },
+                                                                                          child: Text('confirm')),
+                                                                                      SizedBox(
+                                                                                        width: 50,
+                                                                                      ),
+                                                                                      ElevatedButton(
+                                                                                          onPressed: () {
+                                                                                            Navigator.of(context).pop();
+                                                                                          },
+                                                                                          child: Text('cancel')),
+                                                                                    ],
+                                                                                  )
+                                                                                ]),
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      );
+                                                                    }
+                                                                  : null,
                                                           icon: const Icon(
                                                               Icons.paid)),
                                                     ),
