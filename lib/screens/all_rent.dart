@@ -257,76 +257,55 @@ class _AllRentState extends State<AllRent> {
                                                                             actions: <Widget>[
                                                                               Center(
                                                                                 child: Container(
-                                                                                  width: 300,
-                                                                                  height: 200,
+                                                                                  width: 250,
+                                                                                  height: 100,
                                                                                   color: Colors.white,
                                                                                   child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
                                                                                     Padding(
                                                                                       padding: const EdgeInsets.all(8.0),
-                                                                                      child: Center(child: Text('please type CONFIRM')),
+                                                                                      child: Center(child: Text('If You Sure Then Click Confirm')),
                                                                                     ),
-                                                                                    SizedBox(height: 20),
-                                                                                    TextFormField(
-                                                                                      controller: confirmTextEditingController,
-                                                                                      keyboardType: TextInputType.name,
-                                                                                      decoration: InputDecoration(
-                                                                                        labelText: 'CONFIRM',
-                                                                                        border: OutlineInputBorder(
-                                                                                          borderRadius: BorderRadius.circular(10),
-                                                                                        ),
-                                                                                      ),
-                                                                                    ),
-                                                                                    SizedBox(height: 30),
+                                                                                    SizedBox(height: 15),
                                                                                     Row(
-                                                                                      mainAxisAlignment: MainAxisAlignment.end,
+                                                                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                                                       children: [
                                                                                         ElevatedButton(
+                                                                                            style: ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.red)),
                                                                                             onPressed: () async {
-                                                                                              if (confirmTextEditingController.text == "CONFIRM") {
-                                                                                                isPaid = 1;
-                                                                                                RentInfo updatedRent = RentInfo(
-                                                                                                    id: rent.id,
-                                                                                                    tenentName: rent.tenentName,
-                                                                                                    tenentID: rent.tenentID,
-                                                                                                    // floorID: rent.floorID,
-                                                                                                    // floorName: rent.floorName,
-                                                                                                    flatID: rent.flatID,
-                                                                                                    flatName: rent.flatName,
-                                                                                                    month: rent.month,
-                                                                                                    totalAmount: rent.totalAmount,
-                                                                                                    isPaid: 1);
-                                                                                                Deposit deposit = Deposit(rentID: rent.id!, rentMonth: rent.month, tenantID: rent.tenentID, tenantName: rent.tenentName, flatID: rent.flatID, flatName: rent.flatName, totalAmount: rent.totalAmount, depositAmount: rent.totalAmount, dueAmount: 0.0, date: dateofPayment);
-                                                                                                Navigator.of(context).pop();
+                                                                                              isPaid = 1;
+                                                                                              RentInfo updatedRent = RentInfo(
+                                                                                                  id: rent.id,
+                                                                                                  tenentName: rent.tenentName,
+                                                                                                  tenentID: rent.tenentID,
+                                                                                                  // floorID: rent.floorID,
+                                                                                                  // floorName: rent.floorName,
+                                                                                                  flatID: rent.flatID,
+                                                                                                  flatName: rent.flatName,
+                                                                                                  month: rent.month,
+                                                                                                  totalAmount: rent.totalAmount,
+                                                                                                  isPaid: 1);
+                                                                                              Deposit deposit = Deposit(rentID: rent.id!, rentMonth: rent.month, tenantID: rent.tenentID, tenantName: rent.tenentName, flatID: rent.flatID, flatName: rent.flatName, totalAmount: rent.totalAmount, depositAmount: rent.totalAmount, dueAmount: 0.0, date: dateofPayment);
+                                                                                              Navigator.of(context).pop();
 
-                                                                                                await DBHelper.updateRent(updatedRent);
-                                                                                                await DBHelper.insertDepositData(deposit);
-                                                                                                Get.snackbar("", "",
-                                                                                                    messageText: Center(
-                                                                                                        child: const Text(
-                                                                                                      "status has been changed to paid  \n",
-                                                                                                      style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 20),
-                                                                                                    )),
-                                                                                                    snackPosition: SnackPosition.BOTTOM,
-                                                                                                    duration: const Duration(seconds: 2));
+                                                                                              await DBHelper.updateRent(updatedRent);
+                                                                                              await DBHelper.insertDepositData(deposit);
+                                                                                              Get.snackbar("", "",
+                                                                                                  messageText: Center(
+                                                                                                      child: const Text(
+                                                                                                    "status has been changed to paid  \n",
+                                                                                                    style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 20),
+                                                                                                  )),
+                                                                                                  snackPosition: SnackPosition.BOTTOM,
+                                                                                                  duration: const Duration(seconds: 2));
 
-                                                                                                setState(() {
-                                                                                                  _fetchData();
-                                                                                                });
-                                                                                              } else {
-                                                                                                Get.snackbar("", "",
-                                                                                                    messageText: Center(
-                                                                                                        child: const Text(
-                                                                                                      "please type CONFIRM  \n",
-                                                                                                      style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 20),
-                                                                                                    )),
-                                                                                                    snackPosition: SnackPosition.BOTTOM,
-                                                                                                    duration: const Duration(seconds: 2));
-                                                                                              }
+                                                                                              setState(() {
+                                                                                                _fetchData();
+                                                                                              });
                                                                                             },
                                                                                             child: Text('confirm')),
-                                                                                        SizedBox(
-                                                                                          width: 50,
-                                                                                        ),
+                                                                                        // SizedBox(
+                                                                                        //   width: 20,
+                                                                                        // ),
                                                                                         ElevatedButton(
                                                                                             onPressed: () {
                                                                                               Navigator.of(context).pop();
@@ -351,7 +330,7 @@ class _AllRentState extends State<AllRent> {
                                                         backgroundColor:
                                                             const Color
                                                                 .fromARGB(255,
-                                                                145, 145, 145),
+                                                                34, 85, 251),
                                                         child: IconButton(
                                                             iconSize: 15,
                                                             color: Colors.white,
@@ -491,9 +470,8 @@ class _AllRentState extends State<AllRent> {
                                                       CircleAvatar(
                                                         radius: 15,
                                                         backgroundColor:
-                                                            const Color
-                                                                .fromARGB(255,
-                                                                145, 145, 145),
+                                                            Color.fromARGB(255,
+                                                                240, 46, 46),
                                                         child: IconButton(
                                                             iconSize: 15,
                                                             color: Colors.white,
@@ -543,13 +521,21 @@ class _AllRentState extends State<AllRent> {
                                                     style: ButtonStyle(
                                                         backgroundColor:
                                                             MaterialStateProperty
-                                                                .all(Colors
-                                                                    .yellow)),
-                                                    onPressed: () {
-                                                      Get.to(DepositDataPage(
-                                                          rentID:
-                                                              rent.id ?? 0));
-                                                    },
+                                                                .all(Color
+                                                                    .fromARGB(
+                                                                        255,
+                                                                        171,
+                                                                        12,
+                                                                        219))),
+                                                    onPressed: rent.isPaid == 0
+                                                        ? () {
+                                                            Get.to(
+                                                                DepositDataPage(
+                                                                    rentID:
+                                                                        rent.id ??
+                                                                            0));
+                                                          }
+                                                        : null,
                                                     child: Text('Deposit'))
                                               ]),
                                         ],
