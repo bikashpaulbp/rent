@@ -34,7 +34,7 @@ dependencies:
   provider:
   flutter_animated_dialog:
   circle_nav_bar:
-  get: 
+  get:
   intl:
 
   animated_icon_button:
@@ -42,9 +42,10 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
-  path: ^1.8.3
-  bottom_nav_bar: 
+  cupertino_icons:
+  path:
+  bottom_nav_bar:
+  google_sign_in: ^6.1.5
 
 dev_dependencies:
   flutter_test:
