@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:rent_management/models/flat_model.dart';
+import 'package:rent_management/models/tenant_model.dart';
 import 'package:rent_management/screens/tenent_page.dart';
+import 'package:rent_management/services/tenant_service.dart';
 import 'package:rent_management/shared_data/tenent_data.dart';
 import '../classes/flat_info.dart';
 import '../classes/tenent_info.dart';
@@ -11,8 +14,10 @@ import '../db_helper.dart';
 import '../screens/dashboard_page.dart';
 import '../shared_data/flat_data.dart';
 
+// ignore: must_be_immutable
 class TenentDataPage extends StatefulWidget {
-  const TenentDataPage({super.key});
+  void Function() refresh;
+  TenentDataPage({super.key, required this.refresh});
 
   @override
   State<TenentDataPage> createState() => _TenentDataPageState();
@@ -36,24 +41,23 @@ class _TenentDataPageState extends State<TenentDataPage> {
   final TextEditingController _rentAmountController = TextEditingController();
   final TextEditingController _gasBillController = TextEditingController();
   final TextEditingController _waterBillController = TextEditingController();
-  final TextEditingController _serviceChargeController =
-      TextEditingController(); 
+  final TextEditingController _utilityBillController = TextEditingController();
 
-  late Stream<List<TenentInfo>> tenentStream = const Stream.empty();
+  late Stream<List<TenantModel>> tenentStream = const Stream.empty();
+  TenantApiService tenantApiService = TenantApiService();
   DateTime dateTime = DateTime(2023, 1, 1);
   final format = DateFormat("dd MMM y");
-  String? date;
+  DateTime? date;
   bool ifFlatIDMatch = false;
   @override
   void initState() {
-    _fetchTenentData();
-
     super.initState();
+    // _fetchTenantData();
   }
 
-  Future<void> _fetchTenentData() async {
-    tenentStream = DBHelper.readTenentData().asStream();
-  }
+  // Future<void> _fetchTenantData() async {
+  //   tenentStream = tenantApiService.getAllTenants().asStream();
+  // }
 
   @override
   void dispose() {
@@ -67,7 +71,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
     _rentAmountController.dispose();
     _gasBillController.dispose();
     _waterBillController.dispose();
-    _serviceChargeController.dispose();
+    _utilityBillController.dispose();
     _noOfFamilyMemController.dispose();
 
     super.dispose();
@@ -113,48 +117,10 @@ class _TenentDataPageState extends State<TenentDataPage> {
                           ),
                         ),
                       ),
-                      // SizedBox(height: 8),
-                      // Consumer<FloorData>(
-                      //   builder: (context, floorData, child) {
-                      //     List<Floor> floorList = floorData.floorList;
-
-                      //     return DropdownButtonFormField<int>(
-                      //       isExpanded: true,
-                      //       decoration: InputDecoration(
-                      //         suffix: Text(
-                      //           '*',
-                      //           style: TextStyle(color: Colors.red),
-                      //         ),
-                      //         labelText: 'Floor',
-                      //         border: OutlineInputBorder(
-                      //           borderRadius: BorderRadius.circular(10),
-                      //         ),
-                      //       ),
-                      //       disabledHint: Text('Add Floor First'),
-                      //       value: selectedFloorId,
-                      //       onChanged: (int? value) {
-                      //         setState(() {
-                      //           selectedFloorId = value!;
-                      //           selectedFloorName = floorList
-                      //               .firstWhere(
-                      //                   (floor) => floor.id == selectedFloorId)
-                      //               .floorName;
-                      //         });
-                      //       },
-                      //       items: floorList
-                      //           .map<DropdownMenuItem<int>>((Floor floor) {
-                      //         return DropdownMenuItem<int>(
-                      //           value: floor.id,
-                      //           child: Text(floor.floorName),
-                      //         );
-                      //       }).toList(),
-                      //     );
-                      //   },
-                      // ),
                       const SizedBox(height: 8),
                       Consumer<FlatData>(
                         builder: (context, flatData, child) {
-                          List<FlatInfo> flatList = flatData.flatList;
+                          List<FlatModel> flatList = flatData.flatList;
 
                           return DropdownButtonFormField<int>(
                             isExpanded: true,
@@ -176,12 +142,12 @@ class _TenentDataPageState extends State<TenentDataPage> {
                                 selectedFlatName = flatList
                                     .firstWhere(
                                         (flat) => flat.id == selectedFlatId)
-                                    .flatName;
+                                    .name;
                               });
                               ifFlatIDMatch = Provider.of<TenantData>(context,
                                       listen: false)
                                   .tenantList
-                                  .any((e) => e.flatID == selectedFlatId);
+                                  .any((e) => e.id == selectedFlatId);
                               if (ifFlatIDMatch) {
                                 Get.snackbar("", "",
                                     messageText: const Center(
@@ -197,10 +163,10 @@ class _TenentDataPageState extends State<TenentDataPage> {
                               }
                             },
                             items: flatList
-                                .map<DropdownMenuItem<int>>((FlatInfo flat) {
+                                .map<DropdownMenuItem<int>>((FlatModel flat) {
                               return DropdownMenuItem<int>(
                                 value: flat.id,
-                                child: Text(flat.flatName),
+                                child: Text(flat.name!),
                               );
                             }).toList(),
                           );
@@ -312,9 +278,9 @@ class _TenentDataPageState extends State<TenentDataPage> {
                       const SizedBox(height: 8),
                       TextFormField(
                         keyboardType: TextInputType.number,
-                        controller: _serviceChargeController,
+                        controller: _utilityBillController,
                         decoration: InputDecoration(
-                          labelText: 'Service Charge',
+                          labelText: 'Utility Bill',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -334,7 +300,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
                         onChanged: (newValue) {
                           setState(() {
                             dateTime = newValue!;
-                            date = format.format(dateTime);
+                            date = dateTime;
                           });
                         },
                         format: format,
@@ -373,69 +339,53 @@ class _TenentDataPageState extends State<TenentDataPage> {
                         ),
                         onPressed: () async => {
                           if (_tenentNameController.text.isNotEmpty &&
-                              // _nidNoController.text.isEmpty ||
-                              // _passportNoController.text.isEmpty ||
-                              // _mobileNoController.text.isEmpty ||
-                              // _emgMobileNoController.text.isEmpty ||
-                              // _noOfFamilyMemController.text.isEmpty ||
                               _rentAmountController.text.isNotEmpty &&
-                              // _gasBillController.text.isEmpty ||
-                              // _waterBillController.text.isEmpty ||
-                              // _serviceChargeController.text.isEmpty ||
-                              date != "" &&
-                              // selectedFloorId != null &&
-                              // selectedFloorName != "" &&
+                              date != null &&
                               selectedFlatId != null &&
                               selectedFlatName != "" &&
                               ifFlatIDMatch == false)
                             {
-                              await DBHelper.insertTenentData(TenentInfo(
-                                  tenentName: _tenentNameController.text,
-                                  // floorID: selectedFloorId!,
-                                  // floorName: selectedFloorName.toString(),
-                                  flatID: selectedFlatId!,
-                                  flatName: selectedFlatName!,
-                                  nidNo: _nidNoController.text.isNotEmpty
-                                      ? int.parse(_nidNoController.text)
-                                      : 0,
+                              await tenantApiService.createTenant(TenantModel(
+                                  name: _tenentNameController.text,
+                                  flatId: selectedFlatId!,
+                                  nid: _nidNoController.text.isNotEmpty
+                                      ? _nidNoController.text
+                                      : "",
                                   passportNo: _passportNoController.text.isNotEmpty
                                       ? _passportNoController.text
                                       : "",
-                                  birthCertificateNo: _birthCertificateNoController.text.isNotEmpty
-                                      ? int.parse(
-                                          _birthCertificateNoController.text)
-                                      : 0,
+                                  birthCertificateNo:
+                                      _birthCertificateNoController.text.isNotEmpty
+                                          ? _birthCertificateNoController.text
+                                          : "",
                                   mobileNo: _mobileNoController.text.isNotEmpty
-                                      ? int.parse(_mobileNoController.text)
-                                      : 0,
-                                  emgMobileNo: _emgMobileNoController.text.isNotEmpty
-                                      ? int.parse(_emgMobileNoController.text)
-                                      : 0,
-                                  noOfFamilyMem: _noOfFamilyMemController.text.isNotEmpty
+                                      ? _mobileNoController.text
+                                      : "",
+                                  emgMobileNo:
+                                      _emgMobileNoController.text.isNotEmpty
+                                          ? _emgMobileNoController.text
+                                          : "",
+                                  noofFamilyMember: _noOfFamilyMemController.text.isNotEmpty
                                       ? int.parse(_noOfFamilyMemController.text)
                                       : 0,
                                   rentAmount:
                                       double.parse(_rentAmountController.text),
                                   gasBill: _gasBillController.text.isNotEmpty
                                       ? double.parse(_gasBillController.text)
-                                      : 0,
+                                      : 0.0,
                                   waterBill: _waterBillController.text.isNotEmpty
                                       ? double.parse(_waterBillController.text)
-                                      : 0,
-                                  serviceCharge:
-                                      _serviceChargeController.text.isNotEmpty
-                                          ? double.parse(
-                                              _serviceChargeController.text)
-                                          : 0,
-                                  totalAmount: double.parse(_rentAmountController.text) +
-                                      (_gasBillController.text.isNotEmpty
-                                          ? double.parse(_gasBillController.text)
-                                          : 0) +
-                                      (_waterBillController.text.isNotEmpty ? double.parse(_waterBillController.text) : 0) +
-                                      (_serviceChargeController.text.isNotEmpty ? double.parse(_serviceChargeController.text) : 0),
-                                  dateOfIn: date.toString())),
+                                      : 0.0,
+                                  utilityBill: _utilityBillController.text.isNotEmpty
+                                      ? double.parse(_utilityBillController.text)
+                                      : 0.0,
+                                  totalAmount: double.parse(_rentAmountController.text) + (_gasBillController.text.isNotEmpty ? double.parse(_gasBillController.text) : 0.0) + (_waterBillController.text.isNotEmpty ? double.parse(_waterBillController.text) : 0.0) + (_utilityBillController.text.isNotEmpty ? double.parse(_utilityBillController.text) : 0.0),
+                                  arrivalDate: date)),
+                              widget.refresh(),
+                              Get.back(),
                               setState(() {
-                                _fetchTenentData();
+                                // _fetchTenantData();
+
                                 _tenentNameController.text = "";
                                 _nidNoController.text = "";
                                 _passportNoController.text = "";
@@ -446,8 +396,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
                                 _rentAmountController.text = "";
                                 _gasBillController.text = "";
                                 _waterBillController.text = "";
-                                _serviceChargeController.text = "";
-                                date = "";
+                                _utilityBillController.text = "";
 
                                 selectedFloorId = null;
                                 selectedFlatName = "";
@@ -464,7 +413,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
                                   )),
                                   snackPosition: SnackPosition.BOTTOM,
                                   duration: const Duration(seconds: 2)),
-                              Get.to(const TenentPage())
+                              Get.back(),
                             }
                           else
                             {
@@ -501,7 +450,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          Get.offAll(const Dashboard());
+                          Get.back();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:rent_management/models/flat_model.dart';
+import 'package:rent_management/models/floor_model.dart';
+import 'package:rent_management/services/flat_service.dart';
+import 'package:rent_management/services/floor_service.dart';
 
 import '../classes/flat_info.dart';
 import '../db_helper.dart';
@@ -16,26 +20,34 @@ class FlatPage extends StatefulWidget {
 }
 
 class _FlatPageState extends State<FlatPage> {
-  late Stream<List<FlatInfo>> flatStream = const Stream.empty();
+  FlatApiService flatApiService = FlatApiService();
+  FloorApiService floorApiService = FloorApiService();
+  List<FloorModel> floorList = [];
+  String? floorName;
+  late Stream<List<FlatModel>> flatStream = const Stream.empty();
 
   final _newFlatNameController = TextEditingController();
   final _newNoOfMasterbedRoomController = TextEditingController();
   final _newNoOfBedroomController = TextEditingController();
   final _newFlatSideController = TextEditingController();
-  // final _newRentAmountController = TextEditingController();
+
   final _newNoOfWashroomController = TextEditingController();
   final _newFlatSizeController = TextEditingController();
 
   @override
   void initState() {
-    _fetchFlatData();
-
     super.initState();
+    _fetchFlatData();
+  }
+
+  void refresh() {
+    _fetchFlatData();
   }
 
   Future<void> _fetchFlatData() async {
-    flatStream = DBHelper.readFlatData().asStream();
-    List<FlatInfo> flatList = await DBHelper.readFlatData();
+    flatStream = flatApiService.getAllFlats().asStream();
+    List<FlatModel> flatList = await flatApiService.getAllFlats();
+    floorList = await floorApiService.getAllFloors();
     setState(() {
       Provider.of<FlatData>(context, listen: false).updateFlatList(flatList);
     });
@@ -53,7 +65,9 @@ class _FlatPageState extends State<FlatPage> {
         backgroundColor: const Color.fromARGB(255, 66, 129, 247),
         child: IconButton(
           onPressed: () {
-            Get.offAll(const FlatDataPage());
+            Get.to(FlatDataPage(
+              refresh: refresh,
+            ));
           },
           icon: const Icon(Icons.add),
           color: const Color.fromARGB(255, 255, 255, 255),
@@ -86,19 +100,29 @@ class _FlatPageState extends State<FlatPage> {
                       child: SizedBox(
                         width: 400,
                         height: MediaQuery.of(context).size.height * 0.72,
-                        child: StreamBuilder<List<FlatInfo>>(
+                        child: StreamBuilder<List<FlatModel>>(
                           stream: flatStream,
                           builder: (BuildContext context,
-                              AsyncSnapshot<List<FlatInfo>> snapshot) {
-                            if (snapshot.hasData &&
+                              AsyncSnapshot<List<FlatModel>> snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(child: CircularProgressIndicator());
+                            } else if (snapshot.hasData &&
                                 snapshot.data != null &&
                                 snapshot.data!.isNotEmpty) {
-                              List<FlatInfo> flatList = snapshot.data!;
+                              List<FlatModel> flatList = snapshot.data!;
 
                               return ListView.builder(
                                 itemCount: flatList.length,
                                 itemBuilder: (BuildContext context, int index) {
-                                  FlatInfo flat = flatList[index];
+                                  FlatModel flat = flatList[index];
+                                  if (floorList.isNotEmpty) {
+                                    floorName = floorList
+                                        .firstWhere((e) => e.id == flat.floorId)
+                                        .name;
+                                  } else {
+                                    floorName = "floor not found";
+                                  }
 
                                   return ListTile(
                                     title: Card(
@@ -117,28 +141,14 @@ class _FlatPageState extends State<FlatPage> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                // Padding(
-                                                //   padding:
-                                                //       const EdgeInsets.all(5.0),
-                                                //   child: Text(
-                                                //     'ID: ${flat.id}',
-                                                //     style: TextStyle(
-                                                //       color: const Color.fromARGB(
-                                                //           255, 0, 0, 0),
-                                                //       fontSize: 16,
-                                                //       fontWeight: FontWeight.w500,
-                                                //     ),
-                                                //   ),
-                                                // ),
                                                 Padding(
                                                   padding:
                                                       const EdgeInsets.all(5.0),
                                                   child: Text(
-                                                    'Floor Name: ${flat.floorName}',
+                                                    'Floor Name: $floorName',
                                                     style: const TextStyle(
-                                                      color:
-                                                          Color.fromARGB(
-                                                              255, 0, 0, 0),
+                                                      color: Color.fromARGB(
+                                                          255, 0, 0, 0),
                                                       fontSize: 16,
                                                       fontWeight:
                                                           FontWeight.w500,
@@ -149,11 +159,10 @@ class _FlatPageState extends State<FlatPage> {
                                                   padding:
                                                       const EdgeInsets.all(5.0),
                                                   child: Text(
-                                                    'Flat Name: ${flat.flatName.toString()}',
+                                                    'Flat Name: ${flat.name.toString()}',
                                                     style: const TextStyle(
-                                                      color:
-                                                          Color.fromARGB(
-                                                              255, 0, 0, 0),
+                                                      color: Color.fromARGB(
+                                                          255, 0, 0, 0),
                                                       fontSize: 16,
                                                       fontWeight:
                                                           FontWeight.w500,
@@ -164,11 +173,10 @@ class _FlatPageState extends State<FlatPage> {
                                                   padding:
                                                       const EdgeInsets.all(5.0),
                                                   child: Text(
-                                                    'No. Of Master Bedroom: ${flat.noOfMasterbedRoom.toString()}',
+                                                    'No. Of Master Bedroom: ${flat.masterbedRoom.toString()}',
                                                     style: const TextStyle(
-                                                      color:
-                                                          Color.fromARGB(
-                                                              255, 0, 0, 0),
+                                                      color: Color.fromARGB(
+                                                          255, 0, 0, 0),
                                                       fontSize: 16,
                                                       fontWeight:
                                                           FontWeight.w500,
@@ -179,11 +187,10 @@ class _FlatPageState extends State<FlatPage> {
                                                   padding:
                                                       const EdgeInsets.all(5.0),
                                                   child: Text(
-                                                    'No. Of Bedroom: ${flat.noOfBedroom.toString()}',
+                                                    'No. Of Bedroom: ${flat.bedroom.toString()}',
                                                     style: const TextStyle(
-                                                      color:
-                                                          Color.fromARGB(
-                                                              255, 0, 0, 0),
+                                                      color: Color.fromARGB(
+                                                          255, 0, 0, 0),
                                                       fontSize: 16,
                                                       fontWeight:
                                                           FontWeight.w500,
@@ -194,11 +201,10 @@ class _FlatPageState extends State<FlatPage> {
                                                   padding:
                                                       const EdgeInsets.all(5.0),
                                                   child: Text(
-                                                    'No. Of Washroom: ${flat.noOfWashroom.toString()}',
+                                                    'No. Of Washroom: ${flat.washroom.toString()}',
                                                     style: const TextStyle(
-                                                      color:
-                                                          Color.fromARGB(
-                                                              255, 0, 0, 0),
+                                                      color: Color.fromARGB(
+                                                          255, 0, 0, 0),
                                                       fontSize: 16,
                                                       fontWeight:
                                                           FontWeight.w500,
@@ -209,11 +215,10 @@ class _FlatPageState extends State<FlatPage> {
                                                   padding:
                                                       const EdgeInsets.all(5.0),
                                                   child: Text(
-                                                    'Flat Side: ${flat.flatSide.toString()}',
+                                                    'Flat Side: ${flat.flatSide!.isEmpty ? "" : flat.flatSide.toString()}',
                                                     style: const TextStyle(
-                                                      color:
-                                                          Color.fromARGB(
-                                                              255, 0, 0, 0),
+                                                      color: Color.fromARGB(
+                                                          255, 0, 0, 0),
                                                       fontSize: 16,
                                                       fontWeight:
                                                           FontWeight.w500,
@@ -224,11 +229,10 @@ class _FlatPageState extends State<FlatPage> {
                                                   padding:
                                                       const EdgeInsets.all(5.0),
                                                   child: Text(
-                                                    'Flat Size(Sqf): ${flat.flatSize == 0 ? "" : flat.flatSize.toString()}',
+                                                    'Flat Size(Sqf): ${flat.flatSize == null ? 0.0 : flat.flatSize.toString()}',
                                                     style: const TextStyle(
-                                                      color:
-                                                          Color.fromARGB(
-                                                              255, 0, 0, 0),
+                                                      color: Color.fromARGB(
+                                                          255, 0, 0, 0),
                                                       fontSize: 16,
                                                       fontWeight:
                                                           FontWeight.w500,
@@ -243,30 +247,33 @@ class _FlatPageState extends State<FlatPage> {
                                             padding: const EdgeInsets.all(6.0),
                                             child: CircleAvatar(
                                               radius: 15,
-                                              backgroundColor: const Color.fromARGB(
-                                                  255, 255, 221, 0),
+                                              backgroundColor:
+                                                  const Color.fromARGB(
+                                                      255, 255, 221, 0),
                                               child: IconButton(
                                                   iconSize: 15,
                                                   color: Colors.white,
                                                   onPressed: () {
                                                     _newFlatNameController
-                                                        .text = flat.flatName;
+                                                            .text =
+                                                        flat.name.toString();
                                                     _newNoOfMasterbedRoomController
                                                             .text =
-                                                        flat.noOfMasterbedRoom
+                                                        flat.masterbedRoom
                                                             .toString();
                                                     _newNoOfBedroomController
                                                             .text =
-                                                        flat.noOfBedroom
-                                                            .toString();
-                                                    _newFlatSideController
-                                                        .text = flat.flatSide;
-                                                    // _newRentAmountController.text =
-                                                    //     flat.rentAmount.toString();
+                                                        flat.bedroom.toString();
                                                     _newNoOfWashroomController
                                                             .text =
-                                                        flat.noOfWashroom
+                                                        flat.washroom
                                                             .toString();
+
+                                                    _newFlatSideController
+                                                            .text =
+                                                        flat.flatSide
+                                                            .toString();
+
                                                     _newFlatSizeController
                                                             .text =
                                                         flat.flatSize
@@ -286,13 +293,10 @@ class _FlatPageState extends State<FlatPage> {
                                                                 mainAxisAlignment:
                                                                     MainAxisAlignment
                                                                         .start,
-                                                                // mainAxisSize:
-                                                                //     MainAxisSize.min,
                                                                 children: <Widget>[
                                                                   const Padding(
                                                                     padding:
-                                                                        EdgeInsets
-                                                                            .all(
+                                                                        EdgeInsets.all(
                                                                             20.0),
                                                                     child: Text(
                                                                         'Update Your Information'),
@@ -407,38 +411,6 @@ class _FlatPageState extends State<FlatPage> {
                                                                           children: [
                                                                             const SizedBox(
                                                                               child: Text(
-                                                                                'Flat Side',
-                                                                                style: TextStyle(
-                                                                                  fontSize: 16,
-                                                                                  color: Color.fromARGB(255, 78, 78, 78),
-                                                                                  fontStyle: FontStyle.normal,
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                            SizedBox(
-                                                                              width: 250,
-                                                                              height: 50,
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsets.all(8.0),
-                                                                                child: TextFormField(
-                                                                                  keyboardType: TextInputType.name,
-                                                                                  controller: _newFlatSideController,
-                                                                                  decoration: InputDecoration(
-                                                                                    border: OutlineInputBorder(
-                                                                                      borderRadius: BorderRadius.circular(10),
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                        Row(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.spaceBetween,
-                                                                          children: [
-                                                                            const SizedBox(
-                                                                              child: Text(
                                                                                 'No. Of \nWashroom',
                                                                                 style: TextStyle(
                                                                                   fontSize: 16,
@@ -455,6 +427,38 @@ class _FlatPageState extends State<FlatPage> {
                                                                                 child: TextFormField(
                                                                                   keyboardType: TextInputType.number,
                                                                                   controller: _newNoOfWashroomController,
+                                                                                  decoration: InputDecoration(
+                                                                                    border: OutlineInputBorder(
+                                                                                      borderRadius: BorderRadius.circular(10),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                        Row(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.spaceBetween,
+                                                                          children: [
+                                                                            const SizedBox(
+                                                                              child: Text(
+                                                                                'Flat Side',
+                                                                                style: TextStyle(
+                                                                                  fontSize: 16,
+                                                                                  color: Color.fromARGB(255, 78, 78, 78),
+                                                                                  fontStyle: FontStyle.normal,
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                            SizedBox(
+                                                                              width: 250,
+                                                                              height: 50,
+                                                                              child: Padding(
+                                                                                padding: const EdgeInsets.all(8.0),
+                                                                                child: TextFormField(
+                                                                                  keyboardType: TextInputType.name,
+                                                                                  controller: _newFlatSideController,
                                                                                   decoration: InputDecoration(
                                                                                     border: OutlineInputBorder(
                                                                                       borderRadius: BorderRadius.circular(10),
@@ -523,33 +527,32 @@ class _FlatPageState extends State<FlatPage> {
                                                                                 _newFlatNameController.text;
                                                                             int updatedNoOfMasterBedroom =
                                                                                 int.parse(_newNoOfMasterbedRoomController.text);
+
                                                                             int updatedNoOfBedroom =
                                                                                 int.parse(_newNoOfBedroomController.text);
+
+                                                                            int updatedNoOfWashroom =
+                                                                                int.parse(_newNoOfWashroomController.text);
+
                                                                             String
                                                                                 updatedFlatSide =
                                                                                 _newFlatSideController.text;
-                                                                            // double
-                                                                            //     updatedRentAmount =
-                                                                            //     double.parse(
-                                                                            //         _newRentAmountController.text);
-                                                                            int updatedNoOfWashroom =
-                                                                                int.parse(_newNoOfWashroomController.text);
+
                                                                             int updatedFlatSize =
                                                                                 int.parse(_newFlatSizeController.text);
 
-                                                                            FlatInfo updatedFlat = FlatInfo(
-                                                                                id: flatId,
-                                                                                floorId: flat.floorId,
-                                                                                floorName: flat.floorName,
-                                                                                flatName: updatedflatName,
-                                                                                noOfMasterbedRoom: updatedNoOfMasterBedroom,
-                                                                                noOfBedroom: updatedNoOfBedroom,
+                                                                            FlatModel updatedFlat = FlatModel(
+                                                                                id: flat.id,
+                                                                                name: updatedflatName,
+                                                                                masterbedRoom: updatedNoOfMasterBedroom,
+                                                                                bedroom: updatedNoOfBedroom,
+                                                                                washroom: updatedNoOfWashroom,
                                                                                 flatSide: updatedFlatSide,
-                                                                                // rentAmount:
-                                                                                //     updatedRentAmount,
-                                                                                noOfWashroom: updatedNoOfWashroom,
-                                                                                flatSize: updatedFlatSize);
-                                                                            await DBHelper.updateFlat(updatedFlat);
+                                                                                flatSize: updatedFlatSize,
+                                                                                floorId: flat.floorId);
+                                                                            await flatApiService.updateFlat(
+                                                                                flat: updatedFlat,
+                                                                                id: flatId!);
                                                                             Get.snackbar("",
                                                                                 "",
                                                                                 messageText: const Center(
@@ -598,18 +601,20 @@ class _FlatPageState extends State<FlatPage> {
                                             padding: const EdgeInsets.all(5.0),
                                             child: CircleAvatar(
                                               radius: 15,
-                                              backgroundColor: const Color.fromARGB(
-                                                  222, 255, 0, 0),
+                                              backgroundColor:
+                                                  const Color.fromARGB(
+                                                      222, 255, 0, 0),
                                               child: IconButton(
                                                   iconSize: 15,
                                                   color: Colors.white,
                                                   onPressed: () async {
                                                     int? id = flat.id;
-                                                    await DBHelper.deleteFlat(
-                                                        id);
+                                                    await flatApiService
+                                                        .deleteFlat(id!);
                                                     Get.snackbar("", "",
-                                                        messageText: const Center(
-                                                            child: Text(
+                                                        messageText:
+                                                            const Center(
+                                                                child: Text(
                                                           "deleted successfully  \n",
                                                           style: TextStyle(
                                                               color: Color
@@ -620,13 +625,15 @@ class _FlatPageState extends State<FlatPage> {
                                                         snackPosition:
                                                             SnackPosition
                                                                 .BOTTOM,
-                                                        duration: const Duration(
-                                                            seconds: 1));
+                                                        duration:
+                                                            const Duration(
+                                                                seconds: 1));
                                                     setState(() {
                                                       _fetchFlatData();
                                                     });
                                                   },
-                                                  icon: const Icon(Icons.delete)),
+                                                  icon:
+                                                      const Icon(Icons.delete)),
                                             ),
                                           ),
                                         ],
@@ -636,7 +643,8 @@ class _FlatPageState extends State<FlatPage> {
                                 },
                               );
                             } else {
-                              return const Center(child: Text('No flats available.'));
+                              return const Center(
+                                  child: Text('No flats available.'));
                             }
                           },
                         ),

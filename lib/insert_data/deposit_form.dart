@@ -5,16 +5,23 @@ import 'package:provider/provider.dart';
 import 'package:rent_management/classes/deposit.dart';
 import 'package:rent_management/classes/rent_info.dart';
 import 'package:rent_management/db_helper.dart';
+import 'package:rent_management/models/deposit_model.dart';
+import 'package:rent_management/models/flat_model.dart';
+import 'package:rent_management/models/rent_model.dart';
+import 'package:rent_management/models/tenant_model.dart';
 import 'package:rent_management/screens/dashboard_page.dart';
 import 'package:rent_management/screens/monthly_rent_page.dart';
+import 'package:rent_management/services/deposite_service.dart';
+import 'package:rent_management/services/rent_service.dart';
 import 'package:rent_management/shared_data/rent_data.dart';
 
 // ignore: must_be_immutable
 class DepositDataPage extends StatefulWidget {
   // int rentIDIndex;
   // List<RentInfo> rentList = [];
+  final Function() refresh;
   int rentID;
-  DepositDataPage({required this.rentID, super.key});
+  DepositDataPage({required this.rentID, required this.refresh, super.key});
 
   @override
   State<DepositDataPage> createState() => _DepositDataPageState();
@@ -29,40 +36,31 @@ class _DepositDataPageState extends State<DepositDataPage> {
   final TextEditingController depositAmountTextControlller =
       TextEditingController();
 
-  String date = DateFormat('dd MMM y').format(DateTime.now());
+  DateTime? date;
 
-  List<RentInfo> rentList = [];
-  List<Deposit> depositList = [];
+  List<DepositeModel> finalDepositList = [];
+  List<TenantModel> finalTenantList = [];
+  List<FlatModel> finalFlatList = [];
+  List<RentModel> finalRentList = [];
 
-  double? lastDepositAmount;
   double? dueAmount;
   double totalDeposit = 0.0;
+  RentApiService rentApiService = RentApiService();
+  DepositeApiService depositeApiService = DepositeApiService();
 
   @override
   void initState() {
+    _fetchDeposite();
     super.initState();
-    _fetchData();
-    setState(() {});
   }
 
-  Future<void> _fetchData() async {
-    rentList = await DBHelper.readRentData();
-    // depositList = await DBHelper.readDepositData();
-    RentInfo rentInfo = rentList.firstWhere((e) => e.id == widget.rentID);
-    List<Deposit> depositList = await DBHelper.readDepositData();
-    List<Deposit> newDepositList =
-        depositList.where((e) => e.rentID == widget.rentID).toList();
-
-    lastDepositAmount =
-        newDepositList.isEmpty ? 0.0 : newDepositList.last.depositAmount;
-
-    for (var item in newDepositList) {
-      totalDeposit = totalDeposit + item.depositAmount;
+  Future<void> _fetchDeposite() async {
+    List<DepositeModel> depositList =
+        await depositeApiService.getAllDeposites();
+    finalDepositList = depositList;
+    for (var deposites in finalDepositList) {
+      totalDeposit = totalDeposit + deposites.depositeAmount!;
     }
-
-    dueAmount = rentInfo.totalAmount - totalDeposit;
-
-    dueAmountTextControlller.text = dueAmount.toString();
   }
 
   @override
@@ -92,15 +90,15 @@ class _DepositDataPageState extends State<DepositDataPage> {
           child: Container(
             child: Consumer<RentData>(
               builder: (context, rentData, child) {
-                RentInfo? rentInfo =
+                RentModel? rentInfo =
                     rentData.rentList.firstWhere((e) => e.id == widget.rentID);
 
-                rentMonthTextController.text = rentInfo.month;
-                tenantNameTextControlller.text = rentInfo.tenentName;
-                flatNameTextControlller.text = rentInfo.flatName;
+                rentMonthTextController.text = rentInfo.rentMonth.toString();
+
                 totalAmountTextControlller.text =
                     rentInfo.totalAmount.toString();
-
+                dueAmountTextControlller.text =
+                    (rentInfo.totalAmount! - totalDeposit).toString();
                 return Container(
                   child: Column(
                     children: [
@@ -109,42 +107,6 @@ class _DepositDataPageState extends State<DepositDataPage> {
                           const SizedBox(height: 16),
                           Column(
                             children: [
-                              TextFormField(
-                                keyboardType: TextInputType.name,
-                                controller: rentMonthTextController,
-                                enabled: false,
-                                decoration: InputDecoration(
-                                  labelText: 'Rent Month',
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              TextFormField(
-                                keyboardType: TextInputType.name,
-                                controller: flatNameTextControlller,
-                                enabled: false,
-                                decoration: InputDecoration(
-                                  labelText: 'Flat Name',
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              TextFormField(
-                                keyboardType: TextInputType.name,
-                                controller: tenantNameTextControlller,
-                                enabled: false,
-                                decoration: InputDecoration(
-                                  labelText: 'Tenant Name',
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 16),
                               TextFormField(
                                 keyboardType: TextInputType.number,
                                 controller: totalAmountTextControlller,
@@ -207,25 +169,17 @@ class _DepositDataPageState extends State<DepositDataPage> {
                                   if (depositAmountTextControlller
                                       .text.isNotEmpty)
                                     {
-                                      await DBHelper.insertDepositData(Deposit(
-                                          rentID: rentInfo.id ?? 0,
-                                          rentMonth: rentInfo.month,
-                                          tenantID: rentInfo.tenentID,
-                                          tenantName: rentInfo.tenentName,
-                                          flatID: rentInfo.flatID,
-                                          flatName: rentInfo.flatName,
-                                          totalAmount: rentInfo.totalAmount,
-                                          depositAmount: double.parse(
-                                              depositAmountTextControlller
-                                                  .text),
-                                          dueAmount: rentInfo.totalAmount -
-                                              (totalDeposit +
-                                                  double.parse(
-                                                      depositAmountTextControlller
-                                                          .text)),
-                                          date: date)),
-                                      Get.to(const MonthlyRent()),
-                                      _fetchData(),
+                                      await depositeApiService.createDeposite( 
+                                          DepositeModel(
+                                              totalAmount: rentInfo.totalAmount,
+                                              depositeAmount: double.parse(
+                                                  depositAmountTextControlller
+                                                      .text),
+                                              dueAmount: rentInfo.totalAmount! -
+                                                  totalDeposit,
+                                              depositeDate: date,
+                                              rentId: rentInfo.id)),
+                                      Get.back(),
                                       Get.snackbar("", "",
                                           messageText: const Center(
                                               child: Text(

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+import 'package:rent_management/models/rent_model.dart';
 import 'package:rent_management/screens/deposit_page.dart';
+import 'package:rent_management/services/rent_service.dart';
 import 'package:rent_management/shared_data/rent_data.dart';
-import 'package:sqflite/sqflite.dart';
 
 import '../classes/rent_info.dart';
 import '../db_helper.dart';
@@ -19,17 +20,20 @@ class CountPage extends StatefulWidget {
 }
 
 class _CountPageState extends State<CountPage> {
-  Future<List<RentInfo>> fetchDueRentData() async {
-    Database db = await DBHelper.initDB();
-    var rent = await db.query('rent', where: 'isPaid = 0');
-    return rent.isNotEmpty
-        ? rent.map((e) => RentInfo.fromJson(e)).toList()
-        : [];
-  }
+  RentApiService rentApiService = RentApiService();
+  // Future<List<RentModel>> fetchDueRentData() async {
+  //   List<RentModel> rentList = await rentApiService.getAllRents();
+  //   List<RentModel> isPaidList =
+  //       rentList.where((rent) => rent.isPaid == false).toList();
+
+  //   return isPaidList.isNotEmpty
+  //       ? isPaidList.map((e) => RentModel.fromJson(e)).toList()
+  //       : [];
+  // }
 
   @override
   void initState() {
-    fetchDueRentData();
+    // fetchDueRentData();
 
     super.initState();
   }
@@ -155,7 +159,7 @@ class _CountPageState extends State<CountPage> {
                                 child: Consumer<RentData>(
                                     builder: (context, rentData, _) {
                                   int unpaidCount = rentData.rentList
-                                      .where((rent) => rent.isPaid == 0)
+                                      .where((rent) => rent.isPaid == false)
                                       .length;
 
                                   return Text(
@@ -188,7 +192,6 @@ class _CountPageState extends State<CountPage> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
-                  // width: MediaQuery.sizeOf(context).width * 1.0,
                   height: 100,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -203,7 +206,7 @@ class _CountPageState extends State<CountPage> {
                               child: IconButton(
                                 iconSize: 40,
                                 onPressed: () {
-                                  Get.to(DepositPage());
+                                  // Get.to(DepositPage());
                                 },
                                 icon: Icon(Icons.history),
                               ),

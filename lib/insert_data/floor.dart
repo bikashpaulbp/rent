@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:rent_management/models/floor_model.dart';
 import 'package:rent_management/screens/dashboard_page.dart';
 import 'package:rent_management/screens/floor_page.dart';
+import 'package:rent_management/services/floor_service.dart';
 
-import '../classes/floor_info.dart';
-import '../db_helper.dart';
-
+// ignore: must_be_immutable
 class FloorDataPage extends StatefulWidget {
-  const FloorDataPage({super.key});
+  void Function() refresh;
+  FloorDataPage({super.key, required this.refresh});
 
   @override
   State<FloorDataPage> createState() => _FloorDataPageState();
@@ -15,6 +16,8 @@ class FloorDataPage extends StatefulWidget {
 
 class _FloorDataPageState extends State<FloorDataPage> {
   final TextEditingController _floorController = TextEditingController();
+
+  FloorApiService floorApiService = FloorApiService();
 
   @override
   void dispose() {
@@ -67,10 +70,13 @@ class _FloorDataPageState extends State<FloorDataPage> {
                     ElevatedButton(
                       onPressed: () async {
                         if (_floorController.text.isNotEmpty) {
-                          await DBHelper.insertFloorData(
-                            Floor(floorName: _floorController.text),
+                          await floorApiService.createFloor(
+                            FloorModel(name: _floorController.text),
                           );
+                          widget.refresh();
+                          Get.back();
                           _floorController.clear();
+
                           Get.snackbar("", "",
                               messageText: const Center(
                                   child: Text(
@@ -81,7 +87,6 @@ class _FloorDataPageState extends State<FloorDataPage> {
                               )),
                               snackPosition: SnackPosition.BOTTOM,
                               duration: const Duration(seconds: 2));
-                          Get.to(const FloorPage());
                         } else {
                           Get.snackbar("", "",
                               messageText: const Center(
@@ -115,7 +120,7 @@ class _FloorDataPageState extends State<FloorDataPage> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        Get.offAll(const Dashboard());
+                        Get.back();
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,

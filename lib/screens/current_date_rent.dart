@@ -4,6 +4,14 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:rent_management/classes/deposit.dart';
 import 'package:rent_management/insert_data/deposit_form.dart';
+import 'package:rent_management/models/deposit_model.dart';
+import 'package:rent_management/models/flat_model.dart';
+import 'package:rent_management/models/rent_model.dart';
+import 'package:rent_management/models/tenant_model.dart';
+import 'package:rent_management/services/deposite_service.dart';
+import 'package:rent_management/services/flat_service.dart';
+import 'package:rent_management/services/rent_service.dart';
+import 'package:rent_management/services/tenant_service.dart';
 
 import '../classes/rent_info.dart';
 import '../classes/tenent_info.dart';
@@ -18,45 +26,61 @@ class CurrentMonthRent extends StatefulWidget {
 }
 
 class _CurrentMonthRentState extends State<CurrentMonthRent> {
-  late Stream<List<RentInfo>> rentStream = const Stream.empty();
-  TenentInfo? tenentInfo;
-  List<TenentInfo> tenentList = [];
+  late Stream<List<RentModel>> rentStream = const Stream.empty();
+  List<TenantModel> finalTenantList = [];
+
+  List<FlatModel> finalFlatList = [];
 
   final _totalAmountController = TextEditingController();
 
   final format = DateFormat("yyyy-MM-dd");
 
-  String? date;
+  DateTime? date;
 
-  int isPaid = 0;
+  bool isPaid = false;
   DateTime now = DateTime.now();
   int? currentYear;
   int? currentMonth;
 
-  String dateofPayment = DateFormat('dd MMM y').format(DateTime.now());
+  int? tenantId;
+  int? flatId;
+  String? tenantName;
+  String? flatName;
+
+  DateTime dateofPayment = DateTime.now();
 
   final TextEditingController confirmTextEditingController =
       TextEditingController();
 
-  bool isRentCurrentMonth(
-      RentInfo rentInfo, int currentYear, int currentMonth) {
-    DateTime date = DateFormat("dd MMM y").parse(rentInfo.month);
+  bool isRentCurrentMonth(RentModel rent, int currentYear, int currentMonth) {
+    DateTime date = rent.rentMonth!;
     int year = date.year;
     int month = date.month;
     return year == currentYear && month == currentMonth;
   }
 
+  RentApiService rentApiService = RentApiService();
+  TenantApiService tenantApiService = TenantApiService();
+  FlatApiService flatApiService = FlatApiService();
+  DepositeApiService depositeApiService = DepositeApiService();
+
   @override
   void initState() {
-    _fetchData();
-
     super.initState();
+    _fetchRentData();
   }
 
-  Future<void> _fetchData() async {
-    List<RentInfo> rentList = await DBHelper.readRentData();
-    tenentList = await DBHelper.readTenentData();
-    rentStream = DBHelper.readRentData().asStream();
+  void refresh() {
+    _fetchRentData();
+  }
+
+  Future<void> _fetchRentData() async {
+    List<RentModel> rentList = await rentApiService.getAllRents();
+    List<TenantModel> tenantList = await tenantApiService.getAllTenants();
+    List<FlatModel> flatList = await flatApiService.getAllFlats();
+    finalTenantList = tenantList;
+    finalFlatList = flatList;
+    rentStream = rentApiService.getAllRents().asStream();
     setState(() {
       Provider.of<RentData>(context, listen: false).updateRentList(rentList);
     });
@@ -83,14 +107,18 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                   ),
                   SizedBox(
                     height: 510,
-                    child: StreamBuilder<List<RentInfo>>(
+                    child: StreamBuilder<List<RentModel>>(
                       stream: rentStream,
                       builder: (BuildContext context,
-                          AsyncSnapshot<List<RentInfo>> snapshot) {
+                          AsyncSnapshot<List<RentModel>> snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(child: CircularProgressIndicator());
+                        }
                         if (snapshot.hasData &&
                             snapshot.data != null &&
                             snapshot.data!.isNotEmpty) {
-                          List<RentInfo> rentList = snapshot.data!
+                          List<RentModel> rentList = snapshot.data!
                               .where((rent) => isRentCurrentMonth(
                                   rent,
                                   currentYear = now.year,
@@ -99,7 +127,26 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                           return ListView.builder(
                             itemCount: rentList.length,
                             itemBuilder: (BuildContext context, int index) {
-                              RentInfo rent = rentList[index];
+                              RentModel rent = rentList[index];
+                              // flatId = finalFlatList
+                              //     .firstWhere(
+                              //         (flat) => flat.id == rent.flatId)
+                              //     .id;
+                              // int? finalFlatId = flatId;
+                              flatName = finalFlatList
+                                  .firstWhere((flat) => flat.id == rent.flatId)
+                                  .name;
+                              String? finalFlatName = flatName;
+                              // tenantId = finalTenantList
+                              //     .firstWhere(
+                              //         (tenant) => tenant.id == rent.flatId)
+                              //     .id;
+                              // int? finalTenantId = tenantId;
+                              tenantName = finalTenantList
+                                  .firstWhere(
+                                      (tenant) => tenant.id == rent.tenantId)
+                                  .name;
+                              String? finalTenantName = tenantName;
 
                               return ListTile(
                                 title: Card(
@@ -119,50 +166,11 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              // Padding(
-                                              //   padding:
-                                              //       const EdgeInsets.all(5.0),
-                                              //   child: Text(
-                                              //     'ID: ${rent.id}',
-                                              //     style: TextStyle(
-                                              //       color: const Color.fromARGB(
-                                              //           255, 0, 0, 0),
-                                              //       fontSize: 16,
-                                              //       fontWeight: FontWeight.bold,
-                                              //     ),
-                                              //   ),
-                                              // ),
                                               Padding(
                                                 padding:
                                                     const EdgeInsets.all(5.0),
                                                 child: Text(
-                                                  'Tenent Name: ${rent.tenentName}',
-                                                  style: const TextStyle(
-                                                    color: Color.fromARGB(
-                                                        255, 0, 0, 0),
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ),
-                                              // Padding(
-                                              //   padding:
-                                              //       const EdgeInsets.all(5.0),
-                                              //   child: Text(
-                                              //     'Floor Name: ${rent.floorName}',
-                                              //     style: TextStyle(
-                                              //       color: const Color.fromARGB(
-                                              //           255, 0, 0, 0),
-                                              //       fontSize: 16,
-                                              //       fontWeight: FontWeight.bold,
-                                              //     ),
-                                              //   ),
-                                              // ),
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.all(5.0),
-                                                child: Text(
-                                                  'Flat Name: ${rent.flatName}',
+                                                  'Tenent Name: $finalTenantName',
                                                   style: const TextStyle(
                                                     color: Color.fromARGB(
                                                         255, 0, 0, 0),
@@ -175,7 +183,7 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                 padding:
                                                     const EdgeInsets.all(5.0),
                                                 child: Text(
-                                                  'Total Amount: ${rent.totalAmount.toString()}',
+                                                  'Flat Name: $finalFlatName',
                                                   style: const TextStyle(
                                                     color: Color.fromARGB(
                                                         255, 0, 0, 0),
@@ -188,7 +196,7 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                 padding:
                                                     const EdgeInsets.all(5.0),
                                                 child: Text(
-                                                  'Month: ${rent.month.toString()}',
+                                                  'Total Amount: ${rent.totalAmount}',
                                                   style: const TextStyle(
                                                     color: Color.fromARGB(
                                                         255, 0, 0, 0),
@@ -201,7 +209,20 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                 padding:
                                                     const EdgeInsets.all(5.0),
                                                 child: Text(
-                                                  rent.isPaid == 0
+                                                  'Month: ${rent.rentMonth != null ? DateFormat('dd MMM yy').format(rent.rentMonth!) : "N/A"}',
+                                                  style: const TextStyle(
+                                                    color: Color.fromARGB(
+                                                        255, 0, 0, 0),
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(5.0),
+                                                child: Text(
+                                                  rent.isPaid == false
                                                       ? "Status: Unpaid"
                                                       : "Status: Paid",
                                                   style: const TextStyle(
@@ -215,9 +236,7 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                             ],
                                           ),
                                         ),
-                                        const SizedBox(
-                                          width: 50,
-                                        ),
+                                        const SizedBox(width: 50),
                                         Column(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
@@ -233,7 +252,7 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                       radius: 16,
                                                       backgroundColor: rent
                                                                   .isPaid ==
-                                                              1
+                                                              true
                                                           ? const Color
                                                               .fromARGB(
                                                               255, 8, 240, 8)
@@ -243,13 +262,14 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                       child: IconButton(
                                                           iconSize: 16,
                                                           color: rent.isPaid ==
-                                                                  1
+                                                                  true
                                                               ? const Color
                                                                   .fromARGB(255,
                                                                   255, 255, 255)
                                                               : Colors.white,
                                                           onPressed:
-                                                              rent.isPaid == 0
+                                                              rent.isPaid ==
+                                                                      false
                                                                   ? () async {
                                                                       showDialog(
                                                                         context:
@@ -275,23 +295,13 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                                                       ElevatedButton(
                                                                                           style: ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.red)),
                                                                                           onPressed: () async {
-                                                                                            isPaid = 1;
-                                                                                            RentInfo updatedRent = RentInfo(
-                                                                                                id: rent.id,
-                                                                                                tenentName: rent.tenentName,
-                                                                                                tenentID: rent.tenentID,
-                                                                                                // floorID: rent.floorID,
-                                                                                                // floorName: rent.floorName,
-                                                                                                flatID: rent.flatID,
-                                                                                                flatName: rent.flatName,
-                                                                                                month: rent.month,
-                                                                                                totalAmount: rent.totalAmount,
-                                                                                                isPaid: 1);
-                                                                                            Deposit deposit = Deposit(rentID: rent.id!, rentMonth: rent.month, tenantID: rent.tenentID, tenantName: rent.tenentName, flatID: rent.flatID, flatName: rent.flatName, totalAmount: rent.totalAmount, depositAmount: rent.totalAmount, dueAmount: 0.0, date: dateofPayment);
+                                                                                            isPaid = true;
+                                                                                            RentModel updatedRent = RentModel(id: rent.id, rentMonth: rent.rentMonth, totalAmount: rent.totalAmount, isPaid: isPaid, flatId: rent.flatId, tenantId: rent.tenantId);
+                                                                                            DepositeModel deposit = DepositeModel(rentId: rent.id!, totalAmount: rent.totalAmount, depositeAmount: rent.totalAmount, dueAmount: 0.0, depositeDate: dateofPayment);
                                                                                             Navigator.of(context).pop();
 
-                                                                                            await DBHelper.updateRent(updatedRent);
-                                                                                            await DBHelper.insertDepositData(deposit);
+                                                                                            await rentApiService.updateRent(rent: updatedRent, id: rent.id!);
+                                                                                            // await depositeApiService.createDeposite(deposit);
                                                                                             Get.snackbar("", "",
                                                                                                 messageText: Center(
                                                                                                     child: const Text(
@@ -302,13 +312,10 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                                                                 duration: const Duration(seconds: 2));
 
                                                                                             setState(() {
-                                                                                              _fetchData();
+                                                                                              _fetchRentData();
                                                                                             });
                                                                                           },
                                                                                           child: Text('confirm')),
-                                                                                      // SizedBox(
-                                                                                      //   width: 20,
-                                                                                      // ),
                                                                                       ElevatedButton(
                                                                                           onPressed: () {
                                                                                             Navigator.of(context).pop();
@@ -331,7 +338,7 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                     CircleAvatar(
                                                       radius: 15,
                                                       backgroundColor:
-                                                          Color.fromARGB(
+                                                          const Color.fromARGB(
                                                               255, 34, 85, 251),
                                                       child: IconButton(
                                                           iconSize: 15,
@@ -364,8 +371,6 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                                           Column(
                                                                         mainAxisAlignment:
                                                                             MainAxisAlignment.start,
-                                                                        // mainAxisSize:
-                                                                        //     MainAxisSize.min,
                                                                         children: <Widget>[
                                                                           const Padding(
                                                                             padding:
@@ -423,18 +428,8 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                                                 ElevatedButton(
                                                                                   child: const Text('update'),
                                                                                   onPressed: () async {
-                                                                                    RentInfo updatedRent = RentInfo(
-                                                                                        id: rent.id,
-                                                                                        tenentName: rent.tenentName,
-                                                                                        tenentID: rent.tenentID,
-                                                                                        // floorID: rent.floorID,
-                                                                                        // floorName: rent.floorName,
-                                                                                        flatID: rent.flatID,
-                                                                                        flatName: rent.flatName,
-                                                                                        month: rent.month,
-                                                                                        totalAmount: double.parse(_totalAmountController.text),
-                                                                                        isPaid: rent.isPaid);
-                                                                                    await DBHelper.updateRent(updatedRent);
+                                                                                    RentModel updatedRent = RentModel(id: rent.id, tenantId: rent.tenantId, flatId: rent.flatId, rentMonth: rent.rentMonth, totalAmount: double.parse(_totalAmountController.text), isPaid: rent.isPaid);
+                                                                                    await rentApiService.updateRent(id: rent.id!, rent: updatedRent);
                                                                                     Get.snackbar("", "",
                                                                                         messageText: const Center(
                                                                                             child: Text(
@@ -445,7 +440,7 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                                                         duration: const Duration(seconds: 2));
 
                                                                                     setState(() {
-                                                                                      _fetchData();
+                                                                                      _fetchRentData();
 
                                                                                       Navigator.pop(context);
                                                                                     });
@@ -476,15 +471,16 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                     CircleAvatar(
                                                       radius: 15,
                                                       backgroundColor:
-                                                          const Color.fromARGB(
+                                                          Color.fromARGB(
                                                               255, 240, 46, 46),
                                                       child: IconButton(
                                                           iconSize: 15,
                                                           color: Colors.white,
                                                           onPressed: () async {
                                                             int? id = rent.id;
-                                                            await DBHelper
-                                                                .deleteRent(id);
+                                                            await rentApiService
+                                                                .deleteRent(
+                                                                    id!);
                                                             Get.snackbar("", "",
                                                                 messageText:
                                                                     const Center(
@@ -509,7 +505,7 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                                         seconds:
                                                                             1));
                                                             setState(() {
-                                                              _fetchData();
+                                                              _fetchRentData();
                                                             });
                                                           },
                                                           icon: const Icon(
@@ -531,15 +527,17 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                                       171,
                                                                       12,
                                                                       219))),
-                                                  onPressed: rent.isPaid == 0
-                                                      ? () {
-                                                          Get.to(
-                                                              DepositDataPage(
+                                                  onPressed:
+                                                      rent.isPaid == false
+                                                          ? () {
+                                                              Get.to(DepositDataPage(
+                                                                  refresh:
+                                                                      refresh,
                                                                   rentID:
                                                                       rent.id ??
                                                                           0));
-                                                        }
-                                                      : null,
+                                                            }
+                                                          : null,
                                                   child: Text('Deposit'))
                                             ]),
                                       ],

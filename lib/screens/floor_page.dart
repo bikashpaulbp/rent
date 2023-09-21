@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:rent_management/insert_data/floor.dart';
+import 'package:rent_management/models/floor_model.dart';
+import 'package:rent_management/services/floor_service.dart';
 import 'package:rent_management/shared_data/floor_data.dart';
 import 'package:get/get.dart';
-import '../classes/floor_info.dart';
-import '../db_helper.dart';
+
 import 'package:provider/provider.dart';
 
 class FloorPage extends StatefulWidget {
@@ -14,21 +15,25 @@ class FloorPage extends StatefulWidget {
 }
 
 class _FloorPageState extends State<FloorPage> {
-  late Stream<List<Floor>> floorStream = const Stream.empty();
+  FloorApiService floorApiService = FloorApiService();
+  late Stream<List<FloorModel>> floorStream = const Stream.empty();
   final _floorNameController = TextEditingController();
 
   @override
   void initState() {
-    setState(() {
-      _fetchFloorData();
-    });
-
     super.initState();
+    setState(() {
+      _fetchFloorData(); 
+    });
+  }
+
+  void refresh() {
+    _fetchFloorData();
   }
 
   Future<void> _fetchFloorData() async {
-    floorStream = DBHelper.readFloorData().asStream();
-    List<Floor> floorList = await DBHelper.readFloorData();
+    floorStream = floorApiService.getAllFloors().asStream();
+    List<FloorModel> floorList = await floorApiService.getAllFloors();
     setState(() {
       Provider.of<FloorData>(context, listen: false).updateFloorList(floorList);
     });
@@ -46,7 +51,9 @@ class _FloorPageState extends State<FloorPage> {
         backgroundColor: const Color.fromARGB(255, 66, 129, 247),
         child: IconButton(
           onPressed: () {
-            Get.offAll(const FloorDataPage());
+            Get.to(FloorDataPage(
+              refresh: refresh,
+            ));
           },
           icon: const Icon(Icons.add),
           color: const Color.fromARGB(255, 255, 255, 255),
@@ -78,21 +85,24 @@ class _FloorPageState extends State<FloorPage> {
                       child: Container(
                         width: 500,
                         height: MediaQuery.of(context).size.height * 0.745,
-                        child: StreamBuilder<List<Floor>>(
+                        child: StreamBuilder<List<FloorModel>>(
                           stream: floorStream,
                           builder: (BuildContext context,
-                              AsyncSnapshot<List<Floor>> snapshot) {
-                            if (snapshot.hasData &&
+                              AsyncSnapshot<List<FloorModel>> snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(child: CircularProgressIndicator());
+                            } else if (snapshot.hasData &&
                                 snapshot.data != null &&
                                 snapshot.data!.isNotEmpty) {
-                              List<Floor> floorList = snapshot.data!;
+                              List<FloorModel> floorList = snapshot.data!;
                               Provider.of<FloorData>(context, listen: false)
                                   .updateFloorList(floorList);
 
                               return ListView.builder(
                                 itemCount: floorList.length,
                                 itemBuilder: (BuildContext context, int index) {
-                                  Floor floor = floorList[index];
+                                  FloorModel floor = floorList[index];
 
                                   return ListTile(
                                     title: Padding(
@@ -117,31 +127,7 @@ class _FloorPageState extends State<FloorPage> {
                                                     children: [
                                                       RichText(
                                                         text: const TextSpan(
-                                                          children: [
-                                                            // TextSpan(
-                                                            //   text: 'ID: ',
-                                                            //   style: TextStyle(
-                                                            //     color: const Color
-                                                            //             .fromARGB(
-                                                            //         255, 0, 0, 0),
-                                                            //     fontSize: 18,
-                                                            //     fontWeight:
-                                                            //         FontWeight
-                                                            //             .bold,
-                                                            //   ),
-                                                            // ),
-                                                            // TextSpan(
-                                                            //   text: '${floor.id}',
-                                                            //   style: TextStyle(
-                                                            //     color:
-                                                            //         Colors.black,
-                                                            //     fontSize: 18,
-                                                            //     fontWeight:
-                                                            //         FontWeight
-                                                            //             .bold,
-                                                            //   ),
-                                                            // ),
-                                                          ],
+                                                          children: [],
                                                         ),
                                                       ),
                                                       const SizedBox(width: 15),
@@ -157,10 +143,10 @@ class _FloorPageState extends State<FloorPage> {
                                                                     TextStyle(
                                                                   color: Color
                                                                       .fromARGB(
-                                                                      255,
-                                                                      0,
-                                                                      0,
-                                                                      0),
+                                                                          255,
+                                                                          0,
+                                                                          0,
+                                                                          0),
                                                                   fontSize: 16,
                                                                   fontWeight:
                                                                       FontWeight
@@ -169,7 +155,7 @@ class _FloorPageState extends State<FloorPage> {
                                                               ),
                                                               TextSpan(
                                                                 text:
-                                                                    floor.floorName,
+                                                                    floor.name,
                                                                 style:
                                                                     const TextStyle(
                                                                   color: Colors
@@ -187,7 +173,8 @@ class _FloorPageState extends State<FloorPage> {
                                                       CircleAvatar(
                                                         radius: 15,
                                                         backgroundColor:
-                                                            const Color.fromARGB(255,
+                                                            const Color
+                                                                .fromARGB(255,
                                                                 241, 221, 0),
                                                         child: IconButton(
                                                           iconSize: 15,
@@ -195,7 +182,7 @@ class _FloorPageState extends State<FloorPage> {
                                                           onPressed: () {
                                                             _floorNameController
                                                                     .text =
-                                                                floor.floorName;
+                                                                floor.name!;
                                                             showModalBottomSheet<
                                                                 void>(
                                                               context: context,
@@ -278,9 +265,9 @@ class _FloorPageState extends State<FloorPage> {
                                                                                   onPressed: () async {
                                                                                     int? floorId = floor.id;
                                                                                     String updatedFloorName = _floorNameController.text;
-                                                                                    Floor updatedFloor = Floor(id: floorId, floorName: updatedFloorName);
+                                                                                    FloorModel updatedFloor = FloorModel(id: floorId, name: updatedFloorName);
 
-                                                                                    await DBHelper.updateFloor(updatedFloor);
+                                                                                    await floorApiService.updateFloor(floor: updatedFloor, id: floorId!);
                                                                                     Get.snackbar("", "",
                                                                                         messageText: const Center(
                                                                                             child: Text(
@@ -314,24 +301,25 @@ class _FloorPageState extends State<FloorPage> {
                                                               },
                                                             );
                                                           },
-                                                          icon:
-                                                              const Icon(Icons.edit),
+                                                          icon: const Icon(
+                                                              Icons.edit),
                                                         ),
                                                       ),
                                                       const SizedBox(width: 10),
                                                       CircleAvatar(
                                                         radius: 15,
                                                         backgroundColor:
-                                                            const Color.fromARGB(
+                                                            const Color
+                                                                .fromARGB(
                                                                 215, 224, 2, 2),
                                                         child: IconButton(
                                                           iconSize: 15,
                                                           color: Colors.white,
                                                           onPressed: () async {
                                                             int? id = floor.id;
-                                                            await DBHelper
+                                                            await floorApiService
                                                                 .deleteFloor(
-                                                                    id);
+                                                                    id!);
                                                             Get.snackbar("", "",
                                                                 messageText:
                                                                     const Center(
@@ -377,7 +365,8 @@ class _FloorPageState extends State<FloorPage> {
                               );
                             } else {
                               return const Center(
-                                  child: Text('no floors available.'));
+                                child: Text('no floors available.'),
+                              );
                             }
                           },
                         ),

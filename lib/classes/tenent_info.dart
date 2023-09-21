@@ -16,7 +16,7 @@ class TenentInfo {
   double? waterBill;
   double? serviceCharge;
   double totalAmount;
-  String dateOfIn;
+  DateTime dateOfIn;
 
   TenentInfo(
       {this.id,

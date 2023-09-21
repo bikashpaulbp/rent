@@ -7,7 +7,7 @@ class RentInfo {
   int tenentID;
   String tenentName;
   double totalAmount;
-  String month;
+  DateTime month;
   int? isPaid;
 
   RentInfo({

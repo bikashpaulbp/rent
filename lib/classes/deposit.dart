@@ -9,7 +9,7 @@ class Deposit {
   double totalAmount;
   double depositAmount;
   double dueAmount;
-  String date;
+  DateTime date;
 
   Deposit(
       {this.id,

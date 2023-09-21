@@ -4,6 +4,10 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:rent_management/classes/rent_info.dart';
+import 'package:rent_management/models/flat_model.dart';
+import 'package:rent_management/models/rent_model.dart';
+import 'package:rent_management/models/tenant_model.dart';
+import 'package:rent_management/services/rent_service.dart';
 
 import '../classes/flat_info.dart';
 import '../classes/tenent_info.dart';
@@ -14,7 +18,8 @@ import '../shared_data/flat_data.dart';
 import '../shared_data/tenent_data.dart';
 
 class RentManual extends StatefulWidget {
-  const RentManual({super.key});
+  final Function() refresh;
+  const RentManual({super.key, required this.refresh});
 
   @override
   State<RentManual> createState() => _RentManualState();
@@ -28,28 +33,28 @@ class _RentManualState extends State<RentManual> {
 
   final TextEditingController _totalAmountController = TextEditingController();
 
-  late Stream<List<RentInfo>> rentStream = const Stream.empty();
+  late Stream<List<RentModel>> rentStream = const Stream.empty();
   DateTime dateTime = DateTime(2023, 1, 1);
   final format = DateFormat("dd MMM y");
-  String? date;
-  int isPaid = 0;
+  DateTime? date;
+  bool isPaid = false;
+
+  RentApiService rentApiService = RentApiService();
 
   @override
   void initState() {
-    _fetchRentData();
-
     super.initState();
+    _fetchRentData();
   }
 
   Future<void> _fetchRentData() async {
-    rentStream = DBHelper.readRentData().asStream();
+    rentStream = rentApiService.getAllRents().asStream();
   }
 
   @override
   void dispose() {
-    _totalAmountController.dispose();
-
     super.dispose();
+    _totalAmountController.dispose();
   }
 
   @override
@@ -80,7 +85,7 @@ class _RentManualState extends State<RentManual> {
                     children: [
                       Consumer<FlatData>(
                         builder: (context, flatData, child) {
-                          List<FlatInfo> flatList = flatData.flatList;
+                          List<FlatModel> flatList = flatData.flatList;
 
                           return DropdownButtonFormField<int>(
                             isExpanded: true,
@@ -102,14 +107,14 @@ class _RentManualState extends State<RentManual> {
                                 selectedFlatName = flatList
                                     .firstWhere(
                                         (flat) => flat.id == selectedFlatId)
-                                    .flatName;
+                                    .name;
                               });
                             },
                             items: flatList
-                                .map<DropdownMenuItem<int>>((FlatInfo flat) {
+                                .map<DropdownMenuItem<int>>((FlatModel flat) {
                               return DropdownMenuItem<int>(
                                 value: flat.id,
-                                child: Text(flat.flatName),
+                                child: Text(flat.name!),
                               );
                             }).toList(),
                           );
@@ -118,7 +123,7 @@ class _RentManualState extends State<RentManual> {
                       const SizedBox(height: 8),
                       Consumer<TenantData>(
                         builder: (context, tenantData, child) {
-                          List<TenentInfo> tenantList = tenantData.tenantList;
+                          List<TenantModel> tenantList = tenantData.tenantList;
 
                           return DropdownButtonFormField<int>(
                             isExpanded: true,
@@ -140,14 +145,14 @@ class _RentManualState extends State<RentManual> {
                                 selectedTenantName = tenantList
                                     .firstWhere((tenant) =>
                                         tenant.id == selectedTenantId)
-                                    .tenentName;
+                                    .name;
                               });
                             },
                             items: tenantList.map<DropdownMenuItem<int>>(
-                                (TenentInfo tenant) {
+                                (TenantModel tenant) {
                               return DropdownMenuItem<int>(
                                 value: tenant.id,
-                                child: Text(tenant.tenentName),
+                                child: Text(tenant.name!),
                               );
                             }).toList(),
                           );
@@ -182,7 +187,7 @@ class _RentManualState extends State<RentManual> {
                         onChanged: (newValue) {
                           setState(() {
                             dateTime = newValue!;
-                            date = format.format(dateTime);
+                            date = dateTime;
                           });
                         },
                         format: format,
@@ -220,32 +225,28 @@ class _RentManualState extends State<RentManual> {
                           ),
                         ),
                         onPressed: () async => {
-                          if (date != "" &&
+                          if (date != null &&
                               selectedFlatId != null &&
                               selectedFlatName != "" &&
                               selectedTenantId != null &&
                               selectedTenantName != "" &&
                               date != null)
                             {
-                              await DBHelper.insertRentData(RentInfo(
-                                  flatID: selectedFlatId!,
-                                  flatName: selectedFlatName!,
-                                  tenentID: selectedTenantId!,
-                                  tenentName: selectedTenantName!,
-                                  month: date.toString(),
+                              await rentApiService.createRent(RentModel(
+                                  flatId: selectedFlatId!,
+                                  tenantId: selectedTenantId!,
+                                  rentMonth: date,
                                   totalAmount:
                                       double.parse(_totalAmountController.text),
                                   isPaid: isPaid)),
+                              widget.refresh(),
                               setState(() {
-                                _fetchRentData();
-
                                 _totalAmountController.text = "";
-
-                                date = "";
 
                                 selectedFlatName = "";
                                 selectedFlatId = null;
                               }),
+                              Get.back(),
                               Get.snackbar("", "",
                                   messageText: const Center(
                                       child: Text(
@@ -256,7 +257,6 @@ class _RentManualState extends State<RentManual> {
                                   )),
                                   snackPosition: SnackPosition.BOTTOM,
                                   duration: const Duration(seconds: 2)),
-                              Get.to(const MonthlyRent()),
                             }
                           else
                             {
@@ -275,7 +275,7 @@ class _RentManualState extends State<RentManual> {
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          Get.offAll(const Dashboard());
+                          Get.back();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,

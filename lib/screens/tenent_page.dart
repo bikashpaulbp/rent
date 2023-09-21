@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import 'package:rent_management/classes/tenent_info.dart';
 import 'package:rent_management/db_helper.dart';
 import 'package:rent_management/insert_data/tenent.dart';
+import 'package:rent_management/models/flat_model.dart';
+import 'package:rent_management/models/tenant_model.dart';
+import 'package:rent_management/services/flat_service.dart';
+import 'package:rent_management/services/tenant_service.dart';
 
 import '../shared_data/tenent_data.dart';
 
@@ -26,22 +31,29 @@ class _TenentPageState extends State<TenentPage> {
   final _newRentAmountController = TextEditingController();
   final _newGasBillController = TextEditingController();
   final _newWaterBillController = TextEditingController();
-  final _newServiceChargeController = TextEditingController();
+  final _newUtilityController = TextEditingController();
 
-  late Stream<List<TenentInfo>> tenentStream = const Stream.empty();
-
+  late Stream<List<TenantModel>> tenantStream = const Stream.empty();
+  TenantApiService tenantApiService = TenantApiService();
+  FlatApiService flatApiService = FlatApiService();
+  late List<FlatModel> flatList = [];
+  String? flatName;
+  final format = DateFormat('dd MMM y');
   @override
   void initState() {
-    _fetchTenentData();
-    setState(() {});
-
     super.initState();
+    _fetchTenantData();
+    setState(() {});
   }
 
-  Future<void> _fetchTenentData() async {
-    tenentStream = DBHelper.readTenentData().asStream();
-    List<TenentInfo> tenantList = await DBHelper.readTenentData();
+  void refresh() {
+    _fetchTenantData();
+  }
 
+  Future<void> _fetchTenantData() async {
+    tenantStream = tenantApiService.getAllTenants().asStream();
+    List<TenantModel> tenantList = await tenantApiService.getAllTenants();
+    flatList = await flatApiService.getAllFlats();
     setState(() {
       Provider.of<TenantData>(context, listen: false)
           .updateTenantList(tenantList);
@@ -60,7 +72,7 @@ class _TenentPageState extends State<TenentPage> {
         backgroundColor: const Color.fromARGB(255, 66, 129, 247),
         child: IconButton(
           onPressed: () {
-            Get.offAll(const TenentDataPage());
+            Get.to(TenentDataPage(refresh: refresh));
           },
           icon: const Icon(Icons.add),
           color: const Color.fromARGB(255, 255, 255, 255),
@@ -90,19 +102,28 @@ class _TenentPageState extends State<TenentPage> {
                     const SizedBox(height: 10),
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.72,
-                      child: StreamBuilder<List<TenentInfo>>(
-                        stream: tenentStream,
+                      child: StreamBuilder<List<TenantModel>>(
+                        stream: tenantStream,
                         builder: (BuildContext context,
-                            AsyncSnapshot<List<TenentInfo>> snapshot) {
-                          if (snapshot.hasData &&
+                            AsyncSnapshot<List<TenantModel>> snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(child: CircularProgressIndicator());
+                          } else if (snapshot.hasData &&
                               snapshot.data != null &&
                               snapshot.data!.isNotEmpty) {
-                            List<TenentInfo> tenentList = snapshot.data!;
+                            List<TenantModel> tenentList = snapshot.data!;
 
                             return ListView.builder(
                               itemCount: tenentList.length,
                               itemBuilder: (BuildContext context, int index) {
-                                TenentInfo tenent = tenentList[index];
+                                TenantModel tenent = tenentList[index];
+                                if (flatList.isNotEmpty) {
+                                  flatName = flatList
+                                      .firstWhere(
+                                          (flat) => flat.id == tenent.flatId)
+                                      .name;
+                                }
 
                                 return ListTile(
                                   title: Container(
@@ -126,57 +147,12 @@ class _TenentPageState extends State<TenentPage> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  // Padding(
-                                                  //   padding:
-                                                  //       const EdgeInsets.all(5.0),
-                                                  //   child: Text(
-                                                  //     'ID: ${tenent.id}',
-                                                  //     style: TextStyle(
-                                                  //       color:
-                                                  //           const Color.fromARGB(
-                                                  //               255, 0, 0, 0),
-                                                  //       fontSize: 16,
-                                                  //       fontWeight:
-                                                  //           FontWeight.bold,
-                                                  //     ),
-                                                  //   ),
-                                                  // ),
                                                   Padding(
                                                     padding:
                                                         const EdgeInsets.all(
                                                             5.0),
                                                     child: Text(
-                                                      'Tenent Name: ${tenent.tenentName}',
-                                                      style: const TextStyle(
-                                                        color: Color.fromARGB(
-                                                            255, 0, 0, 0),
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  // Padding(
-                                                  //   padding:
-                                                  //       const EdgeInsets.all(5.0),
-                                                  //   child: Text(
-                                                  //     'Floor Name: ${tenent.floorName}',
-                                                  //     style: TextStyle(
-                                                  //       color:
-                                                  //           const Color.fromARGB(
-                                                  //               255, 0, 0, 0),
-                                                  //       fontSize: 16,
-                                                  //       fontWeight:
-                                                  //           FontWeight.bold,
-                                                  //     ),
-                                                  //   ),
-                                                  // ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            5.0),
-                                                    child: Text(
-                                                      'Flat Name: ${tenent.flatName}',
+                                                      'Tenent Name: ${tenent.name}',
                                                       style: const TextStyle(
                                                         color: Color.fromARGB(
                                                             255, 0, 0, 0),
@@ -191,7 +167,7 @@ class _TenentPageState extends State<TenentPage> {
                                                         const EdgeInsets.all(
                                                             5.0),
                                                     child: Text(
-                                                      'Date of In: ${tenent.dateOfIn.toString()}',
+                                                      'Flat Name: $flatName',
                                                       style: const TextStyle(
                                                         color: Color.fromARGB(
                                                             255, 0, 0, 0),
@@ -206,7 +182,7 @@ class _TenentPageState extends State<TenentPage> {
                                                         const EdgeInsets.all(
                                                             5.0),
                                                     child: Text(
-                                                      'NID : ${tenent.nidNo == 0 ? "" : tenent.nidNo.toString()}',
+                                                      'Date of Arrival: ${tenent.arrivalDate != null ? DateFormat('dd MMM y').format(tenent.arrivalDate!) : "N/A"}',
                                                       style: const TextStyle(
                                                         color: Color.fromARGB(
                                                             255, 0, 0, 0),
@@ -221,7 +197,7 @@ class _TenentPageState extends State<TenentPage> {
                                                         const EdgeInsets.all(
                                                             5.0),
                                                     child: Text(
-                                                      'Passport : ${tenent.passportNo == "" ? "" : tenent.passportNo.toString()}',
+                                                      'NID : ${tenent.nid}',
                                                       style: const TextStyle(
                                                         color: Color.fromARGB(
                                                             255, 0, 0, 0),
@@ -236,7 +212,7 @@ class _TenentPageState extends State<TenentPage> {
                                                         const EdgeInsets.all(
                                                             5.0),
                                                     child: Text(
-                                                      'BirthCertificate: ${tenent.birthCertificateNo == 0 ? "" : tenent.birthCertificateNo.toString()}',
+                                                      'Passport : ${tenent.passportNo}',
                                                       style: const TextStyle(
                                                         color: Color.fromARGB(
                                                             255, 0, 0, 0),
@@ -251,7 +227,7 @@ class _TenentPageState extends State<TenentPage> {
                                                         const EdgeInsets.all(
                                                             5.0),
                                                     child: Text(
-                                                      'Mobile: ${tenent.mobileNo == 0 ? "" : tenent.mobileNo.toString()}',
+                                                      'BirthCertificate: ${tenent.birthCertificateNo}',
                                                       style: const TextStyle(
                                                         color: Color.fromARGB(
                                                             255, 0, 0, 0),
@@ -266,7 +242,7 @@ class _TenentPageState extends State<TenentPage> {
                                                         const EdgeInsets.all(
                                                             5.0),
                                                     child: Text(
-                                                      'Emergency Mobile: ${tenent.emgMobileNo == 0 ? "" : tenent.emgMobileNo.toString()}',
+                                                      'Mobile: ${tenent.mobileNo}',
                                                       style: const TextStyle(
                                                         color: Color.fromARGB(
                                                             255, 0, 0, 0),
@@ -281,7 +257,7 @@ class _TenentPageState extends State<TenentPage> {
                                                         const EdgeInsets.all(
                                                             5.0),
                                                     child: Text(
-                                                      'Family Members: ${tenent.noOfFamilyMem == 0 ? "" : tenent.noOfFamilyMem.toString()}',
+                                                      'Emergency Mobile: ${tenent.emgMobileNo}',
                                                       style: const TextStyle(
                                                         color: Color.fromARGB(
                                                             255, 0, 0, 0),
@@ -296,7 +272,7 @@ class _TenentPageState extends State<TenentPage> {
                                                         const EdgeInsets.all(
                                                             5.0),
                                                     child: Text(
-                                                      'Rent Amount: ${tenent.rentAmount.toString()}',
+                                                      'Family Members: ${tenent.noofFamilyMember}',
                                                       style: const TextStyle(
                                                         color: Color.fromARGB(
                                                             255, 0, 0, 0),
@@ -311,7 +287,7 @@ class _TenentPageState extends State<TenentPage> {
                                                         const EdgeInsets.all(
                                                             5.0),
                                                     child: Text(
-                                                      'Gas Bill: ${tenent.gasBill == 0 ? "" : tenent.gasBill.toString()}',
+                                                      'Rent Amount: ${tenent.rentAmount}',
                                                       style: const TextStyle(
                                                         color: Color.fromARGB(
                                                             255, 0, 0, 0),
@@ -326,7 +302,7 @@ class _TenentPageState extends State<TenentPage> {
                                                         const EdgeInsets.all(
                                                             5.0),
                                                     child: Text(
-                                                      'Water Bill: ${tenent.waterBill == 0 ? "" : tenent.waterBill.toString()}',
+                                                      'Gas Bill: ${tenent.gasBill}',
                                                       style: const TextStyle(
                                                         color: Color.fromARGB(
                                                             255, 0, 0, 0),
@@ -341,7 +317,7 @@ class _TenentPageState extends State<TenentPage> {
                                                         const EdgeInsets.all(
                                                             5.0),
                                                     child: Text(
-                                                      'Service Charge: ${tenent.serviceCharge == 0 ? "" : tenent.serviceCharge.toString()}',
+                                                      'Water Bill: ${tenent.waterBill}',
                                                       style: const TextStyle(
                                                         color: Color.fromARGB(
                                                             255, 0, 0, 0),
@@ -356,7 +332,22 @@ class _TenentPageState extends State<TenentPage> {
                                                         const EdgeInsets.all(
                                                             5.0),
                                                     child: Text(
-                                                      'Total Amount: ${tenent.totalAmount.toString()}',
+                                                      'Utility Bill: ${tenent.utilityBill}',
+                                                      style: const TextStyle(
+                                                        color: Color.fromARGB(
+                                                            255, 0, 0, 0),
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            5.0),
+                                                    child: Text(
+                                                      'Total Amount: ${tenent.totalAmount = (tenent.rentAmount! + tenent.gasBill! + tenent.waterBill! + tenent.utilityBill!)}',
                                                       style: const TextStyle(
                                                         color: Color.fromARGB(
                                                             255, 0, 0, 0),
@@ -379,10 +370,9 @@ class _TenentPageState extends State<TenentPage> {
                                                   color: Colors.white,
                                                   onPressed: () {
                                                     _newTenentNameController
-                                                            .text =
-                                                        tenent.tenentName;
+                                                        .text = tenent.name!;
                                                     _newNidNoController.text =
-                                                        tenent.nidNo.toString();
+                                                        tenent.nid.toString();
                                                     _newPassportNoController
                                                             .text =
                                                         tenent.passportNo
@@ -400,9 +390,10 @@ class _TenentPageState extends State<TenentPage> {
                                                             .text =
                                                         tenent.emgMobileNo
                                                             .toString();
+
                                                     _newNoOfFamilyMemController
                                                             .text =
-                                                        tenent.noOfFamilyMem
+                                                        tenent.noofFamilyMember
                                                             .toString();
                                                     _newRentAmountController
                                                             .text =
@@ -415,9 +406,8 @@ class _TenentPageState extends State<TenentPage> {
                                                             .text =
                                                         tenent.waterBill
                                                             .toString();
-                                                    _newServiceChargeController
-                                                            .text =
-                                                        tenent.serviceCharge
+                                                    _newUtilityController.text =
+                                                        tenent.utilityBill
                                                             .toString();
 
                                                     showModalBottomSheet<void>(
@@ -777,7 +767,7 @@ class _TenentPageState extends State<TenentPage> {
                                                                           children: [
                                                                             const SizedBox(
                                                                               child: Text(
-                                                                                'Service Charge',
+                                                                                'Utility Bill',
                                                                                 style: TextStyle(
                                                                                   fontSize: 16,
                                                                                   color: Color.fromARGB(255, 78, 78, 78),
@@ -792,7 +782,7 @@ class _TenentPageState extends State<TenentPage> {
                                                                                 padding: const EdgeInsets.all(8.0),
                                                                                 child: TextFormField(
                                                                                   keyboardType: TextInputType.number,
-                                                                                  controller: _newServiceChargeController,
+                                                                                  controller: _newUtilityController,
                                                                                   decoration: InputDecoration(
                                                                                     border: OutlineInputBorder(
                                                                                       borderRadius: BorderRadius.circular(10),
@@ -821,26 +811,27 @@ class _TenentPageState extends State<TenentPage> {
                                                                               const Text('update'),
                                                                           onPressed:
                                                                               () async {
-                                                                            TenentInfo updatedTenent = TenentInfo(
+                                                                            int id =
+                                                                                tenent.id!;
+                                                                            TenantModel updatedTenant = TenantModel(
+                                                                                name: _newTenentNameController.text == "" ? "" : _newTenentNameController.text,
+                                                                                nid: _newNidNoController.text == "" ? "" : _newNidNoController.text,
+                                                                                passportNo: _newPassportNoController.text == "" ? "" : _newPassportNoController.text,
+                                                                                birthCertificateNo: _newBirthCertificateNoController.text == "" ? "" : _newBirthCertificateNoController.text,
+                                                                                mobileNo: _newMobileNoController.text == "" ? "" : _newMobileNoController.text,
+                                                                                emgMobileNo: _newEmgMobileNoController == "" ? "" : _newMobileNoController.text,
+                                                                                noofFamilyMember: int.parse(_newNoOfFamilyMemController.text),
+                                                                                rentAmount: _newRentAmountController.text == "0.0" ? 0 : double.parse(_newRentAmountController.text),
+                                                                                gasBill: _newGasBillController.text == "0.0" ? 0 : double.parse(_newGasBillController.text),
+                                                                                waterBill: _newWaterBillController.text == "0.0" ? 0 : double.parse(_newWaterBillController.text),
+                                                                                utilityBill: _newUtilityController.text == "0.0" ? 0 : double.parse(_newUtilityController.text),
+                                                                                arrivalDate: tenent.arrivalDate,
+                                                                                flatId: tenent.flatId,
                                                                                 id: tenent.id,
-                                                                                tenentName: _newTenentNameController.text,
-                                                                                // floorID: tenent.floorID,
-                                                                                // floorName: tenent.floorName,
-                                                                                flatID: tenent.flatID,
-                                                                                flatName: tenent.flatName,
-                                                                                nidNo: int.parse(_newNidNoController.text),
-                                                                                passportNo: _newPassportNoController.text,
-                                                                                birthCertificateNo: int.parse(_newBirthCertificateNoController.text),
-                                                                                mobileNo: int.parse(_newMobileNoController.text),
-                                                                                emgMobileNo: int.parse(_newEmgMobileNoController.text),
-                                                                                noOfFamilyMem: int.parse(_newNoOfFamilyMemController.text),
-                                                                                rentAmount: double.parse(_newRentAmountController.text),
-                                                                                gasBill: double.parse(_newGasBillController.text),
-                                                                                waterBill: double.parse(_newWaterBillController.text),
-                                                                                serviceCharge: double.parse(_newServiceChargeController.text),
-                                                                                totalAmount: double.parse(_newRentAmountController.text) + double.parse(_newGasBillController.text) + double.parse(_newWaterBillController.text) + double.parse(_newServiceChargeController.text),
-                                                                                dateOfIn: tenent.dateOfIn);
-                                                                            await DBHelper.updateTenent(updatedTenent);
+                                                                                totalAmount: tenent.totalAmount);
+                                                                            await tenantApiService.updateTenant(
+                                                                                tenant: updatedTenant,
+                                                                                id: id);
                                                                             Get.snackbar("",
                                                                                 "",
                                                                                 messageText: const Center(
@@ -852,7 +843,7 @@ class _TenentPageState extends State<TenentPage> {
                                                                                 duration: const Duration(seconds: 2));
 
                                                                             setState(() {
-                                                                              _fetchTenentData();
+                                                                              _fetchTenantData();
 
                                                                               Navigator.pop(context);
                                                                             });
@@ -891,9 +882,9 @@ class _TenentPageState extends State<TenentPage> {
                                                   iconSize: 15,
                                                   color: Colors.white,
                                                   onPressed: () async {
-                                                    int? id = tenent.id;
-                                                    await DBHelper.deleteTenent(
-                                                        id);
+                                                    await tenantApiService
+                                                        .deleteTenant(
+                                                            tenent.id!);
                                                     Get.snackbar("", "",
                                                         messageText:
                                                             const Center(
@@ -912,7 +903,7 @@ class _TenentPageState extends State<TenentPage> {
                                                             const Duration(
                                                                 seconds: 1));
                                                     setState(() {
-                                                      _fetchTenentData();
+                                                      _fetchTenantData();
                                                     });
                                                   },
                                                   icon:
@@ -928,7 +919,7 @@ class _TenentPageState extends State<TenentPage> {
                             );
                           } else {
                             return const Center(
-                                child: Text('no tenents available.'));
+                                child: Text('no tenants available.'));
                           }
                         },
                       ),

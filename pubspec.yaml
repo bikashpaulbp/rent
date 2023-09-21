@@ -30,7 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  sqflite:
+  
   provider:
   flutter_animated_dialog:
   circle_nav_bar:
@@ -46,6 +46,9 @@ dependencies:
   path:
   bottom_nav_bar:
   google_sign_in: ^6.1.5
+  http:
+
+  
 
 dev_dependencies:
   flutter_test:

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:rent_management/classes/flat_info.dart';
+import 'package:rent_management/models/flat_model.dart';
 
 class FlatData extends ChangeNotifier {
-  List<FlatInfo> _flatList = [];
+  List<FlatModel> _flatList = [];
 
-  List<FlatInfo> get flatList => _flatList;
-  void updateFlatList(List<FlatInfo> newFlatList) {
+  List<FlatModel> get flatList => _flatList;
+  void updateFlatList(List<FlatModel> newFlatList) {
     _flatList = newFlatList;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();

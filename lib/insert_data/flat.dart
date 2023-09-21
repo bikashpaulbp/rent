@@ -1,28 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+import 'package:rent_management/models/flat_model.dart';
+import 'package:rent_management/models/floor_model.dart';
 import 'package:rent_management/screens/dashboard_page.dart';
 import 'package:rent_management/screens/flat_page.dart';
+import 'package:rent_management/services/flat_service.dart';
 
 import '../classes/flat_info.dart';
 import '../classes/floor_info.dart';
 import '../db_helper.dart';
 import '../shared_data/floor_data.dart';
 
+// ignore: must_be_immutable
 class FlatDataPage extends StatefulWidget {
-  const FlatDataPage({super.key});
+  void Function() refresh;
+  FlatDataPage({super.key, required this.refresh});
 
   @override
   State<FlatDataPage> createState() => _FlatDataPageState();
 }
 
 class _FlatDataPageState extends State<FlatDataPage> {
+  FlatApiService flatApiService = FlatApiService();
   final TextEditingController _flatNameController = TextEditingController();
   final TextEditingController _noOfMasterbedRoomController =
       TextEditingController();
   final TextEditingController _noOfBedroomController = TextEditingController();
   final TextEditingController _flatSideController = TextEditingController();
-  // final TextEditingController _rentAmountController = TextEditingController();
+
   final TextEditingController _noOfWashroomController = TextEditingController();
   final TextEditingController _flatSizeController = TextEditingController();
 
@@ -35,7 +41,7 @@ class _FlatDataPageState extends State<FlatDataPage> {
     _noOfMasterbedRoomController.dispose();
     _noOfBedroomController.dispose();
     _flatSideController.dispose();
-    // _rentAmountController.dispose();
+
     _noOfWashroomController.dispose();
     _flatSizeController.dispose();
 
@@ -79,10 +85,10 @@ class _FlatDataPageState extends State<FlatDataPage> {
                   ),
                 ),
               ),
-              const SizedBox(height: 8), 
+              const SizedBox(height: 8),
               Consumer<FloorData>(
                 builder: (context, floorData, child) {
-                  List<Floor> floorList = floorData.floorList;
+                  List<FloorModel> floorList = floorData.floorList;
 
                   return DropdownButtonFormField<int>(
                     isExpanded: true,
@@ -103,13 +109,14 @@ class _FlatDataPageState extends State<FlatDataPage> {
                         selectedFloorId = value!;
                         selectedFloorName = floorList
                             .firstWhere((floor) => floor.id == selectedFloorId)
-                            .floorName;
+                            .name;
                       });
                     },
-                    items: floorList.map<DropdownMenuItem<int>>((Floor floor) {
+                    items: floorList
+                        .map<DropdownMenuItem<int>>((FloorModel floor) {
                       return DropdownMenuItem<int>(
                         value: floor.id,
-                        child: Text(floor.floorName),
+                        child: Text(floor.name!),
                       );
                     }).toList(),
                   );
@@ -139,7 +146,22 @@ class _FlatDataPageState extends State<FlatDataPage> {
                     '*',
                     style: TextStyle(color: Colors.red),
                   ),
-                  labelText: 'No. Of Bedroom',
+                  labelText: 'No. of Bedroom',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextFormField(
+                keyboardType: TextInputType.number,
+                controller: _noOfWashroomController,
+                decoration: InputDecoration(
+                  suffix: const Text(
+                    '*',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                  labelText: 'No. of Washroom',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -155,21 +177,6 @@ class _FlatDataPageState extends State<FlatDataPage> {
                     style: TextStyle(color: Colors.red),
                   ),
                   labelText: 'Flat Side',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              TextFormField(
-                keyboardType: TextInputType.number,
-                controller: _noOfWashroomController,
-                decoration: InputDecoration(
-                  suffix: const Text(
-                    '*',
-                    style: TextStyle(color: Colors.red),
-                  ),
-                  labelText: 'No. Of Washroom',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -194,25 +201,25 @@ class _FlatDataPageState extends State<FlatDataPage> {
                     onPressed: () async {
                       if (_flatNameController.text.isNotEmpty &&
                           _noOfMasterbedRoomController.text.isNotEmpty &&
-                          _flatSideController.text.isNotEmpty &&
-                          _noOfWashroomController.text.isNotEmpty &&
                           _noOfBedroomController.text.isNotEmpty &&
-                          // _flatSizeController.text.isNotEmpty &&
+                          _noOfWashroomController.text.isNotEmpty &&
+                          _flatSideController.text.isNotEmpty &&
                           selectedFloorId != null &&
                           selectedFloorName != "") {
-                        await DBHelper.insertFlatData(FlatInfo(
+                        await flatApiService.createFlat(FlatModel(
                           floorId: selectedFloorId!,
-                          floorName: selectedFloorName!,
-                          flatName: _flatNameController.text,
+                          name: _flatNameController.text,
                           flatSide: _flatSideController.text,
                           flatSize: _flatSizeController.text.isNotEmpty
                               ? int.parse(_flatSizeController.text)
                               : 0,
-                          noOfBedroom: int.parse(_noOfBedroomController.text),
-                          noOfMasterbedRoom:
+                          masterbedRoom:
                               int.parse(_noOfMasterbedRoomController.text),
-                          noOfWashroom: int.parse(_noOfWashroomController.text),
+                          bedroom: int.parse(_noOfBedroomController.text),
+                          washroom: int.parse(_noOfWashroomController.text),
                         ));
+                        widget.refresh();
+                        Get.back();
 
                         Get.snackbar("", "",
                             messageText: const Center(
@@ -228,15 +235,14 @@ class _FlatDataPageState extends State<FlatDataPage> {
                         setState(() {
                           _flatNameController.clear();
                           _noOfMasterbedRoomController.clear();
-                          _flatSideController.clear();
-                          _noOfWashroomController.clear();
-                          _flatSizeController.clear();
                           _noOfBedroomController.clear();
-                          selectedFloorId = null;
-                          selectedFloorName = "";
-                        });
+                          _noOfWashroomController.clear();
+                          _flatSideController.clear();
 
-                        Get.to(const FlatPage());
+                          _flatSizeController.clear();
+
+                          selectedFloorId = null;
+                        });
                       } else {
                         Get.snackbar("", "",
                             messageText: const Center(
@@ -270,7 +276,7 @@ class _FlatDataPageState extends State<FlatDataPage> {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      Get.offAll(const Dashboard());
+                      Get.back();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:rent_management/classes/tenent_info.dart';
+import 'package:rent_management/models/tenant_model.dart';
 
 class TenantData extends ChangeNotifier {
-  List<TenentInfo> _tenantList = [];
+  List<TenantModel> _tenantList = [];
 
-  List<TenentInfo> get tenantList => _tenantList;
-  void updateTenantList(List<TenentInfo> newTenantList) {
+  List<TenantModel> get tenantList => _tenantList;
+  void updateTenantList(List<TenantModel> newTenantList) {
     _tenantList = newTenantList;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {

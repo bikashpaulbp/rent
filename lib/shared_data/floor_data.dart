@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-
-import '../classes/floor_info.dart';
+import 'package:rent_management/models/floor_model.dart';
 
 class FloorData extends ChangeNotifier {
-  List<Floor> _floorList = [];
+  List<FloorModel> _floorList = [];
 
-  List<Floor> get floorList => _floorList;
-  void updateFloorList(List<Floor> newFloorList) {
+  List<FloorModel> get floorList => _floorList;
+  void updateFloorList(List<FloorModel> newFloorList) {
     _floorList = newFloorList;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();

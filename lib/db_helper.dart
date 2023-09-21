@@ -1,208 +1,165 @@
-import 'package:path/path.dart';
-import 'package:rent_management/classes/deposit.dart';
-import 'package:sqflite/sqflite.dart';
+// import 'package:sqflite/sqflite.dart';
+// import 'package:moor/moor.dart';
 
-import 'classes/flat_info.dart';
-import 'classes/floor_info.dart';
-import 'classes/rent_info.dart';
-import 'classes/tenent_info.dart';
+// import 'package:sql_conn/sql_conn.dart';
 
-class DBHelper {
-  static Future<Database> initDB() async {
-    var dpPath = await getDatabasesPath();
-    String path = join(dpPath, 'rentmanagement_a.db');
-    return await openDatabase(path, version: 1, onCreate: _onCreate);
-  }
+// import 'classes/deposit.dart';
+// import 'classes/flat_info.dart';
+// import 'classes/floor_info.dart';
+// import 'classes/rent_info.dart';
+// import 'classes/tenent_info.dart';
 
-  static Future _onCreate(Database db, int version) async {
-    await db.execute('''CREATE TABLE floor (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        floorName TEXT)''');
 
-    await db.execute('''CREATE TABLE flat (
+   
+//     final conn = await SqlConn.connect(
+//       ip: "192.168.1.1",
+//       port: "1433",
+//       databaseName: "MyDatabase",
+//       username: "admin",
+//       password: "password",
+//     );
+   
 
-      id INTEGER PRIMARY KEY AUTOINCREMENT, 
-      floorId INTEGER, 
-      floorName TEXT,
-      flatName TEXT, 
-      noOfMasterbedRoom INTEGER, 
-      noOfBedroom INTEGER, 
-      flatSide TEXT,  
-      noOfWashroom INTEGER, 
-      flatSize INTEGER NULL
-      )''');
 
-    await db.execute('''CREATE TABLE rent (
+// Future<void> insertFloor(Floor floor) async {
+//   // Get the connection to the database.
+//   var conn = await DBHelper.initDB();
 
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      flatID INTEGER,
-      flatName TEXT,
-      tenentID INTEGER,
-      tenentName TEXT,
-      totalAmount DOUBLE,
-      month TEXT,
-      isPaid INTEGER      
-      )''');
+//   // Convert the floor object to a map.
+//   var data = floor.toJson();
 
-    await db.execute('''CREATE TABLE tenent (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      flatID INTEGER,
-      flatName TEXT,
-      tenentName TEXT,
-      nidNo INTEGER NULL,
-      passportNo TEXT NULL,
-      birthCertificateNo INTEGER NULL,
-      mobileNo INTEGER NULL,
-      emgMobileNo INTEGER NULL,
-      noOfFamilyMem INTEGER NULL,
-      dateOfIn TEXT,
-      rentAmount DOUBLE,
-      gasBill DOUBLE NULL,
-      waterBill DOUBLE NULL,
-      serviceCharge DOUBLE NULL,
-      totalAmount DOUBLE 
-      )''');
+//   // Insert the floor into the database.
+//   await SqlConn.writeData(
+//     conn.connectionString,
+//     query: "INSERT INTO floor (floorName) VALUES (?)",
+//     values: [data['floorName']],
+//   );
+// }
+// //floor part
+//   Future<int> insertFloorData(Floor floor) async {
+//     Database db = await DBHelper.initDB();
+//     return await db.insert('floor', floor.toJson());
+//   }
 
-    await db.execute(''' CREATE TABLE deposit(
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-  rentID INTEGER,
-   rentMonth TEXT,
-  tenantID INTEGER,
-   tenantName TEXT,
-  flatID INTEGER,
-  flatName TEXT,
-   totalAmount DOUBLE NULL,
-  depositAmount DOUBLE NULL,
-  dueAmount DOUBLE NULL,
-   date TEXT
-    )''');
-  }
+//   static Future<List<Floor>> readFloorData() async {
+//     Database db = await DBHelper.initDB();
+//     var floor = await db.query('floor', orderBy: 'id');
+//     List<Floor> floorList =
+//         floor.isNotEmpty ? floor.map((e) => Floor.fromJson(e)).toList() : [];
+//     return floorList;
+//   }
 
-//floor part
-  static Future<int> insertFloorData(Floor floor) async {
-    Database db = await DBHelper.initDB();
-    return await db.insert('floor', floor.toJson());
-  }
+//   static Future<int> updateFloor(Floor floor) async {
+//     Database db = await DBHelper.initDB();
+//     return await db.update('floor', floor.toJson(),
+//         where: 'id = ?', whereArgs: [floor.id]);
+//   }
 
-  static Future<List<Floor>> readFloorData() async {
-    Database db = await DBHelper.initDB();
-    var floor = await db.query('floor', orderBy: 'id');
-    List<Floor> floorList =
-        floor.isNotEmpty ? floor.map((e) => Floor.fromJson(e)).toList() : [];
-    return floorList;
-  }
+//   static Future<int> deleteFloor(int? id) async {
+//     Database db = await DBHelper.initDB();
+//     return await db.delete('floor', where: 'id = ?', whereArgs: [id]);
+//   }
 
-  static Future<int> updateFloor(Floor floor) async {
-    Database db = await DBHelper.initDB();
-    return await db.update('floor', floor.toJson(),
-        where: 'id = ?', whereArgs: [floor.id]);
-  }
+// //flat part
+//   static Future<int> insertFlatData(FlatInfo flat) async {
+//     Database db = await DBHelper.initDB();
+//     return await db.insert('flat', flat.toJson());
+//   }
 
-  static Future<int> deleteFloor(int? id) async {
-    Database db = await DBHelper.initDB();
-    return await db.delete('floor', where: 'id = ?', whereArgs: [id]);
-  }
+//   static Future<List<FlatInfo>> readFlatData() async {
+//     Database db = await DBHelper.initDB();
+//     var flat = await db.query('flat', orderBy: 'id');
+//     List<FlatInfo> flatList =
+//         flat.isNotEmpty ? flat.map((e) => FlatInfo.fromJson(e)).toList() : [];
+//     return flatList;
+//   }
 
-//flat part
-  static Future<int> insertFlatData(FlatInfo flat) async {
-    Database db = await DBHelper.initDB();
-    return await db.insert('flat', flat.toJson());
-  }
+//   static Future<int> updateFlat(FlatInfo flat) async {
+//     Database db = await DBHelper.initDB();
+//     return await db
+//         .update('flat', flat.toJson(), where: 'id = ?', whereArgs: [flat.id]);
+//   }
 
-  static Future<List<FlatInfo>> readFlatData() async {
-    Database db = await DBHelper.initDB();
-    var flat = await db.query('flat', orderBy: 'id');
-    List<FlatInfo> flatList =
-        flat.isNotEmpty ? flat.map((e) => FlatInfo.fromJson(e)).toList() : [];
-    return flatList;
-  }
+//   static Future<int> deleteFlat(int? id) async {
+//     Database db = await DBHelper.initDB();
+//     return await db.delete('flat', where: 'id = ?', whereArgs: [id]);
+//   }
 
-  static Future<int> updateFlat(FlatInfo flat) async {
-    Database db = await DBHelper.initDB();
-    return await db
-        .update('flat', flat.toJson(), where: 'id = ?', whereArgs: [flat.id]);
-  }
+// //tenent part
+//   static Future<int> insertTenentData(TenentInfo tenent) async {
+//     Database db = await DBHelper.initDB();
+//     return await db.insert('tenent', tenent.toJson());
+//   }
 
-  static Future<int> deleteFlat(int? id) async {
-    Database db = await DBHelper.initDB();
-    return await db.delete('flat', where: 'id = ?', whereArgs: [id]);
-  }
+//   static Future<List<TenentInfo>> readTenentData() async {
+//     Database db = await DBHelper.initDB();
+//     var tenent = await db.query('tenent', orderBy: 'id');
+//     List<TenentInfo> tenentList = tenent.isNotEmpty
+//         ? tenent.map((e) => TenentInfo.fromJson(e)).toList()
+//         : [];
+//     return tenentList;
+//   }
 
-//tenent part
-  static Future<int> insertTenentData(TenentInfo tenent) async {
-    Database db = await DBHelper.initDB();
-    return await db.insert('tenent', tenent.toJson());
-  }
+//   static Future<int> updateTenent(TenentInfo tenent) async {
+//     Database db = await DBHelper.initDB();
+//     return await db.update('tenent', tenent.toJson(),
+//         where: 'id = ?', whereArgs: [tenent.id]);
+//   }
 
-  static Future<List<TenentInfo>> readTenentData() async {
-    Database db = await DBHelper.initDB();
-    var tenent = await db.query('tenent', orderBy: 'id');
-    List<TenentInfo> tenentList = tenent.isNotEmpty
-        ? tenent.map((e) => TenentInfo.fromJson(e)).toList()
-        : [];
-    return tenentList;
-  }
+//   static Future<int> deleteTenent(int? id) async {
+//     Database db = await DBHelper.initDB();
+//     return await db.delete('tenent', where: 'id = ?', whereArgs: [id]);
+//   }
 
-  static Future<int> updateTenent(TenentInfo tenent) async {
-    Database db = await DBHelper.initDB();
-    return await db.update('tenent', tenent.toJson(),
-        where: 'id = ?', whereArgs: [tenent.id]);
-  }
+//   // rent part
 
-  static Future<int> deleteTenent(int? id) async {
-    Database db = await DBHelper.initDB();
-    return await db.delete('tenent', where: 'id = ?', whereArgs: [id]);
-  }
+//   static Future<int> insertRentData(RentInfo rent) async {
+//     Database db = await DBHelper.initDB();
+//     return await db.insert('rent', rent.toJson());
+//   }
 
-  // rent part
+//   static Future<List<RentInfo>> readRentData() async {
+//     Database db = await DBHelper.initDB();
+//     var rent = await db.query('rent', orderBy: 'id');
+//     List<RentInfo> rentList =
+//         rent.isNotEmpty ? rent.map((e) => RentInfo.fromJson(e)).toList() : [];
+//     return rentList;
+//   }
 
-  static Future<int> insertRentData(RentInfo rent) async {
-    Database db = await DBHelper.initDB();
-    return await db.insert('rent', rent.toJson());
-  }
+//   static Future<int> updateRent(RentInfo rent) async {
+//     Database db = await DBHelper.initDB();
+//     return await db
+//         .update('rent', rent.toJson(), where: 'id = ?', whereArgs: [rent.id]);
+//   }
 
-  static Future<List<RentInfo>> readRentData() async {
-    Database db = await DBHelper.initDB();
-    var rent = await db.query('rent', orderBy: 'id');
-    List<RentInfo> rentList =
-        rent.isNotEmpty ? rent.map((e) => RentInfo.fromJson(e)).toList() : [];
-    return rentList;
-  }
+//   static Future<int> deleteRent(int? id) async {
+//     Database db = await DBHelper.initDB();
+//     return await db.delete('rent', where: 'id = ?', whereArgs: [id]);
+//   }
 
-  static Future<int> updateRent(RentInfo rent) async {
-    Database db = await DBHelper.initDB();
-    return await db
-        .update('rent', rent.toJson(), where: 'id = ?', whereArgs: [rent.id]);
-  }
+//   // deposit part
+//   static Future<int> insertDepositData(Deposit deposit) async {
+//     Database db = await DBHelper.initDB();
+//     return await db.insert('deposit', deposit.toJson());
+//   }
 
-  static Future<int> deleteRent(int? id) async {
-    Database db = await DBHelper.initDB();
-    return await db.delete('rent', where: 'id = ?', whereArgs: [id]);
-  }
+//   static Future<List<Deposit>> readDepositData() async {
+//     Database db = await DBHelper.initDB();
+//     var deposit = await db.query('deposit', orderBy: 'id, flatID, tenantID');
+//     List<Deposit> depositList = deposit.isNotEmpty
+//         ? deposit.map((e) => Deposit.fromJson(e)).toList()
+//         : [];
+//     return depositList;
+//   }
 
-  // deposit part
-  static Future<int> insertDepositData(Deposit deposit) async {
-    Database db = await DBHelper.initDB();
-    return await db.insert('deposit', deposit.toJson());
-  }
+//   static Future<int> updateDeposit(Deposit deposit) async {
+//     Database db = await DBHelper.initDB();
+//     return await db.update('deposit', deposit.toJson(),
+//         where: 'id = ?', whereArgs: [deposit.id]);
+//   }
 
-  static Future<List<Deposit>> readDepositData() async {
-    Database db = await DBHelper.initDB();
-    var deposit = await db.query('deposit', orderBy: 'id, flatID, tenantID');
-    List<Deposit> depositList = deposit.isNotEmpty
-        ? deposit.map((e) => Deposit.fromJson(e)).toList()
-        : [];
-    return depositList;
-  }
-
-  static Future<int> updateDeposit(Deposit deposit) async {
-    Database db = await DBHelper.initDB();
-    return await db.update('deposit', deposit.toJson(),
-        where: 'id = ?', whereArgs: [deposit.id]);
-  }
-
-  static Future<int> deleteDeposit(int? id) async {
-    Database db = await DBHelper.initDB();
-    return await db.delete('deposit', where: 'id = ?', whereArgs: [id]);
-  }
-}
+//   static Future<int> deleteDeposit(int? id) async {
+//     Database db = await DBHelper.initDB();
+//     return await db.delete('deposit', where: 'id = ?', whereArgs: [id]);
+//   }
+// }
