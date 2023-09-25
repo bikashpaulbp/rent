@@ -106,7 +106,7 @@ class _RentDataPageState extends State<RentDataPage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton(
-                  onPressed: () async =>   {
+                  onPressed: () async => {
                     if (date != null && tenentList!.isNotEmpty)
                       {
                         for (RentModel rent in rentList)
@@ -140,18 +140,14 @@ class _RentDataPageState extends State<RentDataPage> {
                                   rentAmount: i.rentAmount,
                                   totalAmount: i.totalAmount,
                                 ),
-                            await    rentApiService
-                                    .createRent(RentModel(
-                                        flatId: tenantModel!.flatId,
-                                        tenantId: tenantModel?.id,
-                                        totalAmount: tenantModel!.totalAmount,
-                                        rentMonth: date,
-                                        isPaid: isPaid)),
-
-                                    widget.refresh(),
-                                          setState(() {
-                                            _fetchRentData();
-                                          }),
+                                await rentApiService.createRent(RentModel(
+                                    flatId: tenantModel!.flatId,
+                                    tenantId: tenantModel?.id,
+                                    totalAmount: tenantModel!.totalAmount,
+                                    rentMonth: date,
+                                    isPaid: isPaid)),
+                                await widget.refresh(),
+                                await _fetchRentData(),
                                 Get.back(),
                               },
                             Get.snackbar("", "",
