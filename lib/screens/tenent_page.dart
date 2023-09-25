@@ -3,8 +3,6 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import 'package:rent_management/classes/tenent_info.dart';
-import 'package:rent_management/db_helper.dart';
 import 'package:rent_management/insert_data/tenent.dart';
 import 'package:rent_management/models/flat_model.dart';
 import 'package:rent_management/models/tenant_model.dart';

@@ -3,13 +3,8 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:rent_management/models/flat_model.dart';
 import 'package:rent_management/models/floor_model.dart';
-import 'package:rent_management/screens/dashboard_page.dart';
-import 'package:rent_management/screens/flat_page.dart';
 import 'package:rent_management/services/flat_service.dart';
 
-import '../classes/flat_info.dart';
-import '../classes/floor_info.dart';
-import '../db_helper.dart';
 import '../shared_data/floor_data.dart';
 
 // ignore: must_be_immutable

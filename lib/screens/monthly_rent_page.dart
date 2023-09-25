@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:rent_management/classes/rent_info.dart';
 
 import 'package:rent_management/classes/tenent_info.dart';
-import 'package:rent_management/db_helper.dart';
 import 'package:rent_management/insert_data/rent.dart';
 import 'package:rent_management/insert_data/rent_manual.dart';
 import 'package:rent_management/models/rent_model.dart';

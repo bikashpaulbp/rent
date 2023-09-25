@@ -5,14 +5,10 @@ import 'package:intl/intl.dart';
 import 'package:rent_management/models/flat_model.dart';
 import 'package:rent_management/models/rent_model.dart';
 import 'package:rent_management/models/tenant_model.dart';
-import 'package:rent_management/screens/monthly_rent_page.dart';
 import 'package:rent_management/services/deposite_service.dart';
 import 'package:rent_management/services/flat_service.dart';
 import 'package:rent_management/services/rent_service.dart';
 import 'package:rent_management/services/tenant_service.dart';
-import '../classes/rent_info.dart';
-import '../classes/tenent_info.dart';
-import '../db_helper.dart';
 import '../screens/dashboard_page.dart';
 
 // ignore: must_be_immutable

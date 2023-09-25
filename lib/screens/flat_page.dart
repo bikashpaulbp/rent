@@ -5,8 +5,6 @@ import 'package:rent_management/models/floor_model.dart';
 import 'package:rent_management/services/flat_service.dart';
 import 'package:rent_management/services/floor_service.dart';
 
-import '../classes/flat_info.dart';
-import '../db_helper.dart';
 import 'package:provider/provider.dart';
 
 import '../insert_data/flat.dart';

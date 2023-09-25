@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:rent_management/classes/deposit.dart';
-import 'package:rent_management/classes/rent_info.dart';
-import 'package:rent_management/db_helper.dart';
 import 'package:rent_management/models/deposit_model.dart';
 import 'package:rent_management/models/flat_model.dart';
 import 'package:rent_management/models/rent_model.dart';
 import 'package:rent_management/models/tenant_model.dart';
 import 'package:rent_management/screens/dashboard_page.dart';
-import 'package:rent_management/screens/monthly_rent_page.dart';
 import 'package:rent_management/services/deposite_service.dart';
 import 'package:rent_management/services/rent_service.dart';
 import 'package:rent_management/shared_data/rent_data.dart';
@@ -36,31 +31,41 @@ class _DepositDataPageState extends State<DepositDataPage> {
   final TextEditingController depositAmountTextControlller =
       TextEditingController();
 
-  DateTime? date;
+  DateTime date = DateTime.now();
 
   List<DepositeModel> finalDepositList = [];
   List<TenantModel> finalTenantList = [];
   List<FlatModel> finalFlatList = [];
   List<RentModel> finalRentList = [];
-
-  double? dueAmount;
-  double totalDeposit = 0.0;
+  List<DepositeModel> totalDepositeList = [];
+  List<DepositeModel> depositList = [];
+  double? dueAmount = 0;
+  double? totalDeposit = 0;
+  // double? finalTotalDeposit = 0;
   RentApiService rentApiService = RentApiService();
   DepositeApiService depositeApiService = DepositeApiService();
 
   @override
   void initState() {
-    _fetchDeposite();
     super.initState();
+    _fetchDeposite();
   }
 
   Future<void> _fetchDeposite() async {
-    List<DepositeModel> depositList =
-        await depositeApiService.getAllDeposites();
-    finalDepositList = depositList;
-    for (var deposites in finalDepositList) {
-      totalDeposit = totalDeposit + deposites.depositeAmount!;
+    List<RentModel> rentList = await rentApiService.getAllRents();
+    // depositList = await DBHelper.readDepositData();
+    RentModel rentInfo = rentList.firstWhere((e) => e.id == widget.rentID);
+    depositList = await depositeApiService.getAllDeposites();
+
+    totalDepositeList =
+        depositList.where((e) => e.rentId == widget.rentID).toList();
+    for (var deposites in totalDepositeList) {
+      totalDeposit = totalDeposit! + deposites.depositeAmount!;
     }
+
+    dueAmount = rentInfo.totalAmount! - totalDeposit!;
+
+    dueAmountTextControlller.text = dueAmount.toString();
   }
 
   @override
@@ -97,8 +102,7 @@ class _DepositDataPageState extends State<DepositDataPage> {
 
                 totalAmountTextControlller.text =
                     rentInfo.totalAmount.toString();
-                dueAmountTextControlller.text =
-                    (rentInfo.totalAmount! - totalDeposit).toString();
+
                 return Container(
                   child: Column(
                     children: [
@@ -169,16 +173,33 @@ class _DepositDataPageState extends State<DepositDataPage> {
                                   if (depositAmountTextControlller
                                       .text.isNotEmpty)
                                     {
-                                      await depositeApiService.createDeposite( 
+                                      // depositList = await depositeApiService
+                                      //     .getAllDeposites(),
+                                      // totalDepositeList = depositList
+                                      //     .where(
+                                      //         (e) => e.rentId == widget.rentID)
+                                      //     .toList(),
+                                      // for (var deposites in totalDepositeList)
+                                      //   {
+                                      //     totalDeposit = totalDeposit! +
+                                      //         deposites.depositeAmount!,
+                                      //   },
+                                      await depositeApiService.createDeposite(
                                           DepositeModel(
                                               totalAmount: rentInfo.totalAmount,
                                               depositeAmount: double.parse(
                                                   depositAmountTextControlller
                                                       .text),
                                               dueAmount: rentInfo.totalAmount! -
-                                                  totalDeposit,
+                                                  (totalDeposit! +
+                                                      double.parse(
+                                                          depositAmountTextControlller
+                                                              .text)),
                                               depositeDate: date,
                                               rentId: rentInfo.id)),
+                                      setState(() {
+                                        _fetchDeposite();
+                                      }),
                                       Get.back(),
                                       Get.snackbar("", "",
                                           messageText: const Center(

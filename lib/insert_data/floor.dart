@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rent_management/models/floor_model.dart';
-import 'package:rent_management/screens/dashboard_page.dart';
-import 'package:rent_management/screens/floor_page.dart';
 import 'package:rent_management/services/floor_service.dart';
 
 // ignore: must_be_immutable

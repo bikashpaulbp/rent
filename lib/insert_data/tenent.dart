@@ -5,13 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:rent_management/models/flat_model.dart';
 import 'package:rent_management/models/tenant_model.dart';
-import 'package:rent_management/screens/tenent_page.dart';
 import 'package:rent_management/services/tenant_service.dart';
 import 'package:rent_management/shared_data/tenent_data.dart';
-import '../classes/flat_info.dart';
-import '../classes/tenent_info.dart';
-import '../db_helper.dart';
-import '../screens/dashboard_page.dart';
 import '../shared_data/flat_data.dart';
 
 // ignore: must_be_immutable

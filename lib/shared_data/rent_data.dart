@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rent_management/models/rent_model.dart';
 
-import '../classes/rent_info.dart';
 
 class RentData extends ChangeNotifier {
   List<RentModel> _rentList = [];

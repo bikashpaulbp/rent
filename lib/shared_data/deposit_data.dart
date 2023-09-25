@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:rent_management/classes/deposit.dart';
 import 'package:rent_management/models/deposit_model.dart';
 
 class DepositData extends ChangeNotifier {

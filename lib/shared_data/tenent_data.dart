@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:rent_management/classes/tenent_info.dart';
 import 'package:rent_management/models/tenant_model.dart';
 
 class TenantData extends ChangeNotifier {

@@ -76,17 +76,24 @@ class DepositeApiService {
 
   Future<DepositeModel> createDeposite(DepositeModel deposite) async {
     try {
-      final http.Response response = await http.post(Uri.parse(postDepositeUrl),
-          headers: <String, String>{
-            'Content-Type': 'application/json; charset=UTF-8',
-          },
-          body: jsonEncode(deposite.toJson()));
+      final http.Response response = await http.post(
+        Uri.parse(postDepositeUrl),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(deposite.toJson()),
+      );
 
       if (response.statusCode == 200) {
         return DepositeModel.fromJson(jsonDecode(response.body));
       } else {
-        print("Error: ${response.statusCode} - ${response.reasonPhrase}");
-        throw Exception('Failed to create deposite.');
+        final errorMessage = response.reasonPhrase;
+        final statusCode = response.statusCode;
+
+        print("Error: $statusCode - $errorMessage");
+        print("Response Body: ${response.body}");
+
+        throw Exception('Failed to create deposite. Status Code: $statusCode');
       }
     } catch (e) {
       print("Error: $e");

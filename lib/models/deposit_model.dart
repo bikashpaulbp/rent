@@ -31,7 +31,7 @@ class DepositeModel {
     data['totalAmount'] = this.totalAmount;
     data['depositeAmount'] = this.depositeAmount;
     data['dueAmount'] = this.dueAmount;
-    data['depositeDate'] = this.depositeDate;
+    data['depositeDate'] = this.depositeDate?.toIso8601String();
     data['rentId'] = this.rentId;
     return data;
   }

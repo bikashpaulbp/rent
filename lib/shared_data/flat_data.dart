@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:rent_management/classes/flat_info.dart';
 import 'package:rent_management/models/flat_model.dart';
 
 class FlatData extends ChangeNotifier {

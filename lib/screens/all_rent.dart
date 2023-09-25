@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:rent_management/classes/deposit.dart';
-import 'package:rent_management/classes/rent_info.dart';
 
-import 'package:rent_management/classes/tenent_info.dart';
-import 'package:rent_management/db_helper.dart';
 import 'package:rent_management/insert_data/deposit_form.dart';
 import 'package:rent_management/models/deposit_model.dart';
 import 'package:rent_management/models/flat_model.dart';
@@ -298,11 +294,11 @@ class _AllRentState extends State<AllRent> {
                                                                                             onPressed: () async {
                                                                                               isPaid = true;
                                                                                               RentModel updatedRent = RentModel(id: rent.id, rentMonth: rent.rentMonth, totalAmount: rent.totalAmount, isPaid: isPaid, flatId: rent.flatId, tenantId: rent.tenantId);
-                                                                                              DepositeModel deposit = DepositeModel(rentId: rent.id!, totalAmount: rent.totalAmount, depositeAmount: rent.totalAmount, dueAmount: 0.0, depositeDate: dateofPayment);
+                                                                                              DepositeModel deposit = DepositeModel(rentId: rent.id, totalAmount: rent.totalAmount, depositeAmount: rent.totalAmount, dueAmount: 0.0, depositeDate: dateofPayment);
                                                                                               Navigator.of(context).pop();
 
                                                                                               await rentApiService.updateRent(id: rent.id!, rent: updatedRent);
-                                                                                              // await depositeApiService.createDeposite(deposit);
+                                                                                              await depositeApiService.createDeposite(deposit);
                                                                                               Get.snackbar("", "",
                                                                                                   messageText: Center(
                                                                                                       child: const Text(

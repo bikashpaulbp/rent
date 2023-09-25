@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:provider/provider.dart';
-import 'package:rent_management/models/rent_model.dart';
-import 'package:rent_management/screens/deposit_page.dart';
 import 'package:rent_management/services/rent_service.dart';
 import 'package:rent_management/shared_data/rent_data.dart';
 
-import '../classes/rent_info.dart';
-import '../db_helper.dart';
 import '../shared_data/flat_data.dart';
 import '../shared_data/floor_data.dart';
 import '../shared_data/tenent_data.dart';
