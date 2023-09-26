@@ -41,7 +41,10 @@ class _DepositDataPageState extends State<DepositDataPage> {
   List<DepositeModel> depositList = [];
   double? dueAmount = 0;
   double? totalDeposit = 0;
+  double dueAmountForIsPaid = 0;
+  bool isDueAmount = false;
   // double? finalTotalDeposit = 0;
+  RentModel? updatedRent;
   RentApiService rentApiService = RentApiService();
   DepositeApiService depositeApiService = DepositeApiService();
 
@@ -197,6 +200,26 @@ class _DepositDataPageState extends State<DepositDataPage> {
                                                               .text)),
                                               depositeDate: date,
                                               rentId: rentInfo.id)),
+
+                                      dueAmountForIsPaid = rentInfo
+                                              .totalAmount! -
+                                          (totalDeposit! +
+                                              double.parse(
+                                                  depositAmountTextControlller
+                                                      .text)),
+                                      isDueAmount = dueAmountForIsPaid == 0
+                                          ? true
+                                          : false,
+                                      updatedRent = RentModel(
+                                          id: rentInfo.id,
+                                          flatId: rentInfo.flatId,
+                                          tenantId: rentInfo.tenantId,
+                                          totalAmount: rentInfo.totalAmount,
+                                          rentMonth: rentInfo.rentMonth,
+                                          isPaid: isDueAmount),
+                                      await rentApiService.updateRent(
+                                          id: widget.rentID,
+                                          rent: updatedRent!),
                                       setState(() {
                                         _fetchDeposite();
                                       }),
