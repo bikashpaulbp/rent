@@ -3,6 +3,10 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:provider/provider.dart';
 import 'package:rent_management/screens/deposit_page.dart';
+import 'package:rent_management/screens/flat_page.dart';
+import 'package:rent_management/screens/floor_page.dart';
+import 'package:rent_management/screens/monthly_rent_page.dart';
+import 'package:rent_management/screens/tenent_page.dart';
 import 'package:rent_management/services/rent_service.dart';
 import 'package:rent_management/shared_data/rent_data.dart';
 
@@ -56,27 +60,32 @@ class _CountPageState extends State<CountPage> {
                         flex: 1,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Card(
-                            shape: BeveledRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            elevation: 10,
-                            child: Container(
-                              child: Center(
-                                child: Consumer<FloorData>(
-                                    builder: (context, floorData, _) {
-                                  return Text(
-                                    "Total Floor \n${floorData.floorListNew()}",
-                                    style: const TextStyle(
-                                        fontSize: 24, color: Colors.white),
-                                    textAlign: TextAlign.center,
-                                  );
-                                }),
-                              ),
-                              height: 150,
-                              decoration: BoxDecoration(
-                                  color:
-                                      const Color.fromARGB(255, 19, 255, 212),
+                          child: InkWell(
+                            onTap: () {
+                              Get.to(FloorPage());
+                            },
+                            child: Card(
+                              shape: BeveledRectangleBorder(
                                   borderRadius: BorderRadius.circular(10)),
+                              elevation: 10,
+                              child: Container(
+                                child: Center(
+                                  child: Consumer<FloorData>(
+                                      builder: (context, floorData, _) {
+                                    return Text(
+                                      "Total Floor \n${floorData.floorListNew()}",
+                                      style: const TextStyle(
+                                          fontSize: 24, color: Colors.white),
+                                      textAlign: TextAlign.center,
+                                    );
+                                  }),
+                                ),
+                                height: 150,
+                                decoration: BoxDecoration(
+                                    color:
+                                        const Color.fromARGB(255, 19, 255, 212),
+                                    borderRadius: BorderRadius.circular(10)),
+                              ),
                             ),
                           ),
                         ),
@@ -85,26 +94,32 @@ class _CountPageState extends State<CountPage> {
                         flex: 1,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Card(
-                            shape: BeveledRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            elevation: 10,
-                            child: Container(
-                              child: Center(
-                                child: Consumer<FlatData>(
-                                    builder: (context, flatData, _) {
-                                  return Text(
-                                    "Total Flat \n${flatData.flatListNew()}",
-                                    style: const TextStyle(
-                                        fontSize: 24, color: Colors.white),
-                                    textAlign: TextAlign.center,
-                                  );
-                                }),
-                              ),
-                              height: 150,
-                              decoration: BoxDecoration(
-                                  color: const Color.fromARGB(255, 81, 245, 86),
+                          child: InkWell(
+                            onTap: () {
+                              Get.to(FlatPage());
+                            },
+                            child: Card(
+                              shape: BeveledRectangleBorder(
                                   borderRadius: BorderRadius.circular(10)),
+                              elevation: 10,
+                              child: Container(
+                                child: Center(
+                                  child: Consumer<FlatData>(
+                                      builder: (context, flatData, _) {
+                                    return Text(
+                                      "Total Flat \n${flatData.flatListNew()}",
+                                      style: const TextStyle(
+                                          fontSize: 24, color: Colors.white),
+                                      textAlign: TextAlign.center,
+                                    );
+                                  }),
+                                ),
+                                height: 150,
+                                decoration: BoxDecoration(
+                                    color:
+                                        const Color.fromARGB(255, 81, 245, 86),
+                                    borderRadius: BorderRadius.circular(10)),
+                              ),
                             ),
                           ),
                         ),
@@ -120,26 +135,31 @@ class _CountPageState extends State<CountPage> {
                         flex: 1,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Card(
-                            shape: BeveledRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            elevation: 10,
-                            child: Container(
-                              child: Center(
-                                child: Consumer<TenantData>(
-                                    builder: (context, tenantData, _) {
-                                  return Text(
-                                    "Total Tenant \n${tenantData.tenantListNew()}",
-                                    style: const TextStyle(
-                                        fontSize: 24, color: Colors.white),
-                                    textAlign: TextAlign.center,
-                                  );
-                                }),
-                              ),
-                              height: 150,
-                              decoration: BoxDecoration(
-                                  color: Colors.blue,
+                          child: InkWell(
+                            onTap: () {
+                              Get.to(TenentPage());
+                            },
+                            child: Card(
+                              shape: BeveledRectangleBorder(
                                   borderRadius: BorderRadius.circular(10)),
+                              elevation: 10,
+                              child: Container(
+                                child: Center(
+                                  child: Consumer<TenantData>(
+                                      builder: (context, tenantData, _) {
+                                    return Text(
+                                      "Total Tenant \n${tenantData.tenantListNew()}",
+                                      style: const TextStyle(
+                                          fontSize: 24, color: Colors.white),
+                                      textAlign: TextAlign.center,
+                                    );
+                                  }),
+                                ),
+                                height: 150,
+                                decoration: BoxDecoration(
+                                    color: Colors.blue,
+                                    borderRadius: BorderRadius.circular(10)),
+                              ),
                             ),
                           ),
                         ),
@@ -148,31 +168,36 @@ class _CountPageState extends State<CountPage> {
                         flex: 1,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Card(
-                            shape: BeveledRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            elevation: 10,
-                            child: Container(
-                              child: Center(
-                                child: Consumer<RentData>(
-                                    builder: (context, rentData, _) {
-                                  int unpaidCount = rentData.rentList
-                                      .where((rent) => rent.isPaid == false)
-                                      .length;
-
-                                  return Text(
-                                    "Total Unpaid \n${unpaidCount}",
-                                    style: const TextStyle(
-                                        fontSize: 24, color: Colors.white),
-                                    textAlign: TextAlign.center,
-                                  );
-                                }),
-                              ),
-                              height: 150,
-                              decoration: BoxDecoration(
-                                  color:
-                                      const Color.fromARGB(255, 255, 202, 56),
+                          child: InkWell(
+                            onTap: () {
+                              Get.to(MonthlyRent());
+                            },
+                            child: Card(
+                              shape: BeveledRectangleBorder(
                                   borderRadius: BorderRadius.circular(10)),
+                              elevation: 10,
+                              child: Container(
+                                child: Center(
+                                  child: Consumer<RentData>(
+                                      builder: (context, rentData, _) {
+                                    int unpaidCount = rentData.rentList
+                                        .where((rent) => rent.isPaid == false)
+                                        .length;
+
+                                    return Text(
+                                      "Total Unpaid \n${unpaidCount}",
+                                      style: const TextStyle(
+                                          fontSize: 24, color: Colors.white),
+                                      textAlign: TextAlign.center,
+                                    );
+                                  }),
+                                ),
+                                height: 150,
+                                decoration: BoxDecoration(
+                                    color:
+                                        const Color.fromARGB(255, 255, 202, 56),
+                                    borderRadius: BorderRadius.circular(10)),
+                              ),
                             ),
                           ),
                         ),

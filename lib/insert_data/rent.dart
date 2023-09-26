@@ -150,10 +150,10 @@ class _RentDataPageState extends State<RentDataPage> {
                                     totalAmount: tenantModel!.totalAmount,
                                     rentMonth: date,
                                     isPaid: isPaid)),
-                                await widget.refresh(),
-                                await _fetchRentData(),
-                                Get.offAll(Dashboard()),
                               },
+                            await widget.refresh(),
+                            await _fetchRentData(),
+                            Get.offAll(Dashboard()),
                             Get.snackbar("", "",
                                 messageText: const Center(
                                     child: Text(
