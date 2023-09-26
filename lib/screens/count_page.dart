@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:provider/provider.dart';
+import 'package:rent_management/screens/deposit_page.dart';
 import 'package:rent_management/services/rent_service.dart';
 import 'package:rent_management/shared_data/rent_data.dart';
 
@@ -201,7 +204,7 @@ class _CountPageState extends State<CountPage> {
                               child: IconButton(
                                 iconSize: 40,
                                 onPressed: () {
-                                  // Get.to(DepositPage());
+                                  Get.to(DepositPage());
                                 },
                                 icon: Icon(Icons.history),
                               ),

@@ -171,7 +171,7 @@ class _TenentPageState extends State<TenentPage> {
                                                             255, 0, 0, 0),
                                                         fontSize: 16,
                                                         fontWeight:
-                                                            FontWeight.bold,
+                                                            FontWeight.bold, 
                                                       ),
                                                     ),
                                                   ),

@@ -28,11 +28,11 @@ class _RentDataPageState extends State<RentDataPage> {
   List<FlatModel> flatList = [];
   DateTime dateTime = DateTime(2023, 1, 1);
   final format = DateFormat("dd MMM y");
-  int? rentMonth;
-  int? rentYear;
-  DateTime rentDate = DateTime(1990, 1, 1);
+  DateTime? rentMonth;
+  DateTime? rentYear;
+  DateTime? rentDate;
   DateTime? date;
-
+  String? formattedDate;
   bool isPaid = false;
 
   RentApiService rentApiService = RentApiService();
@@ -111,13 +111,17 @@ class _RentDataPageState extends State<RentDataPage> {
                       {
                         for (RentModel rent in rentList)
                           {
-                            rentDate = DateTime.parse(
-                                DateFormat('dd MMM y').format(rent.rentMonth!)),
-                            rentMonth = rentDate.month,
-                            rentYear = rentDate.year,
+                            // rentDate = DateFormat('dd MMM y')
+                            //     .format(rent.rentMonth!) as DateTime?,
+                            formattedDate =
+                                DateFormat('dd MMM y').format(rent.rentMonth!),
+                            rentMonth =
+                                DateFormat('dd MMM y').parse(formattedDate!),
+                            rentYear =
+                                DateFormat('dd MMM y').parse(formattedDate!),
                           },
-                        if (rentMonth == dateTime.month &&
-                            rentYear == dateTime.year)
+                        if (rentMonth!.month == dateTime.month &&
+                            rentYear!.year == dateTime.year)
                           {
                             Get.snackbar("", "",
                                 messageText: const Center(
@@ -148,7 +152,7 @@ class _RentDataPageState extends State<RentDataPage> {
                                     isPaid: isPaid)),
                                 await widget.refresh(),
                                 await _fetchRentData(),
-                                Get.back(),
+                                Get.offAll(Dashboard()),
                               },
                             Get.snackbar("", "",
                                 messageText: const Center(
