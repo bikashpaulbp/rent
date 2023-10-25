@@ -214,7 +214,7 @@ class _LoginAndRegisterScreenState extends State<LoginAndRegisterScreen> {
                         });
                       }
 
-                      print(loggedInUser.email);
+                      print(loggedInUser.password);
                       print('get it');
                     } catch (e) {
                       if (userApiService.isLoggedIn == false) {
