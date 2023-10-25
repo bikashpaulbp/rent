@@ -59,10 +59,10 @@ class _FloorPageState extends State<FloorPage> {
           color: const Color.fromARGB(255, 255, 255, 255),
         ),
       ),
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 229, 115, 115),
-        title: const Center(child: Text('Floor List')),
-      ),
+      // appBar: AppBar(
+      //   backgroundColor: const Color.fromARGB(255, 229, 115, 115),
+      //   title: const Center(child: Text('Floor List')),
+      // ),
       body: Padding(
         padding: const EdgeInsets.all(5.0),
         child: Container(

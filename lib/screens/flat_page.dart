@@ -71,10 +71,10 @@ class _FlatPageState extends State<FlatPage> {
           color: const Color.fromARGB(255, 255, 255, 255),
         ),
       ),
-      appBar: AppBar(
-        backgroundColor: Colors.blue.shade300,
-        title: const Center(child: Text('Flat List')),
-      ),
+      // appBar: AppBar(
+      //   backgroundColor: Colors.blue.shade300,
+      //   title: const Center(child: Text('Flat List')),
+      // ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Container(

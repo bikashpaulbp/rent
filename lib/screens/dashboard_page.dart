@@ -3,6 +3,7 @@ import 'package:bottom_nav_bar/bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:rent_management/screens/count_page.dart';
 import 'package:rent_management/screens/flat_page.dart';
+import 'package:rent_management/screens/login_screen.dart';
 import 'package:rent_management/screens/tenent_page.dart';
 
 import 'floor_page.dart';
@@ -17,13 +18,53 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   int _currentIndex = 0;
+  AuthStateManager authStateManager = AuthStateManager();
   // var tapColor = const Color.fromARGB(255, 121, 121, 121);
   // var tapIconColor = const Color.fromARGB(255, 255, 255, 255);
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  void _openDrawer() {
+    _scaffoldKey.currentState!.openDrawer();
+  }
+
+  void _closeDrawer() {
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Rent Managemet"),
+        backgroundColor: Color.fromARGB(255, 0, 179, 206),
+      ),
+      key: _scaffoldKey,
+
       body: Container(
           height: MediaQuery.sizeOf(context).height * 1.0, child: _body()),
+      drawer: Drawer(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Text('This is the Drawer'),
+              ElevatedButton(
+                onPressed: () {
+                  authStateManager.removeLoggedInUser().then((_) {
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: (context) => ChooseScreen(),
+                    ));
+                  });
+                },
+                child: const Text('Log Out'),
+              ),
+            ],
+          ),
+        ),
+      ),
+      // Disable opening the drawer with a swipe gesture.
+      drawerEnableOpenDragGesture: false,
+
       bottomNavigationBar: _bottomNavBar(),
     );
   }

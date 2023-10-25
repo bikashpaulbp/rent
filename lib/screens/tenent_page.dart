@@ -76,10 +76,10 @@ class _TenentPageState extends State<TenentPage> {
           color: const Color.fromARGB(255, 255, 255, 255),
         ),
       ),
-      appBar: AppBar(
-        backgroundColor: Colors.green.shade300,
-        title: const Center(child: Text('Tenant List')),
-      ),
+      // appBar: AppBar(
+      //   backgroundColor: Colors.green.shade300,
+      //   title: const Center(child: Text('Tenant List')),
+      // ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Container(

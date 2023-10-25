@@ -43,10 +43,10 @@ class _CountPageState extends State<CountPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 94, 91, 255),
-        title: const Center(child: Text('Dashboard')),
-      ),
+      // appBar: AppBar(
+      //   backgroundColor: const Color.fromARGB(255, 94, 91, 255),
+      //   title: const Center(child: Text('Dashboard')),
+      // ),
       body: Container(
         child: Column(
           children: [

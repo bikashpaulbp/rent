@@ -7,7 +7,7 @@ import 'dart:convert';
 import 'package:rent_management/models/floor_model.dart';
 
 class FloorApiService {
-  final getFloorsUrl =
+  final getFloorsUrl = 
       "http://103.197.204.163/RentMgtAPI/api/Floor/GetAllFloor";
   final postFloorUrl =
       "http://103.197.204.163/RentMgtAPI/api/Floor/CreateFloor";
