@@ -1,6 +1,7 @@
 import 'package:bottom_nav_bar/bottom_nav_bar.dart';
 
 import 'package:flutter/material.dart';
+import 'package:rent_management/models/user_model.dart';
 import 'package:rent_management/screens/count_page.dart';
 import 'package:rent_management/screens/flat_page.dart';
 import 'package:rent_management/screens/login_screen.dart';
@@ -21,6 +22,7 @@ class _DashboardState extends State<Dashboard> {
   String email = "";
   int _currentIndex = 0;
   AuthStateManager authStateManager = AuthStateManager();
+  UserModel? loggedInUser = UserModel();
   // var tapColor = const Color.fromARGB(255, 121, 121, 121);
   // var tapIconColor = const Color.fromARGB(255, 255, 255, 255);
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -35,8 +37,13 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   void initState() {
-    // TODO: implement initState
+    fetchLoggedInUser();
+
     super.initState();
+  }
+
+  Future<void> fetchLoggedInUser() async {
+    loggedInUser = await authStateManager.getLoggedInUser();
   }
 
   @override
@@ -47,42 +54,111 @@ class _DashboardState extends State<Dashboard> {
         backgroundColor: Color.fromARGB(255, 0, 179, 206),
       ),
       key: _scaffoldKey,
-
-      body: Container(
-          height: MediaQuery.sizeOf(context).height * 1.0, child: _body()),
+      body: SizedBox.expand(
+        child: Container(
+            height: MediaQuery.sizeOf(context).height * 1, child: _body()),
+      ),
       drawer: Drawer(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              SizedBox(
-                height: 50,
-              ),
-              Container(
-                height: 150,
-                decoration: BoxDecoration(color: Colors.amber),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            SizedBox(
+              height: 52,
+            ),
+            Container(
+              width: MediaQuery.sizeOf(context).width * 1,
+              height: 110,
+              decoration:
+                  BoxDecoration(color: Color.fromARGB(255, 218, 218, 218)),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
-                    children: [Text("")]),
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Center(
+                        child: Text(
+                          "Hi! ${loggedInUser!.name}",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              color: Color.fromARGB(255, 152, 152, 152)),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Center(
+                            child: Text(
+                          "${loggedInUser!.email}",
+                          style: TextStyle(
+                              color: Color.fromARGB(255, 152, 152, 152)),
+                        )),
+                      )
+                    ]),
               ),
-              const Text('This is the Drawer'),
-              ElevatedButton(
-                onPressed: () {
-                  authStateManager.removeLoggedInUser().then((_) {
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (context) => ChooseScreen(),
-                    ));
-                  });
-                },
-                child: const Text('Log Out'),
-              ),
-            ],
-          ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: InkWell(
+                  onTap: () {
+                    _closeDrawer();
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(children: [
+                      Icon(Icons.apartment),
+                      SizedBox(
+                        width: 30,
+                      ),
+                      Text("Add Building")
+                    ]),
+                  )),
+            ),
+            Spacer(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "You are done!",
+                    style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        color: Color.fromARGB(255, 152, 152, 152)),
+                  ),
+                ),
+                Spacer(),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(
+                            Color.fromARGB(255, 90, 215, 232))),
+                    onPressed: () {
+                      authStateManager.removeLoggedInUser().then((_) {
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => ChooseScreen(),
+                        ));
+                      });
+                    },
+                    child: Row(
+                      children: [
+                        Icon(Icons.logout),
+                        SizedBox(width: 8),
+                        Text('Log Out'),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
-      // Disable opening the drawer with a swipe gesture.
       drawerEnableOpenDragGesture: false,
-
       bottomNavigationBar: _bottomNavBar(),
     );
   }

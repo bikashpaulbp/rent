@@ -39,10 +39,9 @@ class _TenentPageState extends State<TenentPage> {
   final format = DateFormat('dd MMM y');
   @override
   void initState() {
-     _fetchTenantData();
+    _fetchTenantData();
     setState(() {});
     super.initState();
-   
   }
 
   void refresh() {
@@ -67,6 +66,16 @@ class _TenentPageState extends State<TenentPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        iconTheme: IconThemeData(color: const Color.fromARGB(255, 49, 49, 49)),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: Center(
+            child: Text(
+          "Tenants",
+          style: TextStyle(color: Colors.black),
+        )),
+      ),
       floatingActionButton: CircleAvatar(
         backgroundColor: const Color.fromARGB(255, 66, 129, 247),
         child: IconButton(
@@ -90,14 +99,14 @@ class _TenentPageState extends State<TenentPage> {
               children: [
                 Column(
                   children: [
-                    const Text(
-                      'Tenants',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Color.fromARGB(255, 78, 78, 78),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    // const Text(
+                    //   'Tenants',
+                    //   style: TextStyle(
+                    //     fontSize: 16,
+                    //     color: Color.fromARGB(255, 78, 78, 78),
+                    //     fontWeight: FontWeight.bold,
+                    //   ),
+                    // ),
                     const SizedBox(height: 10),
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.72,

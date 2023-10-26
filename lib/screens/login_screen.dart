@@ -111,8 +111,8 @@ class _LoginAndRegisterScreenState extends State<LoginAndRegisterScreen> {
 
   @override
   void initState() {
-    super.initState();
     getAllUser();
+    super.initState();
   }
 
   Future<void> getAllUser() async {
@@ -210,6 +210,7 @@ class _LoginAndRegisterScreenState extends State<LoginAndRegisterScreen> {
                         await authStateManager
                             .saveLoggedInUser(loggedInUser)
                             .then((_) {
+                          print(loggedInUser.name);
                           Navigator.of(context)
                               .pushReplacement(MaterialPageRoute(
                             builder: (context) => Dashboard(),
@@ -228,32 +229,6 @@ class _LoginAndRegisterScreenState extends State<LoginAndRegisterScreen> {
                       showLoading = false;
                     });
                   }
-                  // if (!loginScreenVisible) {
-                  //   String? checkEmail;
-                  //   try {
-                  //     checkEmail =
-                  //         userList.firstWhere((e) => e.email == email).email;
-                  //   } catch (e) {}
-                  //   if (checkEmail == null || checkEmail.isEmpty) {
-                  //     await userApiService.createUser(UserModel(
-                  //       email: email,
-                  //       password: password,
-                  //       mobileNo: "",
-                  //       name: "",
-                  //     ));
-                  //     ScaffoldMessenger.of(context).showSnackBar(
-                  //       const SnackBar(
-                  //           content: Text('User registered successfully')),
-                  //     );
-                  //   } else {
-                  //     ScaffoldMessenger.of(context).showSnackBar(
-                  //       const SnackBar(content: Text('User already exists')),
-                  //     );
-                  //   }
-                  //   setState(() {
-                  //     showLoading = false;
-                  //   });
-                  // }
                 },
           padding: EdgeInsets.symmetric(vertical: 13),
           minWidth: double.infinity,
@@ -293,8 +268,8 @@ class _SignUpState extends State<SignUp> {
 
   @override
   void initState() {
-    super.initState();
     getAllUser();
+    super.initState();
   }
 
   Future<void> getAllUser() async {

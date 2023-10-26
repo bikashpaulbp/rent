@@ -34,9 +34,8 @@ class _FlatPageState extends State<FlatPage> {
 
   @override
   void initState() {
-     _fetchFlatData();
+    _fetchFlatData();
     super.initState();
-   
   }
 
   void refresh() {
@@ -60,6 +59,16 @@ class _FlatPageState extends State<FlatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        iconTheme: IconThemeData(color: const Color.fromARGB(255, 49, 49, 49)),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: Center(
+            child: Text(
+          "Flats",
+          style: TextStyle(color: Colors.black),
+        )),
+      ),
       floatingActionButton: CircleAvatar(
         backgroundColor: const Color.fromARGB(255, 66, 129, 247),
         child: IconButton(
@@ -86,14 +95,14 @@ class _FlatPageState extends State<FlatPage> {
               children: [
                 Column(
                   children: [
-                    const Text(
-                      'Flats',
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Color.fromARGB(255, 78, 78, 78),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    // const Text(
+                    //   'Flats',
+                    //   style: TextStyle(
+                    //     fontSize: 20,
+                    //     color: Color.fromARGB(255, 78, 78, 78),
+                    //     fontWeight: FontWeight.bold,
+                    //   ),
+                    // ),
                     Padding(
                       padding: const EdgeInsets.all(1.0),
                       child: SizedBox(
