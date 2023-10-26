@@ -34,8 +34,9 @@ class _FlatPageState extends State<FlatPage> {
 
   @override
   void initState() {
+     _fetchFlatData();
     super.initState();
-    _fetchFlatData();
+   
   }
 
   void refresh() {

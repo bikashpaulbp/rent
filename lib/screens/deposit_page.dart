@@ -33,8 +33,9 @@ class _DepositPageState extends State<DepositPage> {
 
   @override
   void initState() {
+     _fetchData();
     super.initState();
-    _fetchData();
+   
   }
 
   Future _fetchData() async {

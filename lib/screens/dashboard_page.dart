@@ -17,6 +17,8 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  String name = "";
+  String email = "";
   int _currentIndex = 0;
   AuthStateManager authStateManager = AuthStateManager();
   // var tapColor = const Color.fromARGB(255, 121, 121, 121);
@@ -29,6 +31,12 @@ class _DashboardState extends State<Dashboard> {
 
   void _closeDrawer() {
     Navigator.of(context).pop();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
   }
 
   @override
@@ -45,8 +53,18 @@ class _DashboardState extends State<Dashboard> {
       drawer: Drawer(
         child: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
+              SizedBox(
+                height: 50,
+              ),
+              Container(
+                height: 150,
+                decoration: BoxDecoration(color: Colors.amber),
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [Text("")]),
+              ),
               const Text('This is the Drawer'),
               ElevatedButton(
                 onPressed: () {

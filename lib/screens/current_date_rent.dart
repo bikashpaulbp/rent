@@ -62,8 +62,9 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
 
   @override
   void initState() {
+     _fetchRentData();
     super.initState();
-    _fetchRentData();
+   
   }
 
   void refresh() {

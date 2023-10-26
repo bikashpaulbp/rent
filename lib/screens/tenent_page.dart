@@ -39,9 +39,10 @@ class _TenentPageState extends State<TenentPage> {
   final format = DateFormat('dd MMM y');
   @override
   void initState() {
-    super.initState();
-    _fetchTenantData();
+     _fetchTenantData();
     setState(() {});
+    super.initState();
+   
   }
 
   void refresh() {
@@ -171,7 +172,7 @@ class _TenentPageState extends State<TenentPage> {
                                                             255, 0, 0, 0),
                                                         fontSize: 16,
                                                         fontWeight:
-                                                            FontWeight.bold, 
+                                                            FontWeight.bold,
                                                       ),
                                                     ),
                                                   ),

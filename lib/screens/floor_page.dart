@@ -21,10 +21,11 @@ class _FloorPageState extends State<FloorPage> {
 
   @override
   void initState() {
-    super.initState();
-    setState(() {
+     setState(() {
       _fetchFloorData(); 
     });
+    super.initState();
+   
   }
 
   void refresh() {

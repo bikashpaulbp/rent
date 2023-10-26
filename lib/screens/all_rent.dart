@@ -52,8 +52,9 @@ class _AllRentState extends State<AllRent> {
 
   @override
   void initState() {
+      _fetchRentData();
     super.initState();
-    _fetchRentData();
+  
   }
 
   void refresh() {
