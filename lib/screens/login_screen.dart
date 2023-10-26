@@ -64,20 +64,11 @@ class ChooseScreen extends StatefulWidget {
 }
 
 class _ChooseScreenState extends State<ChooseScreen> {
-  Future<void> checkInternetConnection() async {
-    bool isConnected = await DataConnectionChecker().hasConnection;
-    if (!isConnected) {
-      ScaffoldMessenger.of(context as BuildContext)
-          .showSnackBar(SnackBar(content: Text("No internet connection")));
-    }
-  }
-
   AuthStateManager authStateManager = AuthStateManager();
   bool isLoggedIn = false;
   @override
   void initState() {
     super.initState();
-    checkInternetConnection();
   }
 
   @override
@@ -120,8 +111,8 @@ class _LoginAndRegisterScreenState extends State<LoginAndRegisterScreen> {
 
   @override
   void initState() {
-    getAllUser();
     super.initState();
+    getAllUser();
   }
 
   Future<void> getAllUser() async {
@@ -133,17 +124,30 @@ class _LoginAndRegisterScreenState extends State<LoginAndRegisterScreen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(loginScreenVisible ? 'Login' : 'Signup'),
+        title: Text('Login'),
         backgroundColor: Color.fromARGB(255, 0, 179, 206),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 50, vertical: 200),
+        padding: EdgeInsets.symmetric(horizontal: 50, vertical: 100),
         child: Column(
           children: [
             inputField('email'),
             inputField('password'),
             !loginScreenVisible ? SizedBox() : forgotPassword(),
             loginRegisterButton(context),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text("New user?"),
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (context) => SignUp(),
+                      ));
+                    },
+                    child: Text("Sign Up"))
+              ],
+            ),
           ],
         ),
       ),
@@ -187,7 +191,7 @@ class _LoginAndRegisterScreenState extends State<LoginAndRegisterScreen> {
         ));
   }
 
-  /// Login and Register Button
+  /// Login  Button
   Widget loginRegisterButton(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(top: 31, bottom: 21),
@@ -199,7 +203,6 @@ class _LoginAndRegisterScreenState extends State<LoginAndRegisterScreen> {
                   showLoading = true;
                   if (loginScreenVisible) {
                     try {
-                      print('get it now');
                       UserModel loggedInUser = await userApiService.loginUser(
                           email: email, password: password);
 
@@ -214,8 +217,7 @@ class _LoginAndRegisterScreenState extends State<LoginAndRegisterScreen> {
                         });
                       }
 
-                      print(loggedInUser.password);
-                      print('get it');
+                      print(loggedInUser.email);
                     } catch (e) {
                       if (userApiService.isLoggedIn == false) {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -226,40 +228,36 @@ class _LoginAndRegisterScreenState extends State<LoginAndRegisterScreen> {
                       showLoading = false;
                     });
                   }
-                  if (!loginScreenVisible) {
-                    String? checkEmail;
-                    try {
-                      checkEmail =
-                          userList.firstWhere((e) => e.email == email).email;
-                    } catch (e) {}
-                    if (checkEmail == null || checkEmail.isEmpty) {
-                      await userApiService.createUser(UserModel(
-                          email: email,
-                          password: password,
-                          isActive: true,
-                          isLoggedIn: true,
-                          isAdmin: true,
-                          isRegularUser: false,
-                          mobileNo: "",
-                          name: "",
-                          propertyInfoId: 5));
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('User registered successfully')),
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('User already exists')),
-                      );
-                    }
-                    setState(() {
-                      showLoading = false;
-                    });
-                  }
+                  // if (!loginScreenVisible) {
+                  //   String? checkEmail;
+                  //   try {
+                  //     checkEmail =
+                  //         userList.firstWhere((e) => e.email == email).email;
+                  //   } catch (e) {}
+                  //   if (checkEmail == null || checkEmail.isEmpty) {
+                  //     await userApiService.createUser(UserModel(
+                  //       email: email,
+                  //       password: password,
+                  //       mobileNo: "",
+                  //       name: "",
+                  //     ));
+                  //     ScaffoldMessenger.of(context).showSnackBar(
+                  //       const SnackBar(
+                  //           content: Text('User registered successfully')),
+                  //     );
+                  //   } else {
+                  //     ScaffoldMessenger.of(context).showSnackBar(
+                  //       const SnackBar(content: Text('User already exists')),
+                  //     );
+                  //   }
+                  //   setState(() {
+                  //     showLoading = false;
+                  //   });
+                  // }
                 },
           padding: EdgeInsets.symmetric(vertical: 13),
           minWidth: double.infinity,
-          color: const Color.fromARGB(255, 139, 139, 139),
+          color: Color.fromARGB(255, 11, 172, 197),
           disabledColor: Colors.grey.shade300,
           textColor: Colors.white,
           child: showLoading
@@ -271,6 +269,219 @@ class _LoginAndRegisterScreenState extends State<LoginAndRegisterScreen> {
                   ),
                 )
               : Text('Login')),
+    );
+  }
+}
+
+class SignUp extends StatefulWidget {
+  const SignUp({super.key});
+
+  @override
+  State<SignUp> createState() => _SignUpState();
+}
+
+class _SignUpState extends State<SignUp> {
+  String email = "";
+  String name = "";
+  String password = "";
+  String confirmPassword = "";
+  String mobile = "";
+  UserApiService userApiService = UserApiService();
+  List<UserModel> userList = [];
+
+  bool showLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    getAllUser();
+  }
+
+  Future<void> getAllUser() async {
+    userList = await userApiService.getAllUsers();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text('Signup'),
+        backgroundColor: Color.fromARGB(255, 0, 179, 206),
+      ),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: 50, vertical: 100),
+        child: Column(
+          children: [
+            Text("Create New User"),
+            SizedBox(
+              height: 20,
+            ),
+            inputField('name'),
+            inputField('email'),
+            inputField('password'),
+            inputField('confirmPassword'),
+            inputField('mobile'),
+            signUpButton(context),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text("Already registered?"),
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (context) => LoginAndRegisterScreen(),
+                      ));
+                    },
+                    child: Text("Login"))
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget inputField(fieldType) {
+    hintText() {
+      if (fieldType == 'name') {
+        return "Enter name...";
+      } else if (fieldType == 'email') {
+        return "Enter email...";
+      } else if (fieldType == 'password') {
+        return "Enter password...";
+      } else if (fieldType == 'confirmPassword') {
+        return "Confirm password...";
+      } else if (fieldType == 'mobile') {
+        return "Enter mobile...";
+      }
+    }
+
+    hidePassword() {
+      if (fieldType == 'password') {
+        return true;
+      }
+    }
+
+    return Padding(
+      padding: EdgeInsets.only(bottom: 10),
+      child: TextField(
+        onChanged: (value) {
+          setState(() {
+            if (fieldType == 'email') {
+              email = value;
+            }
+            if (fieldType == 'password') {
+              password = value;
+            }
+            if (fieldType == 'name') {
+              name = value;
+            }
+            if (fieldType == 'mobile') {
+              mobile = value;
+            }
+            if (fieldType == 'confirmPassword') {
+              confirmPassword = value;
+            }
+          });
+        },
+        cursorColor: const Color.fromARGB(255, 144, 144, 144),
+        decoration: InputDecoration(
+            semanticCounterText: "*",
+            focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                    color: const Color.fromARGB(255, 121, 121, 121))),
+            hintText: hintText(),
+            hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14)),
+      ),
+    );
+  }
+
+  Widget signUpButton(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(top: 31, bottom: 21),
+      child: MaterialButton(
+          onPressed: email.isEmpty || password.isEmpty
+              ? null
+              : () async {
+                  setState(() {});
+                  showLoading = true;
+
+                  if (password != confirmPassword) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('confirm password mismatch')));
+                    setState(() {
+                      showLoading = false;
+                    });
+                  } else if (name.isEmpty ||
+                      email.isEmpty ||
+                      password.isEmpty ||
+                      confirmPassword.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('User registered successfully')),
+                    );
+                    setState(() {
+                      showLoading = false;
+                    });
+                  } else {
+                    if (name.isNotEmpty &&
+                        email.isNotEmpty &&
+                        password.isNotEmpty &&
+                        confirmPassword.isNotEmpty) {
+                      String? checkEmail;
+                      try {
+                        userList = await userApiService.getAllUsers();
+                        checkEmail =
+                            userList.firstWhere((e) => e.email == email).email;
+                      } catch (_) {}
+                      if (checkEmail == null || checkEmail.isEmpty) {
+                        await userApiService
+                            .createUser(UserModel(
+                          email: email,
+                          password: password,
+                          mobileNo: mobile,
+                          name: name,
+                        ))
+                            .then((_) {
+                          Navigator.of(context)
+                              .pushReplacement(MaterialPageRoute(
+                            builder: (context) => Dashboard(),
+                          ));
+                        });
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('User registered successfully')),
+                        );
+                        setState(() {
+                          showLoading = false;
+                        });
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('User already exists')),
+                        );
+                        setState(() {
+                          showLoading = false;
+                        });
+                      }
+                    }
+                  }
+                },
+          padding: EdgeInsets.symmetric(vertical: 13),
+          minWidth: double.infinity,
+          color: Color.fromARGB(255, 11, 172, 197),
+          disabledColor: Colors.grey.shade300,
+          textColor: Colors.white,
+          child: showLoading
+              ? SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                  ),
+                )
+              : Text('Sign Up')),
     );
   }
 }
