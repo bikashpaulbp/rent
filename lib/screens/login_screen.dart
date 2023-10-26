@@ -446,7 +446,7 @@ class _SignUpState extends State<SignUp> {
                             .then((_) {
                           Navigator.of(context)
                               .pushReplacement(MaterialPageRoute(
-                            builder: (context) => Dashboard(),
+                            builder: (context) => LoginAndRegisterScreen(),
                           ));
                         });
 
