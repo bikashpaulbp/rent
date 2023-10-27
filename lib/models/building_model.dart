@@ -1,26 +1,26 @@
-class FloorModel {
+class BuildingModel {
   int? id;
-  int? userId;
-  int? buildingId;
   String? name;
+  String? address;
+  int? userId;
   bool? isActive;
 
-  FloorModel({this.id, this.userId, this.buildingId, this.name, this.isActive});
+  BuildingModel({this.id, this.name, this.address, this.userId, this.isActive});
 
-  FloorModel.fromJson(Map<String, dynamic> json) {
+  BuildingModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    userId = json['userId'];
-    buildingId = json['buildingId'];
     name = json['name'];
+    address = json['address'];
+    userId = json['userId'];
     isActive = json['isActive'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
-    data['userId'] = this.userId;
-    data['buildingId'] = this.buildingId;
     data['name'] = this.name;
+    data['address'] = this.address;
+    data['userId'] = this.userId;
     data['isActive'] = this.isActive;
     return data;
   }

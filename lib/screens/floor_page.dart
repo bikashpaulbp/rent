@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:rent_management/insert_data/floor.dart';
+import 'package:rent_management/models/building_model.dart';
 import 'package:rent_management/models/floor_model.dart';
+import 'package:rent_management/services/building_service.dart';
 import 'package:rent_management/services/floor_service.dart';
 import 'package:rent_management/shared_data/floor_data.dart';
 import 'package:get/get.dart';
@@ -16,14 +18,17 @@ class FloorPage extends StatefulWidget {
 
 class _FloorPageState extends State<FloorPage> {
   FloorApiService floorApiService = FloorApiService();
+  BuildingApiService buildingApiService = BuildingApiService();
   late Stream<List<FloorModel>> floorStream = const Stream.empty();
   final _floorNameController = TextEditingController();
+  List<BuildingModel> buildingList = [];
 
   @override
   void initState() {
     setState(() {
       _fetchFloorData();
     });
+    fetchBuilding();
     super.initState();
   }
 
@@ -31,9 +36,14 @@ class _FloorPageState extends State<FloorPage> {
     _fetchFloorData();
   }
 
+  Future<List<BuildingModel>> fetchBuilding() async {
+    return buildingList = await buildingApiService.getAllBuildings();
+  }
+
   Future<void> _fetchFloorData() async {
     floorStream = floorApiService.getAllFloors().asStream();
     List<FloorModel> floorList = await floorApiService.getAllFloors();
+
     setState(() {
       Provider.of<FloorData>(context, listen: false).updateFloorList(floorList);
     });
@@ -106,9 +116,15 @@ class _FloorPageState extends State<FloorPage> {
                             } else if (snapshot.hasData &&
                                 snapshot.data != null &&
                                 snapshot.data!.isNotEmpty) {
-                              List<FloorModel> floorList = snapshot.data!;
+                              fetchBuilding();
+                              List<FloorModel> allFloorList = snapshot.data!;
                               Provider.of<FloorData>(context, listen: false)
-                                  .updateFloorList(floorList);
+                                  .updateFloorList(allFloorList);
+                              List<FloorModel> floorList = allFloorList
+                                  .where((floor) => buildingList.any(
+                                      (building) =>
+                                          building.id == floor.buildingId))
+                                  .toList();
 
                               return ListView.builder(
                                 itemCount: floorList.length,

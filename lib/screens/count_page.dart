@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:provider/provider.dart';
+import 'package:rent_management/models/building_model.dart';
+import 'package:rent_management/models/user_model.dart';
 import 'package:rent_management/screens/deposit_page.dart';
 import 'package:rent_management/screens/flat_page.dart';
 import 'package:rent_management/screens/floor_page.dart';
+import 'package:rent_management/screens/login_screen.dart';
 import 'package:rent_management/screens/monthly_rent_page.dart';
 import 'package:rent_management/screens/tenent_page.dart';
+import 'package:rent_management/services/building_service.dart';
 import 'package:rent_management/services/rent_service.dart';
 import 'package:rent_management/shared_data/rent_data.dart';
 
@@ -23,6 +27,10 @@ class CountPage extends StatefulWidget {
 
 class _CountPageState extends State<CountPage> {
   RentApiService rentApiService = RentApiService();
+  BuildingApiService buildingApiService = BuildingApiService();
+  List<BuildingModel> buildingList = [];
+  AuthStateManager authStateManager = AuthStateManager();
+  UserModel? loggedInUser = UserModel();
   // Future<List<RentModel>> fetchDueRentData() async {
   //   List<RentModel> rentList = await rentApiService.getAllRents();
   //   List<RentModel> isPaidList =
@@ -36,8 +44,17 @@ class _CountPageState extends State<CountPage> {
   @override
   void initState() {
     // fetchDueRentData();
-
+    fetchBuilding();
+    fetchLoggedInUser();
     super.initState();
+  }
+
+  Future<UserModel?> fetchLoggedInUser() async {
+    return loggedInUser = await authStateManager.getLoggedInUser();
+  }
+
+  Future<List<BuildingModel>> fetchBuilding() async {
+    return buildingList = await buildingApiService.getAllBuildings();
   }
 
   @override

@@ -1,7 +1,9 @@
 import 'package:bottom_nav_bar/bottom_nav_bar.dart';
 
 import 'package:flutter/material.dart';
+import 'package:rent_management/insert_data/building.dart';
 import 'package:rent_management/models/user_model.dart';
+import 'package:rent_management/screens/building_page.dart';
 import 'package:rent_management/screens/count_page.dart';
 import 'package:rent_management/screens/flat_page.dart';
 import 'package:rent_management/screens/login_screen.dart';
@@ -125,24 +127,6 @@ class _DashboardState extends State<Dashboard> {
                           }
                         },
                       ),
-
-                      // Center(
-                      //   child: Text(
-                      //     "Hi! ${loggedInUser!.name}",
-                      //     style: TextStyle(
-                      //         fontWeight: FontWeight.w700,
-                      //         color: Color.fromARGB(255, 152, 152, 152)),
-                      //   ),
-                      // ),
-                      // Padding(
-                      //   padding: const EdgeInsets.all(8.0),
-                      //   child: Center(
-                      //       child: Text(
-                      //     "${loggedInUser!.email}",
-                      //     style: TextStyle(
-                      //         color: Color.fromARGB(255, 152, 152, 152)),
-                      //   )),
-                      // )
                     ]),
               ),
             ),
@@ -154,6 +138,8 @@ class _DashboardState extends State<Dashboard> {
               child: InkWell(
                   onTap: () {
                     _closeDrawer();
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => BuildingPage()));
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -163,7 +149,7 @@ class _DashboardState extends State<Dashboard> {
                         width: 30,
                       ),
                       Text(
-                        "Add Building",
+                        "Building",
                         style: TextStyle(
                           fontWeight: FontWeight.w700,
                         ),
