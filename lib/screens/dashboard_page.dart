@@ -42,8 +42,8 @@ class _DashboardState extends State<Dashboard> {
     super.initState();
   }
 
-  Future<void> fetchLoggedInUser() async {
-    loggedInUser = await authStateManager.getLoggedInUser();
+  Future<UserModel?> fetchLoggedInUser() async {
+    return loggedInUser = await authStateManager.getLoggedInUser();
   }
 
   @override
@@ -80,25 +80,74 @@ class _DashboardState extends State<Dashboard> {
                       SizedBox(
                         height: 20,
                       ),
-                      Center(
-                        child: Text(
-                          "Hi! ${loggedInUser!.name}",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              color: Color.fromARGB(255, 152, 152, 152)),
-                        ),
+                      FutureBuilder<UserModel?>(
+                        future: fetchLoggedInUser(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            return Text("Error: ${snapshot.error}");
+                          } else if (snapshot.hasData) {
+                            UserModel? loggedInUser = snapshot.data;
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Center(
+                                  child: Text(
+                                    "Hi! ${loggedInUser!.name}",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      color: Color.fromARGB(255, 152, 152, 152),
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Center(
+                                    child: Text(
+                                      "${loggedInUser.email}",
+                                      style: TextStyle(
+                                        color:
+                                            Color.fromARGB(255, 152, 152, 152),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          } else {
+                            return Text("No user data available.");
+                          }
+                        },
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Center(
-                            child: Text(
-                          "${loggedInUser!.email}",
-                          style: TextStyle(
-                              color: Color.fromARGB(255, 152, 152, 152)),
-                        )),
-                      )
+
+                      // Center(
+                      //   child: Text(
+                      //     "Hi! ${loggedInUser!.name}",
+                      //     style: TextStyle(
+                      //         fontWeight: FontWeight.w700,
+                      //         color: Color.fromARGB(255, 152, 152, 152)),
+                      //   ),
+                      // ),
+                      // Padding(
+                      //   padding: const EdgeInsets.all(8.0),
+                      //   child: Center(
+                      //       child: Text(
+                      //     "${loggedInUser!.email}",
+                      //     style: TextStyle(
+                      //         color: Color.fromARGB(255, 152, 152, 152)),
+                      //   )),
+                      // )
                     ]),
               ),
+            ),
+            SizedBox(
+              height: 10,
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -113,7 +162,12 @@ class _DashboardState extends State<Dashboard> {
                       SizedBox(
                         width: 30,
                       ),
-                      Text("Add Building")
+                      Text(
+                        "Add Building",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      )
                     ]),
                   )),
             ),
