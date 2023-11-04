@@ -68,9 +68,10 @@ class _AllRentState extends State<AllRent> {
     finalTenantList = tenantList;
     finalFlatList = flatList;
     rentStream = rentApiService.getAllRents().asStream();
-    setState(() {
+    
+      // ignore: use_build_context_synchronously
       Provider.of<RentData>(context, listen: false).updateRentList(rentList);
-    });
+   
   }
 
   @override

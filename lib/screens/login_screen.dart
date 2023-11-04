@@ -12,15 +12,25 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthStateManager {
   bool isLoggedIn = false;
 
+  Future<void> saveBuildingId(int id) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('buildingId', id);
+  }
+
+  Future<int?> getBuildingId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('buildingId');
+  }
+
   Future<void> setIsLoggedIn(bool isLoggedIn) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('isLoggedIn', true);
+    await prefs.setBool('isLoggedIn', true);
     this.isLoggedIn = true;
   }
 
   Future<void> removeIsLoggedIn(bool isLoggedIn) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('isLoggedIn', false);
+    await prefs.setBool('isLoggedIn', false);
     this.isLoggedIn = false;
   }
 
@@ -32,7 +42,7 @@ class AuthStateManager {
   Future<void> saveLoggedInUser(UserModel loggedInUser) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final userJson = jsonEncode(loggedInUser.toJson());
-    prefs.setString('loggedInUser', userJson);
+    await prefs.setString('loggedInUser', userJson);
     setIsLoggedIn(isLoggedIn);
   }
 
@@ -49,7 +59,7 @@ class AuthStateManager {
 
   Future<void> removeLoggedInUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove('loggedInUser');
+    await prefs.remove('loggedInUser');
     removeIsLoggedIn(isLoggedIn);
   }
 

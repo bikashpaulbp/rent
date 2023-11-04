@@ -42,11 +42,6 @@ class _FloorPageState extends State<FloorPage> {
 
   Future<void> _fetchFloorData() async {
     floorStream = floorApiService.getAllFloors().asStream();
-    List<FloorModel> floorList = await floorApiService.getAllFloors();
-
-    setState(() {
-      Provider.of<FloorData>(context, listen: false).updateFloorList(floorList);
-    });
   }
 
   @override
@@ -118,8 +113,7 @@ class _FloorPageState extends State<FloorPage> {
                                 snapshot.data!.isNotEmpty) {
                               fetchBuilding();
                               List<FloorModel> allFloorList = snapshot.data!;
-                              Provider.of<FloorData>(context, listen: false)
-                                  .updateFloorList(allFloorList);
+
                               List<FloorModel> floorList = allFloorList
                                   .where((floor) => buildingList.any(
                                       (building) =>

@@ -133,8 +133,7 @@ class _BuildingDataPageState extends State<BuildingDataPage> {
                             // Get.back();
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                 content: Text("building saved successfully")));
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => BuildingPage()));
+                            Navigator.of(context).pop();
                             _buildingNameController.clear();
                             _addressController.clear();
                           });
@@ -166,8 +165,9 @@ class _BuildingDataPageState extends State<BuildingDataPage> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.of(context).pushReplacement(MaterialPageRoute(
-                            builder: (context) => Dashboard()));
+                        Navigator.of(context).pop();
+                        // pushReplacement(MaterialPageRoute(
+                        //     builder: (context) => Dashboard()));
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,

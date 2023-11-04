@@ -6,8 +6,11 @@ class DepositData extends ChangeNotifier {
 
   List<DepositeModel> get depositList => _depositList;
 
+
+
   void updateRentList(List<DepositeModel> newDepositList) {
     _depositList = newDepositList;
     notifyListeners();
   }
 }
+ 

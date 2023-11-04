@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:provider/provider.dart';
+import 'package:rent_management/shared_data/building_provider.dart';
 import 'package:rent_management/shared_data/deposit_data.dart';
 import 'package:rent_management/shared_data/flat_data.dart';
 import 'package:rent_management/shared_data/floor_data.dart';
@@ -19,6 +20,7 @@ void main() {
       ChangeNotifierProvider(create: (context) => TenantData()),
       ChangeNotifierProvider(create: (context) => RentData()),
       ChangeNotifierProvider(create: (context) => DepositData()),
+      ChangeNotifierProvider(create: (context) => BuildingProvider()),
     ],
     child: const MyApp(),
   ));
@@ -27,7 +29,7 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  @override 
+  @override
   Widget build(BuildContext context) {
     return const GetMaterialApp(
         debugShowCheckedModeBanner: false,

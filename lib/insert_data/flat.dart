@@ -83,6 +83,7 @@ class _FlatDataPageState extends State<FlatDataPage> {
               const SizedBox(height: 8),
               Consumer<FloorData>(
                 builder: (context, floorData, child) {
+                  floorData.getFloorList();
                   List<FloorModel> floorList = floorData.floorList;
 
                   return DropdownButtonFormField<int>(

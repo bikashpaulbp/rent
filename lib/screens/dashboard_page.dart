@@ -41,8 +41,14 @@ class _DashboardState extends State<Dashboard> {
   void initState() {
     fetchLoggedInUser();
 
+    setState(() {
+      refresh();
+    });
+
     super.initState();
   }
+
+  void refresh() {}
 
   Future<UserModel?> fetchLoggedInUser() async {
     return loggedInUser = await authStateManager.getLoggedInUser();
@@ -66,11 +72,11 @@ class _DashboardState extends State<Dashboard> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             SizedBox(
-              height: 52,
+              height: MediaQuery.sizeOf(context).height * 0.065,
             ),
             Container(
               width: MediaQuery.sizeOf(context).width * 1,
-              height: 110,
+              height: MediaQuery.sizeOf(context).height * 0.15,
               decoration:
                   BoxDecoration(color: Color.fromARGB(255, 218, 218, 218)),
               child: Padding(
@@ -206,7 +212,7 @@ class _DashboardState extends State<Dashboard> {
   Widget _body() => SizedBox.expand(
         child: IndexedStack(
           index: _currentIndex,
-          children: const <Widget>[
+          children: <Widget>[
             CountPage(),
             FloorPage(),
             FlatPage(),

@@ -37,10 +37,8 @@ class _MonthlyRentState extends State<MonthlyRent> {
 
   @override
   void initState() {
-     refresh();
+    refresh();
     super.initState();
-
-   
   }
 
   void refresh() {
@@ -51,9 +49,9 @@ class _MonthlyRentState extends State<MonthlyRent> {
     List<RentModel> rentList = await rentApiService.getAllRents();
     tenentList = await tenantApiService.getAllTenants();
     rentStream = rentApiService.getAllRents().asStream();
-    setState(() {
-      Provider.of<RentData>(context, listen: false).updateRentList(rentList);
-    });
+
+    // ignore: use_build_context_synchronously
+    Provider.of<RentData>(context, listen: false).updateRentList(rentList);
   }
 
   @override

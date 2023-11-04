@@ -7,7 +7,7 @@ import 'dart:convert';
 import 'package:rent_management/models/floor_model.dart';
 
 class FloorApiService {
-  final getFloorsUrl = 
+  final getFloorsUrl =
       "http://103.197.204.163/RentMgtAPI/api/Floor/GetAllFloor";
   final postFloorUrl =
       "http://103.197.204.163/RentMgtAPI/api/Floor/CreateFloor";
@@ -35,14 +35,15 @@ class FloorApiService {
         throw "Request failed with status: ${response.statusCode}";
       }
     } catch (e) {
-      if (e is SocketException) {
-        print("Network error: ${e.message}");
+      // if (e is SocketException) {
+      //   print("Network error: ${e.message}");
 
-        return [];
-      } else {
-        print("Error: $e");
-        rethrow;
-      }
+      //   return [];
+      // } else {
+      //   print("Error: $e");
+      //   rethrow;
+      // }
+      return [];
     }
   }
 

@@ -12,6 +12,7 @@ import 'package:rent_management/screens/monthly_rent_page.dart';
 import 'package:rent_management/screens/tenent_page.dart';
 import 'package:rent_management/services/building_service.dart';
 import 'package:rent_management/services/rent_service.dart';
+import 'package:rent_management/shared_data/building_provider.dart';
 import 'package:rent_management/shared_data/rent_data.dart';
 
 import '../shared_data/flat_data.dart';
@@ -19,7 +20,9 @@ import '../shared_data/floor_data.dart';
 import '../shared_data/tenent_data.dart';
 
 class CountPage extends StatefulWidget {
-  const CountPage({super.key});
+  CountPage({
+    super.key,
+  });
 
   @override
   State<CountPage> createState() => _CountPageState();
@@ -40,12 +43,16 @@ class _CountPageState extends State<CountPage> {
   //       ? isPaidList.map((e) => RentModel.fromJson(e)).toList()
   //       : [];
   // }
+  int? selectedBuildingId;
+  int? buildingId;
 
   @override
   void initState() {
     // fetchDueRentData();
     fetchBuilding();
     fetchLoggedInUser();
+    getBuildingId();
+
     super.initState();
   }
 
@@ -53,8 +60,16 @@ class _CountPageState extends State<CountPage> {
     return loggedInUser = await authStateManager.getLoggedInUser();
   }
 
+  Future<void> getBuildingId() async {
+    buildingId = (await authStateManager.getBuildingId())!;
+  }
+
   Future<List<BuildingModel>> fetchBuilding() async {
-    return buildingList = await buildingApiService.getAllBuildings();
+    try {
+      return buildingList = await buildingApiService.getAllBuildings();
+    } catch (e) {
+      return [];
+    }
   }
 
   @override
@@ -69,6 +84,54 @@ class _CountPageState extends State<CountPage> {
           children: [
             Column(
               children: [
+                SizedBox(
+                  height: 20,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    child: Consumer<BuildingProvider>(
+                      builder: (context, building, child) {
+                        building.getBuildingList();
+                        List<BuildingModel> allBuildingList =
+                            building.buildingList;
+                        fetchLoggedInUser();
+                        buildingList = allBuildingList
+                            .where((e) => e.userId == loggedInUser!.id)
+                            .toList();
+                        return DropdownButtonFormField<int>(
+                          isExpanded: true,
+                          decoration: InputDecoration(
+                            suffix: const Text(
+                              '*',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                            labelText: 'Select Building',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          disabledHint: const Text('Add Building First'),
+                          value: selectedBuildingId,
+                          onChanged: (int? newValue) {
+                            setState(() {
+                              selectedBuildingId = newValue!;
+                              authStateManager
+                                  .saveBuildingId(selectedBuildingId!);
+                            });
+                            getBuildingId();
+                          },
+                          items: buildingList.map<DropdownMenuItem<int>>(
+                              (BuildingModel building) {
+                            return DropdownMenuItem<int>(
+                                value: building.id,
+                                child: Text(building.name!));
+                          }).toList(),
+                        );
+                      },
+                    ),
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
@@ -89,6 +152,7 @@ class _CountPageState extends State<CountPage> {
                                 child: Center(
                                   child: Consumer<FloorData>(
                                       builder: (context, floorData, _) {
+                                    floorData.getFloorList();
                                     return Text(
                                       "Total Floor \n${floorData.floorListNew()}",
                                       style: const TextStyle(

@@ -8,7 +8,7 @@ import 'package:rent_management/services/building_service.dart';
 import 'package:get/get.dart';
 
 class BuildingPage extends StatefulWidget {
-  const BuildingPage({Key? key}) : super(key: key);
+  BuildingPage({Key? key}) : super(key: key);
 
   @override
   State<BuildingPage> createState() => _BuildingPageState();
@@ -398,6 +398,7 @@ class _BuildingPageState extends State<BuildingPage> {
                                                                                       setState(() {
                                                                                         loading = false;
                                                                                         _fetchBuildingData();
+
                                                                                         Navigator.pop(context);
                                                                                       });
                                                                                     });
