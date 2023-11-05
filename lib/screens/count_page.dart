@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:provider/provider.dart';
 import 'package:rent_management/models/building_model.dart';
+import 'package:rent_management/models/floor_model.dart';
 import 'package:rent_management/models/user_model.dart';
 import 'package:rent_management/screens/deposit_page.dart';
 import 'package:rent_management/screens/flat_page.dart';
@@ -52,6 +53,7 @@ class _CountPageState extends State<CountPage> {
     fetchBuilding();
     fetchLoggedInUser();
     getBuildingId();
+    getLocalInfo();
 
     super.initState();
   }
@@ -62,6 +64,11 @@ class _CountPageState extends State<CountPage> {
 
   Future<void> getBuildingId() async {
     buildingId = (await authStateManager.getBuildingId())!;
+  }
+
+  Future<void> getLocalInfo() async {
+    buildingId = await authStateManager.getBuildingId();
+    loggedInUser = await authStateManager.getLoggedInUser();
   }
 
   Future<List<BuildingModel>> fetchBuilding() async {
@@ -152,9 +159,15 @@ class _CountPageState extends State<CountPage> {
                                 child: Center(
                                   child: Consumer<FloorData>(
                                       builder: (context, floorData, _) {
+                                    getBuildingId();
                                     floorData.getFloorList();
+                                    List<FloorModel> floorList = floorData
+                                        .floorList
+                                        .where(
+                                            (e) => e.buildingId == buildingId)
+                                        .toList();
                                     return Text(
-                                      "Total Floor \n${floorData.floorListNew()}",
+                                      "Total Floor \n${floorList.length}",
                                       style: const TextStyle(
                                           fontSize: 24, color: Colors.white),
                                       textAlign: TextAlign.center,

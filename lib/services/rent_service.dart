@@ -32,14 +32,16 @@ class RentApiService {
         throw "Request failed with status: ${response.statusCode}";
       }
     } catch (e) {
-      if (e is SocketException) {
-        print("Network error: ${e.message}");
+      // if (e is SocketException) {
+      //   print("Network error: ${e.message}");
 
-        return [];
-      } else {
-        print("Error: $e");
-        rethrow;
-      }
+      //   return [];
+      // } else {
+      //   print("Error: $e");
+      //   rethrow;
+      // }
+
+      return [];
     }
   }
 

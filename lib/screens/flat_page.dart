@@ -44,11 +44,8 @@ class _FlatPageState extends State<FlatPage> {
 
   Future<void> _fetchFlatData() async {
     flatStream = flatApiService.getAllFlats().asStream();
-    List<FlatModel> flatList = await flatApiService.getAllFlats();
+
     floorList = await floorApiService.getAllFloors();
-    setState(() {
-      Provider.of<FlatData>(context, listen: false).updateFlatList(flatList);
-    });
   }
 
   @override

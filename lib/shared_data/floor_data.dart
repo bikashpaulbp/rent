@@ -7,9 +7,11 @@ class FloorData extends ChangeNotifier {
   FloorApiService floorApiService = FloorApiService();
 
   Future<void> getFloorList() async {
-    List<FloorModel> allFloorList = await floorApiService.getAllFloors();
-    floorList = allFloorList;
-    notifyListeners();
+    try {
+      List<FloorModel> allFloorList = await floorApiService.getAllFloors();
+      floorList = allFloorList;
+      notifyListeners();
+    } catch (_) {}
   }
 
   floorListNew() {

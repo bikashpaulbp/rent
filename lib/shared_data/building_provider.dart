@@ -7,9 +7,11 @@ class BuildingProvider extends ChangeNotifier {
   List<BuildingModel> buildingList = [];
 
   Future<void> getBuildingList() async {
-    List<BuildingModel> allBuildingList =
-        await buildingApiService.getAllBuildings();
-    buildingList = allBuildingList;
-    notifyListeners();
+    try {
+      List<BuildingModel> allBuildingList =
+          await buildingApiService.getAllBuildings();
+      buildingList = allBuildingList;
+      notifyListeners();
+    } catch (_) {}
   }
 }

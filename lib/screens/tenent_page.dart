@@ -50,12 +50,8 @@ class _TenentPageState extends State<TenentPage> {
 
   Future<void> _fetchTenantData() async {
     tenantStream = tenantApiService.getAllTenants().asStream();
-    List<TenantModel> tenantList = await tenantApiService.getAllTenants();
+
     flatList = await flatApiService.getAllFlats();
-    setState(() {
-      Provider.of<TenantData>(context, listen: false)
-          .updateTenantList(tenantList);
-    });
   }
 
   @override

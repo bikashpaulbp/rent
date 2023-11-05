@@ -102,6 +102,7 @@ class _BuildingPageState extends State<BuildingPage> {
                           stream: buildingStream,
                           builder: (BuildContext context,
                               AsyncSnapshot<List<BuildingModel>> snapshot) {
+                            fetchLoggedInUser();
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
                               return const Center(
@@ -111,7 +112,7 @@ class _BuildingPageState extends State<BuildingPage> {
                                 snapshot.data!.isNotEmpty) {
                               List<BuildingModel> allBuildingList =
                                   snapshot.data!;
-                              fetchLoggedInUser();
+
                               buildingList = allBuildingList
                                   .where((e) => e.userId == loggedInUser!.id)
                                   .toList();

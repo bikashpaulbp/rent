@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:rent_management/insert_data/floor.dart';
 import 'package:rent_management/models/building_model.dart';
 import 'package:rent_management/models/floor_model.dart';
+import 'package:rent_management/models/user_model.dart';
+import 'package:rent_management/screens/login_screen.dart';
 import 'package:rent_management/services/building_service.dart';
 import 'package:rent_management/services/floor_service.dart';
 import 'package:rent_management/shared_data/floor_data.dart';
@@ -23,17 +25,27 @@ class _FloorPageState extends State<FloorPage> {
   final _floorNameController = TextEditingController();
   List<BuildingModel> buildingList = [];
 
+  AuthStateManager authStateManager = AuthStateManager();
+  UserModel? loggedInUser = UserModel();
+  int? buildingId;
+
   @override
   void initState() {
     setState(() {
       _fetchFloorData();
     });
     fetchBuilding();
+    getLocalInfo();
     super.initState();
   }
 
   void refresh() {
     _fetchFloorData();
+  }
+
+  Future<void> getLocalInfo() async {
+    buildingId = await authStateManager.getBuildingId();
+    loggedInUser = await authStateManager.getLoggedInUser();
   }
 
   Future<List<BuildingModel>> fetchBuilding() async {
@@ -111,13 +123,10 @@ class _FloorPageState extends State<FloorPage> {
                             } else if (snapshot.hasData &&
                                 snapshot.data != null &&
                                 snapshot.data!.isNotEmpty) {
-                              fetchBuilding();
                               List<FloorModel> allFloorList = snapshot.data!;
-
+                              getLocalInfo();
                               List<FloorModel> floorList = allFloorList
-                                  .where((floor) => buildingList.any(
-                                      (building) =>
-                                          building.id == floor.buildingId))
+                                  .where((e) => e.buildingId == buildingId)
                                   .toList();
 
                               return ListView.builder(

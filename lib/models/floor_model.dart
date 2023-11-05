@@ -12,7 +12,7 @@ class FloorModel {
     userId = json['userId'];
     buildingId = json['buildingId'];
     name = json['name'];
-    isActive = json['isActive'];
+    isActive = json['isActive']; 
   }
 
   Map<String, dynamic> toJson() {

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rent_management/models/floor_model.dart';
+import 'package:rent_management/models/user_model.dart';
+import 'package:rent_management/screens/login_screen.dart';
 import 'package:rent_management/services/floor_service.dart';
 
 // ignore: must_be_immutable
@@ -14,8 +16,21 @@ class FloorDataPage extends StatefulWidget {
 
 class _FloorDataPageState extends State<FloorDataPage> {
   final TextEditingController _floorController = TextEditingController();
-
   FloorApiService floorApiService = FloorApiService();
+
+  AuthStateManager authStateManager = AuthStateManager();
+  UserModel? loggedInUser = UserModel();
+  int? buildingId;
+  @override
+  void initState() {
+    getLocalInfo();
+    super.initState();
+  }
+
+  Future<void> getLocalInfo() async {
+    buildingId = await authStateManager.getBuildingId();
+    loggedInUser = await authStateManager.getLoggedInUser();
+  }
 
   @override
   void dispose() {
@@ -67,35 +82,27 @@ class _FloorDataPageState extends State<FloorDataPage> {
                   children: [
                     ElevatedButton(
                       onPressed: () async {
-                        if (_floorController.text.isNotEmpty) {
+                        if (_floorController.text.isNotEmpty &&
+                            buildingId != null) {
                           await floorApiService.createFloor(
-                            FloorModel(name: _floorController.text),
+                            FloorModel(
+                              name: _floorController.text,
+                              buildingId: buildingId,
+                              isActive: true,
+                              userId: loggedInUser!.id,
+                            ),
                           );
                           widget.refresh();
                           Get.back();
                           _floorController.clear();
-
-                          Get.snackbar("", "",
-                              messageText: const Center(
-                                  child: Text(
-                                "saved successfully  \n",
-                                style: TextStyle(
-                                    color: Color.fromARGB(255, 0, 0, 0),
-                                    fontSize: 20),
-                              )),
-                              snackPosition: SnackPosition.BOTTOM,
-                              duration: const Duration(seconds: 2));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("saved successfully")));
+                        } else if (buildingId == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text("please add building first")));
                         } else {
-                          Get.snackbar("", "",
-                              messageText: const Center(
-                                  child: Text(
-                                " please provide floor name\n",
-                                style: TextStyle(
-                                    color: Color.fromARGB(233, 216, 41, 41),
-                                    fontSize: 20),
-                              )),
-                              snackPosition: SnackPosition.BOTTOM,
-                              duration: const Duration(seconds: 2));
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text("please provide floor name")));
                         }
                       },
                       style: ElevatedButton.styleFrom(
