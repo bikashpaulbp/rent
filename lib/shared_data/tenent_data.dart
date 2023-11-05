@@ -1,23 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:rent_management/models/tenant_model.dart';
+import 'package:rent_management/services/tenant_service.dart';
 
 class TenantData extends ChangeNotifier {
-  List<TenantModel> _tenantList = [];
+  List<TenantModel> tenantList = [];
 
-  List<TenantModel> get tenantList => _tenantList;
-  void updateTenantList(List<TenantModel> newTenantList) {
-    _tenantList = newTenantList;
+  TenantApiService tenantApiService = TenantApiService();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+  Future<void> getTenantList() async {
+    try {
+      List<TenantModel> allTenantList = await tenantApiService.getAllTenants();
+      tenantList = allTenantList;
       notifyListeners();
-    });
+    } catch (_) {}
   }
 
   tenantListNew() {
-    return _tenantList.length;
+    return tenantList.length;
   }
-
-  firstWhere(bool Function(dynamic tenant) param0) {}
-
-  where(bool Function(dynamic e) param0) {}
 }

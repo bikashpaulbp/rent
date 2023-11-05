@@ -72,7 +72,7 @@ class _DashboardState extends State<Dashboard> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             SizedBox(
-              height: MediaQuery.sizeOf(context).height * 0.065,
+              height: MediaQuery.sizeOf(context).height * 0.045,
             ),
             Container(
               width: MediaQuery.sizeOf(context).width * 1,
@@ -150,14 +150,20 @@ class _DashboardState extends State<Dashboard> {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(children: [
-                      Icon(Icons.apartment),
+                      Icon(
+                        Icons.apartment,
+                        color: Colors.amber,
+                        size: 30,
+                      ),
                       SizedBox(
                         width: 30,
                       ),
                       Text(
                         "Building",
                         style: TextStyle(
+                          fontSize: 18,
                           fontWeight: FontWeight.w700,
+                          color: Color.fromARGB(255, 238, 155, 30),
                         ),
                       )
                     ]),
@@ -215,8 +221,8 @@ class _DashboardState extends State<Dashboard> {
           children: <Widget>[
             CountPage(),
             FloorPage(),
-            FlatPage(),
             TenentPage(),
+            FlatPage(),
             MonthlyRent(),
           ],
         ),
@@ -254,18 +260,18 @@ class _DashboardState extends State<Dashboard> {
                 activeBackgroundColor: const Color.fromARGB(255, 224, 108, 62),
               ),
               BottomNavBarItem(
-                title: 'Flat',
-                icon: const Icon(Icons.home),
-                activeColor: Colors.white,
-                inactiveColor: Colors.black,
-                activeBackgroundColor: const Color.fromARGB(255, 73, 173, 255),
-              ),
-              BottomNavBarItem(
                 title: 'Tenent',
                 icon: const Icon(Icons.people_alt),
                 inactiveColor: Colors.black,
                 activeColor: Colors.white,
                 activeBackgroundColor: const Color.fromARGB(255, 102, 240, 109),
+              ),
+              BottomNavBarItem(
+                title: 'Flat',
+                icon: const Icon(Icons.home),
+                activeColor: Colors.white,
+                inactiveColor: Colors.black,
+                activeBackgroundColor: const Color.fromARGB(255, 73, 173, 255),
               ),
               BottomNavBarItem(
                 title: 'Rent',

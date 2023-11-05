@@ -62,15 +62,14 @@ class _AllRentState extends State<AllRent> {
   }
 
   Future<void> _fetchRentData() async {
-    List<RentModel> rentList = await rentApiService.getAllRents();
+    
     List<TenantModel> tenantList = await tenantApiService.getAllTenants();
     List<FlatModel> flatList = await flatApiService.getAllFlats();
     finalTenantList = tenantList;
     finalFlatList = flatList;
     rentStream = rentApiService.getAllRents().asStream();
     
-      // ignore: use_build_context_synchronously
-      Provider.of<RentData>(context, listen: false).updateRentList(rentList);
+      
    
   }
 

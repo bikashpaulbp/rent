@@ -7,8 +7,7 @@ import 'package:rent_management/services/floor_service.dart';
 
 // ignore: must_be_immutable
 class FloorDataPage extends StatefulWidget {
-  void Function() refresh;
-  FloorDataPage({super.key, required this.refresh});
+  FloorDataPage({super.key});
 
   @override
   State<FloorDataPage> createState() => _FloorDataPageState();
@@ -84,19 +83,21 @@ class _FloorDataPageState extends State<FloorDataPage> {
                       onPressed: () async {
                         if (_floorController.text.isNotEmpty &&
                             buildingId != null) {
-                          await floorApiService.createFloor(
+                          await floorApiService
+                              .createFloor(
                             FloorModel(
                               name: _floorController.text,
                               buildingId: buildingId,
                               isActive: true,
                               userId: loggedInUser!.id,
                             ),
-                          );
-                          widget.refresh();
-                          Get.back();
-                          _floorController.clear();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text("saved successfully")));
+                          )
+                              .whenComplete(() {
+                            Get.back();
+                            _floorController.clear();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text("saved successfully")));
+                          });
                         } else if (buildingId == null) {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content: Text("please add building first")));

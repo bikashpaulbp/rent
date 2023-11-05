@@ -12,9 +12,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthStateManager {
   bool isLoggedIn = false;
 
-  Future<void> saveBuildingId(int id) async {
+  Future<void> saveBuildingId(int id, String name) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setInt('buildingId', id);
+    await prefs.setString('buildingName', name);
+  }
+
+  Future<String?> getBuildingName() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('buildingName');
   }
 
   Future<int?> getBuildingId() async {

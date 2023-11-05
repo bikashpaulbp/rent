@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:rent_management/insert_data/floor.dart';
 import 'package:rent_management/models/building_model.dart';
 import 'package:rent_management/models/floor_model.dart';
@@ -6,10 +7,9 @@ import 'package:rent_management/models/user_model.dart';
 import 'package:rent_management/screens/login_screen.dart';
 import 'package:rent_management/services/building_service.dart';
 import 'package:rent_management/services/floor_service.dart';
-import 'package:rent_management/shared_data/floor_data.dart';
-import 'package:get/get.dart';
 
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
+import 'package:rent_management/shared_data/floor_data.dart';
 
 class FloorPage extends StatefulWidget {
   const FloorPage({Key? key}) : super(key: key);
@@ -28,6 +28,7 @@ class _FloorPageState extends State<FloorPage> {
   AuthStateManager authStateManager = AuthStateManager();
   UserModel? loggedInUser = UserModel();
   int? buildingId;
+  
 
   @override
   void initState() {
@@ -37,10 +38,6 @@ class _FloorPageState extends State<FloorPage> {
     fetchBuilding();
     getLocalInfo();
     super.initState();
-  }
-
-  void refresh() {
-    _fetchFloorData();
   }
 
   Future<void> getLocalInfo() async {
@@ -78,9 +75,7 @@ class _FloorPageState extends State<FloorPage> {
         backgroundColor: const Color.fromARGB(255, 66, 129, 247),
         child: IconButton(
           onPressed: () {
-            Get.to(FloorDataPage(
-              refresh: refresh,
-            ));
+            Get.to(FloorDataPage());
           },
           icon: const Icon(Icons.add),
           color: const Color.fromARGB(255, 255, 255, 255),
@@ -112,251 +107,64 @@ class _FloorPageState extends State<FloorPage> {
                       child: Container(
                         width: 500,
                         height: MediaQuery.of(context).size.height * 0.745,
-                        child: StreamBuilder<List<FloorModel>>(
-                          stream: floorStream,
-                          builder: (BuildContext context,
-                              AsyncSnapshot<List<FloorModel>> snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const Center(
-                                  child: CircularProgressIndicator());
-                            } else if (snapshot.hasData &&
-                                snapshot.data != null &&
-                                snapshot.data!.isNotEmpty) {
-                              List<FloorModel> allFloorList = snapshot.data!;
-                              getLocalInfo();
-                              List<FloorModel> floorList = allFloorList
-                                  .where((e) => e.buildingId == buildingId)
-                                  .toList();
+                        child: Consumer<FloorData>(
+                          builder: (context, floor, child) {
+                            floor.getFloorList();
+                            getLocalInfo();
+                            List<FloorModel> allFloorList = floor.floorList;
 
-                              return ListView.builder(
-                                itemCount: floorList.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  FloorModel floor = floorList[index];
+                            List<FloorModel> floorList = allFloorList
+                                .where((e) => e.buildingId == buildingId)
+                                .toList();
 
-                                  return ListTile(
-                                    title: Padding(
-                                      padding: const EdgeInsets.all(1.0),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Container(
-                                              height: 60,
-                                              child: Card(
-                                                elevation: 10,
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(5.0),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceEvenly,
-                                                    children: [
-                                                      RichText(
-                                                        text: const TextSpan(
-                                                          children: [],
-                                                        ),
-                                                      ),
-                                                      const SizedBox(width: 15),
-                                                      SizedBox(
-                                                        width: 220,
-                                                        child: RichText(
-                                                          text: TextSpan(
-                                                            children: [
-                                                              const TextSpan(
-                                                                text:
-                                                                    'Floor Name: ',
-                                                                style:
-                                                                    TextStyle(
-                                                                  color: Color
-                                                                      .fromARGB(
-                                                                          255,
-                                                                          0,
-                                                                          0,
-                                                                          0),
-                                                                  fontSize: 16,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                ),
-                                                              ),
-                                                              TextSpan(
-                                                                text:
-                                                                    floor.name,
-                                                                style:
-                                                                    const TextStyle(
-                                                                  color: Colors
-                                                                      .black,
-                                                                  fontSize: 16,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                ),
-                                                              ),
-                                                            ],
+                            return floorList.isNotEmpty
+                                ? ListView.builder(
+                                    itemCount: floorList.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      FloorModel floor = floorList[index];
+
+                                      return ListTile(
+                                        title: Padding(
+                                          padding: const EdgeInsets.all(1.0),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Container(
+                                                  height: 60,
+                                                  child: Card(
+                                                    elevation: 10,
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              5.0),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceEvenly,
+                                                        children: [
+                                                          RichText(
+                                                            text:
+                                                                const TextSpan(
+                                                              children: [],
+                                                            ),
                                                           ),
-                                                        ),
-                                                      ),
-                                                      CircleAvatar(
-                                                        radius: 15,
-                                                        backgroundColor:
-                                                            const Color
-                                                                .fromARGB(255,
-                                                                241, 221, 0),
-                                                        child: IconButton(
-                                                          iconSize: 15,
-                                                          color: Colors.white,
-                                                          onPressed: () {
-                                                            _floorNameController
-                                                                    .text =
-                                                                floor.name!;
-                                                            showModalBottomSheet<
-                                                                void>(
-                                                              context: context,
-                                                              builder:
-                                                                  (BuildContext
-                                                                      context) {
-                                                                return SingleChildScrollView(
-                                                                  child:
-                                                                      Container(
-                                                                    height: 450,
-                                                                    color: Colors
-                                                                        .white,
-                                                                    child:
-                                                                        Center(
-                                                                      child:
-                                                                          Column(
-                                                                        mainAxisAlignment:
-                                                                            MainAxisAlignment.start,
-                                                                        children: <Widget>[
-                                                                          const Padding(
-                                                                            padding:
-                                                                                EdgeInsets.all(20.0),
-                                                                            child:
-                                                                                Text(
-                                                                              'Update Your Information',
-                                                                              style: TextStyle(
-                                                                                fontSize: 18,
-                                                                                fontWeight: FontWeight.bold,
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          Padding(
-                                                                            padding:
-                                                                                const EdgeInsets.all(14.0),
-                                                                            child:
-                                                                                Row(
-                                                                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                                                              children: [
-                                                                                SizedBox(
-                                                                                  child: Text(
-                                                                                    'Floor',
-                                                                                    style: TextStyle(
-                                                                                      fontSize: 16,
-                                                                                      color: Colors.grey[700],
-                                                                                      fontStyle: FontStyle.normal,
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                                SizedBox(
-                                                                                  width: 250,
-                                                                                  height: 50,
-                                                                                  child: Padding(
-                                                                                    padding: const EdgeInsets.all(8.0),
-                                                                                    child: TextFormField(
-                                                                                      keyboardType: TextInputType.name,
-                                                                                      controller: _floorNameController,
-                                                                                      decoration: InputDecoration(
-                                                                                        border: OutlineInputBorder(
-                                                                                          borderRadius: BorderRadius.circular(10),
-                                                                                        ),
-                                                                                      ),
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                              ],
-                                                                            ),
-                                                                          ),
-                                                                          Padding(
-                                                                            padding:
-                                                                                const EdgeInsets.all(8.0),
-                                                                            child:
-                                                                                Row(
-                                                                              mainAxisAlignment: MainAxisAlignment.end,
-                                                                              children: [
-                                                                                ElevatedButton(
-                                                                                  style: ElevatedButton.styleFrom(
-                                                                                    backgroundColor: Colors.blue,
-                                                                                  ),
-                                                                                  child: const Text('Update', style: TextStyle(color: Colors.white)),
-                                                                                  onPressed: () async {
-                                                                                    int? floorId = floor.id;
-                                                                                    String updatedFloorName = _floorNameController.text;
-                                                                                    FloorModel updatedFloor = FloorModel(id: floorId, name: updatedFloorName);
-
-                                                                                    await floorApiService.updateFloor(floor: updatedFloor, id: floorId!);
-                                                                                    Get.snackbar("", "",
-                                                                                        messageText: const Center(
-                                                                                            child: Text(
-                                                                                          "updated successfully  \n",
-                                                                                          style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 20),
-                                                                                        )),
-                                                                                        snackPosition: SnackPosition.BOTTOM,
-                                                                                        duration: const Duration(seconds: 2));
-                                                                                    setState(() {
-                                                                                      _fetchFloorData();
-                                                                                      Navigator.pop(context);
-                                                                                    });
-                                                                                  },
-                                                                                ),
-                                                                                const SizedBox(width: 20),
-                                                                                ElevatedButton(
-                                                                                  style: ElevatedButton.styleFrom(
-                                                                                    backgroundColor: Colors.red,
-                                                                                  ),
-                                                                                  child: const Text('Cancel', style: TextStyle(color: Colors.white)),
-                                                                                  onPressed: () => Navigator.pop(context),
-                                                                                ),
-                                                                              ],
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                );
-                                                              },
-                                                            );
-                                                          },
-                                                          icon: const Icon(
-                                                              Icons.edit),
-                                                        ),
-                                                      ),
-                                                      const SizedBox(width: 10),
-                                                      CircleAvatar(
-                                                        radius: 15,
-                                                        backgroundColor:
-                                                            const Color
-                                                                .fromARGB(
-                                                                215, 224, 2, 2),
-                                                        child: IconButton(
-                                                          iconSize: 15,
-                                                          color: Colors.white,
-                                                          onPressed: () async {
-                                                            int? id = floor.id;
-                                                            await floorApiService
-                                                                .deleteFloor(
-                                                                    id!);
-                                                            Get.snackbar("", "",
-                                                                messageText:
-                                                                    const Center(
-                                                                        child:
-                                                                            Text(
-                                                                  "deleted successfully  \n",
-                                                                  style: TextStyle(
+                                                          const SizedBox(
+                                                              width: 15),
+                                                          SizedBox(
+                                                            width: 220,
+                                                            child: RichText(
+                                                              text: TextSpan(
+                                                                children: [
+                                                                  const TextSpan(
+                                                                    text:
+                                                                        'Floor Name: ',
+                                                                    style:
+                                                                        TextStyle(
                                                                       color: Color
                                                                           .fromARGB(
                                                                               255,
@@ -364,40 +172,206 @@ class _FloorPageState extends State<FloorPage> {
                                                                               0,
                                                                               0),
                                                                       fontSize:
-                                                                          20),
-                                                                )),
-                                                                snackPosition:
-                                                                    SnackPosition
-                                                                        .BOTTOM,
-                                                                duration:
-                                                                    const Duration(
-                                                                        seconds:
-                                                                            1));
-                                                            setState(() {
-                                                              _fetchFloorData();
-                                                            });
-                                                          },
-                                                          icon: const Icon(
-                                                              Icons.delete),
-                                                        ),
+                                                                          16,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                    ),
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text: floor
+                                                                        .name,
+                                                                    style:
+                                                                        const TextStyle(
+                                                                      color: Colors
+                                                                          .black,
+                                                                      fontSize:
+                                                                          16,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          CircleAvatar(
+                                                            radius: 15,
+                                                            backgroundColor:
+                                                                const Color
+                                                                    .fromARGB(
+                                                                    255,
+                                                                    241,
+                                                                    221,
+                                                                    0),
+                                                            child: IconButton(
+                                                              iconSize: 15,
+                                                              color:
+                                                                  Colors.white,
+                                                              onPressed: () {
+                                                                _floorNameController
+                                                                        .text =
+                                                                    floor.name!;
+                                                                showModalBottomSheet<
+                                                                    void>(
+                                                                  context:
+                                                                      context,
+                                                                  builder:
+                                                                      (BuildContext
+                                                                          context) {
+                                                                    return SingleChildScrollView(
+                                                                      child:
+                                                                          Container(
+                                                                        height:
+                                                                            450,
+                                                                        color: Colors
+                                                                            .white,
+                                                                        child:
+                                                                            Center(
+                                                                          child:
+                                                                              Column(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.start,
+                                                                            children: <Widget>[
+                                                                              const Padding(
+                                                                                padding: EdgeInsets.all(20.0),
+                                                                                child: Text(
+                                                                                  'Update Your Information',
+                                                                                  style: TextStyle(
+                                                                                    fontSize: 18,
+                                                                                    fontWeight: FontWeight.bold,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                              Padding(
+                                                                                padding: const EdgeInsets.all(14.0),
+                                                                                child: Row(
+                                                                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                                                                  children: [
+                                                                                    SizedBox(
+                                                                                      child: Text(
+                                                                                        'Floor',
+                                                                                        style: TextStyle(
+                                                                                          fontSize: 16,
+                                                                                          color: Colors.grey[700],
+                                                                                          fontStyle: FontStyle.normal,
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                    SizedBox(
+                                                                                      width: 250,
+                                                                                      height: 50,
+                                                                                      child: Padding(
+                                                                                        padding: const EdgeInsets.all(8.0),
+                                                                                        child: TextFormField(
+                                                                                          keyboardType: TextInputType.name,
+                                                                                          controller: _floorNameController,
+                                                                                          decoration: InputDecoration(
+                                                                                            border: OutlineInputBorder(
+                                                                                              borderRadius: BorderRadius.circular(10),
+                                                                                            ),
+                                                                                          ),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
+                                                                              ),
+                                                                              Padding(
+                                                                                padding: const EdgeInsets.all(8.0),
+                                                                                child: Row(
+                                                                                  mainAxisAlignment: MainAxisAlignment.end,
+                                                                                  children: [
+                                                                                    ElevatedButton(
+                                                                                      style: ElevatedButton.styleFrom(
+                                                                                        backgroundColor: Colors.blue,
+                                                                                      ),
+                                                                                      child: const Text('Update', style: TextStyle(color: Colors.white)),
+                                                                                      onPressed: () async {
+                                                                                        getLocalInfo();
+                                                                                        int? floorId = floor.id;
+                                                                                        String updatedFloorName = _floorNameController.text;
+                                                                                        FloorModel updatedFloor = FloorModel(id: floorId, name: updatedFloorName, buildingId: buildingId, isActive: true, userId: loggedInUser!.id);
+
+                                                                                        await floorApiService.updateFloor(floor: updatedFloor, id: floorId!);
+                                                                                        // ignore: use_build_context_synchronously
+                                                                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("updated successfully")));
+
+                                                                                        setState(() {
+                                                                                          _fetchFloorData();
+                                                                                          Navigator.pop(context);
+                                                                                        });
+                                                                                      },
+                                                                                    ),
+                                                                                    const SizedBox(width: 20),
+                                                                                    ElevatedButton(
+                                                                                      style: ElevatedButton.styleFrom(
+                                                                                        backgroundColor: Colors.red,
+                                                                                      ),
+                                                                                      child: const Text('Cancel', style: TextStyle(color: Colors.white)),
+                                                                                      onPressed: () => Navigator.pop(context),
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    );
+                                                                  },
+                                                                );
+                                                              },
+                                                              icon: const Icon(
+                                                                  Icons.edit),
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                              width: 10),
+                                                          CircleAvatar(
+                                                            radius: 15,
+                                                            backgroundColor:
+                                                                const Color
+                                                                    .fromARGB(
+                                                                    215,
+                                                                    224,
+                                                                    2,
+                                                                    2),
+                                                            child: IconButton(
+                                                              iconSize: 15,
+                                                              color:
+                                                                  Colors.white,
+                                                              onPressed:
+                                                                  () async {
+                                                                int? id =
+                                                                    floor.id;
+                                                                await floorApiService
+                                                                    .deleteFloor(
+                                                                        id!);
+                                                                ScaffoldMessenger.of(
+                                                                        context)
+                                                                    .showSnackBar(SnackBar(
+                                                                        content:
+                                                                            Text("deleted successfully")));
+                                                              },
+                                                              icon: const Icon(
+                                                                  Icons.delete),
+                                                            ),
+                                                          ),
+                                                        ],
                                                       ),
-                                                    ],
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                },
-                              );
-                            } else {
-                              return const Center(
-                                child: Text('no floors available.'),
-                              );
-                            }
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  )
+                                : Center(child: Text("no floor found"));
                           },
                         ),
                       ),

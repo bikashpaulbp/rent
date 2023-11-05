@@ -11,7 +11,7 @@ class FloorData extends ChangeNotifier {
       List<FloorModel> allFloorList = await floorApiService.getAllFloors();
       floorList = allFloorList;
       notifyListeners();
-    } catch (_) {}
+    } catch (_) {} 
   }
 
   floorListNew() {

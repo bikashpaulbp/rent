@@ -9,7 +9,7 @@ class TenantModel {
   int? noofFamilyMember;
   DateTime? arrivalDate;
   double? rentAmount;
-  double? utilityBill; 
+  double? utilityBill;
   double? gasBill;
   double? waterBill;
   double? totalAmount;

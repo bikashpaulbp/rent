@@ -7,6 +7,7 @@ import 'package:rent_management/shared_data/building_provider.dart';
 import 'package:rent_management/shared_data/deposit_data.dart';
 import 'package:rent_management/shared_data/flat_data.dart';
 import 'package:rent_management/shared_data/floor_data.dart';
+import 'package:rent_management/shared_data/local_info_provider.dart';
 import 'package:rent_management/shared_data/rent_data.dart';
 import 'package:rent_management/shared_data/tenent_data.dart';
 
@@ -21,6 +22,7 @@ void main() {
       ChangeNotifierProvider(create: (context) => RentData()),
       ChangeNotifierProvider(create: (context) => DepositData()),
       ChangeNotifierProvider(create: (context) => BuildingProvider()),
+      ChangeNotifierProvider(create: (context) => LocalData()),
     ],
     child: const MyApp(),
   ));
