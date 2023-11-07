@@ -28,14 +28,13 @@ class _FloorPageState extends State<FloorPage> {
   AuthStateManager authStateManager = AuthStateManager();
   UserModel? loggedInUser = UserModel();
   int? buildingId;
-  
 
   @override
   void initState() {
     setState(() {
       _fetchFloorData();
     });
-    fetchBuilding();
+
     getLocalInfo();
     super.initState();
   }
@@ -43,10 +42,6 @@ class _FloorPageState extends State<FloorPage> {
   Future<void> getLocalInfo() async {
     buildingId = await authStateManager.getBuildingId();
     loggedInUser = await authStateManager.getLoggedInUser();
-  }
-
-  Future<List<BuildingModel>> fetchBuilding() async {
-    return buildingList = await buildingApiService.getAllBuildings();
   }
 
   Future<void> _fetchFloorData() async {

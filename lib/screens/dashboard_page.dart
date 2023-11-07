@@ -189,8 +189,10 @@ class _DashboardState extends State<Dashboard> {
                     style: ButtonStyle(
                         backgroundColor: MaterialStatePropertyAll(
                             Color.fromARGB(255, 90, 215, 232))),
-                    onPressed: () {
-                      authStateManager.removeLoggedInUser().then((_) {
+                    onPressed: () async {
+                      await authStateManager.removeBuildingId();
+                      await authStateManager.removeBuildingName();
+                      await authStateManager.removeLoggedInUser().then((_) {
                         Navigator.of(context).pushReplacement(MaterialPageRoute(
                           builder: (context) => ChooseScreen(),
                         ));
@@ -223,7 +225,7 @@ class _DashboardState extends State<Dashboard> {
             FloorPage(),
             TenentPage(),
             FlatPage(),
-            MonthlyRent(),
+            // MonthlyRent(),
           ],
         ),
       );

@@ -28,6 +28,16 @@ class AuthStateManager {
     return prefs.getInt('buildingId');
   }
 
+  Future<void> removeBuildingName() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('buildingName');
+  }
+
+  Future<void> removeBuildingId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('buildingId');
+  }
+
   Future<void> setIsLoggedIn(bool isLoggedIn) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isLoggedIn', true);

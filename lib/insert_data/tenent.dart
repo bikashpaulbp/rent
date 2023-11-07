@@ -1,13 +1,17 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
+
 import 'package:intl/intl.dart';
-import 'package:rent_management/models/flat_model.dart';
+
 import 'package:rent_management/models/tenant_model.dart';
+import 'package:rent_management/models/user_model.dart';
+import 'package:rent_management/screens/login_screen.dart';
 import 'package:rent_management/services/tenant_service.dart';
-import 'package:rent_management/shared_data/tenent_data.dart';
-import '../shared_data/flat_data.dart';
 
 // ignore: must_be_immutable
 class TenentDataPage extends StatefulWidget {
@@ -19,11 +23,6 @@ class TenentDataPage extends StatefulWidget {
 }
 
 class _TenentDataPageState extends State<TenentDataPage> {
-  int? selectedFlatId;
-  String? selectedFlatName;
-  int? selectedFloorId;
-  String? selectedFloorName;
-
   final TextEditingController _tenentNameController = TextEditingController();
   final TextEditingController _nidNoController = TextEditingController();
   final TextEditingController _passportNoController = TextEditingController();
@@ -33,26 +32,64 @@ class _TenentDataPageState extends State<TenentDataPage> {
   final TextEditingController _emgMobileNoController = TextEditingController();
   final TextEditingController _noOfFamilyMemController =
       TextEditingController();
-  final TextEditingController _rentAmountController = TextEditingController();
-  final TextEditingController _gasBillController = TextEditingController();
-  final TextEditingController _waterBillController = TextEditingController();
-  final TextEditingController _utilityBillController = TextEditingController();
+  final TextEditingController _advanceAmountController =
+      TextEditingController();
+  bool isActive = true;
 
-  late Stream<List<TenantModel>> tenentStream = const Stream.empty();
   TenantApiService tenantApiService = TenantApiService();
   DateTime dateTime = DateTime(2023, 1, 1);
   final format = DateFormat("dd MMM y");
   DateTime? date;
-  bool ifFlatIDMatch = false;
+  UserModel user = UserModel();
+  DateTime? arrivalDate;
+  DateTime? rentAmountChangeDate;
+  AuthStateManager authStateManager = AuthStateManager();
+  UserModel? loggedInUser = UserModel();
+  int? userId;
+  int? buildingId;
+  Uint8List? nidImage;
+  Uint8List? tenantImage;
+
+  File? _tenantImage;
+  File? _nidImage;
   @override
   void initState() {
+    getBuildingId();
+    getUser();
     super.initState();
-    // _fetchTenantData();
   }
 
-  // Future<void> _fetchTenantData() async {
-  //   tenentStream = tenantApiService.getAllTenants().asStream();
-  // }
+  Future<void> _pickTenantImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _tenantImage = File(pickedFile.path);
+      });
+      tenantImage = await _tenantImage!.readAsBytes();
+    }
+  }
+
+  Future<void> _pickNidImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _nidImage = File(pickedFile.path);
+      });
+      nidImage = await _nidImage!.readAsBytes();
+    }
+  }
+
+  Future<void> getUser() async {
+    user = (await authStateManager.getLoggedInUser())!;
+  }
+
+  Future<void> getBuildingId() async {
+    buildingId = await authStateManager.getBuildingId();
+  }
 
   @override
   void dispose() {
@@ -63,10 +100,8 @@ class _TenentDataPageState extends State<TenentDataPage> {
     _birthCertificateNoController.dispose();
     _mobileNoController.dispose();
     _emgMobileNoController.dispose();
-    _rentAmountController.dispose();
-    _gasBillController.dispose();
-    _waterBillController.dispose();
-    _utilityBillController.dispose();
+    _advanceAmountController.dispose();
+
     _noOfFamilyMemController.dispose();
 
     super.dispose();
@@ -113,60 +148,6 @@ class _TenentDataPageState extends State<TenentDataPage> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      Consumer<FlatData>(
-                        builder: (context, flatData, child) {
-                          List<FlatModel> flatList = flatData.flatList;
-
-                          return DropdownButtonFormField<int>(
-                            isExpanded: true,
-                            decoration: InputDecoration(
-                              suffix: const Text(
-                                '*',
-                                style: TextStyle(color: Colors.red),
-                              ),
-                              labelText: 'Flat',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            disabledHint: const Text('Add Flat First'),
-                            value: selectedFlatId,
-                            onChanged: (int? value) {
-                              setState(() {
-                                selectedFlatId = value!;
-                                selectedFlatName = flatList
-                                    .firstWhere(
-                                        (flat) => flat.id == selectedFlatId)
-                                    .name;
-                              });
-                              ifFlatIDMatch = Provider.of<TenantData>(context,
-                                      listen: false)
-                                  .tenantList
-                                  .any((e) => e.id == selectedFlatId);
-                              if (ifFlatIDMatch) {
-                                Get.snackbar("", "",
-                                    messageText: const Center(
-                                        child: Text(
-                                      "selected flat already \nadded to another tenant\n",
-                                      style: TextStyle(
-                                          color:
-                                              Color.fromARGB(255, 255, 22, 22),
-                                          fontSize: 20),
-                                    )),
-                                    snackPosition: SnackPosition.BOTTOM,
-                                    duration: const Duration(seconds: 2));
-                              }
-                            },
-                            items: flatList
-                                .map<DropdownMenuItem<int>>((FlatModel flat) {
-                              return DropdownMenuItem<int>(
-                                value: flat.id,
-                                child: Text(flat.name!),
-                              );
-                            }).toList(),
-                          );
-                        },
-                      ),
                       const SizedBox(height: 8),
                       TextFormField(
                         keyboardType: TextInputType.number,
@@ -236,51 +217,20 @@ class _TenentDataPageState extends State<TenentDataPage> {
                       const SizedBox(height: 8),
                       TextFormField(
                         keyboardType: TextInputType.number,
-                        controller: _rentAmountController,
+                        controller: _advanceAmountController,
                         decoration: InputDecoration(
                           suffix: const Text(
                             '*',
                             style: TextStyle(color: Colors.red),
                           ),
-                          labelText: 'Rent Amount',
+                          labelText: 'Advance Amount',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                       ),
                       const SizedBox(height: 8),
-                      TextFormField(
-                        keyboardType: TextInputType.number,
-                        controller: _gasBillController,
-                        decoration: InputDecoration(
-                          labelText: 'Gas Bill',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      TextFormField(
-                        keyboardType: TextInputType.number,
-                        controller: _waterBillController,
-                        decoration: InputDecoration(
-                          labelText: 'Water Bill',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      TextFormField(
-                        keyboardType: TextInputType.number,
-                        controller: _utilityBillController,
-                        decoration: InputDecoration(
-                          labelText: 'Utility Bill',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                      ),
+                     
                       const SizedBox(height: 8),
                       DateTimeField(
                         decoration: InputDecoration(
@@ -288,14 +238,14 @@ class _TenentDataPageState extends State<TenentDataPage> {
                               '*',
                               style: TextStyle(color: Colors.red),
                             ),
-                            labelText: 'select date and month of in',
+                            labelText: 'select date of arrival',
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10)),
                             icon: const Icon(Icons.calendar_month)),
                         onChanged: (newValue) {
                           setState(() {
                             dateTime = newValue!;
-                            date = dateTime;
+                            arrivalDate = dateTime;
                           });
                         },
                         format: format,
@@ -308,9 +258,96 @@ class _TenentDataPageState extends State<TenentDataPage> {
                           );
                         },
                       ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      DateTimeField(
+                        decoration: InputDecoration(
+                            labelText: 'select date of change rent amount',
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                            icon: const Icon(Icons.calendar_month)),
+                        onChanged: (newValue) {
+                          setState(() {
+                            dateTime = newValue!;
+                            rentAmountChangeDate = dateTime;
+                          });
+                        },
+                        format: format,
+                        onShowPicker: (context, currentValue) {
+                          return showDatePicker(
+                            context: context,
+                            firstDate: DateTime(1900),
+                            initialDate: currentValue ?? DateTime.now(),
+                            lastDate: DateTime(2100),
+                          );
+                        },
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            if (_tenantImage != null)
+                              Image.file(
+                                _tenantImage!,
+                                width: 100,
+                                height: 100,
+                              )
+                            else
+                              Icon(Icons.image, size: 100),
+                            SizedBox(height: 20),
+                            TextButton(
+                              child: _tenantImage == null
+                                  ? Text(
+                                      "choose tenant image",
+                                      style: TextStyle(fontSize: 20),
+                                    )
+                                  : Text(
+                                      "change tenant image",
+                                      style: TextStyle(fontSize: 20),
+                                    ),
+                              onPressed: _pickTenantImage,
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            if (_nidImage != null)
+                              Image.file(
+                                _nidImage!,
+                                width: 100,
+                                height: 100,
+                              )
+                            else
+                              Icon(Icons.image, size: 100),
+                            SizedBox(width: 20),
+                            TextButton(
+                              child: _nidImage == null
+                                  ? Text(
+                                      "choose NID image",
+                                      style: TextStyle(fontSize: 20),
+                                    )
+                                  : Text(
+                                      "change NID image",
+                                      style: TextStyle(fontSize: 20),
+                                    ),
+                              onPressed: _pickNidImage,
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -333,49 +370,48 @@ class _TenentDataPageState extends State<TenentDataPage> {
                           ),
                         ),
                         onPressed: () async => {
+                          getBuildingId(),
+                          getUser(),
                           if (_tenentNameController.text.isNotEmpty &&
-                              _rentAmountController.text.isNotEmpty &&
-                              date != null &&
-                              selectedFlatId != null &&
-                              selectedFlatName != "" &&
-                              ifFlatIDMatch == false)
+                              arrivalDate != null &&
+                              _advanceAmountController.text.isNotEmpty)
                             {
                               await tenantApiService.createTenant(TenantModel(
-                                  name: _tenentNameController.text,
-                                  flatId: selectedFlatId!,
-                                  nid: _nidNoController.text.isNotEmpty
-                                      ? _nidNoController.text
-                                      : "",
-                                  passportNo: _passportNoController.text.isNotEmpty
-                                      ? _passportNoController.text
-                                      : "",
-                                  birthCertificateNo:
-                                      _birthCertificateNoController.text.isNotEmpty
-                                          ? _birthCertificateNoController.text
-                                          : "",
-                                  mobileNo: _mobileNoController.text.isNotEmpty
-                                      ? _mobileNoController.text
-                                      : "",
-                                  emgMobileNo:
-                                      _emgMobileNoController.text.isNotEmpty
-                                          ? _emgMobileNoController.text
-                                          : "",
-                                  noofFamilyMember: _noOfFamilyMemController.text.isNotEmpty
-                                      ? int.parse(_noOfFamilyMemController.text)
-                                      : 0,
-                                  rentAmount:
-                                      double.parse(_rentAmountController.text),
-                                  gasBill: _gasBillController.text.isNotEmpty
-                                      ? double.parse(_gasBillController.text)
-                                      : 0.0,
-                                  waterBill: _waterBillController.text.isNotEmpty
-                                      ? double.parse(_waterBillController.text)
-                                      : 0.0,
-                                  utilityBill: _utilityBillController.text.isNotEmpty
-                                      ? double.parse(_utilityBillController.text)
-                                      : 0.0,
-                                  totalAmount: double.parse(_rentAmountController.text) + (_gasBillController.text.isNotEmpty ? double.parse(_gasBillController.text) : 0.0) + (_waterBillController.text.isNotEmpty ? double.parse(_waterBillController.text) : 0.0) + (_utilityBillController.text.isNotEmpty ? double.parse(_utilityBillController.text) : 0.0),
-                                  arrivalDate: date)),
+                                name: _tenentNameController.text,
+                                nid: _nidNoController.text.isNotEmpty
+                                    ? _nidNoController.text
+                                    : "",
+                                passportNo:
+                                    _passportNoController.text.isNotEmpty
+                                        ? _passportNoController.text
+                                        : "",
+                                birthCertificateNo:
+                                    _birthCertificateNoController
+                                            .text.isNotEmpty
+                                        ? _birthCertificateNoController.text
+                                        : "",
+                                mobileNo: _mobileNoController.text.isNotEmpty
+                                    ? _mobileNoController.text
+                                    : "",
+                                emgMobileNo:
+                                    _emgMobileNoController.text.isNotEmpty
+                                        ? _emgMobileNoController.text
+                                        : "",
+                                noofFamilyMember: _noOfFamilyMemController
+                                        .text.isNotEmpty
+                                    ? int.parse(_noOfFamilyMemController.text)
+                                    : 0,
+                                arrivalDate: arrivalDate,
+                                advanceAmount:
+                                    int.parse(_advanceAmountController.text),
+                                buildingId: buildingId,
+                                isActive: isActive,
+                                rentAmountChangeDate:
+                                    rentAmountChangeDate ?? null,
+                                tenantImage: tenantImage ?? null,
+                                tenantNidImage: nidImage ?? null,
+                                userId: user.id,
+                              )),
                               widget.refresh(),
                               Get.back(),
                               setState(() {
@@ -388,58 +424,19 @@ class _TenentDataPageState extends State<TenentDataPage> {
                                 _mobileNoController.text = "";
                                 _emgMobileNoController.text = "";
                                 _noOfFamilyMemController.text = "";
-                                _rentAmountController.text = "";
-                                _gasBillController.text = "";
-                                _waterBillController.text = "";
-                                _utilityBillController.text = "";
-
-                                selectedFloorId = null;
-                                selectedFlatName = "";
-                                selectedFlatId = null;
-                                selectedFloorName = "";
+                                _advanceAmountController.text = "";
                               }),
-                              Get.snackbar("", "",
-                                  messageText: const Center(
-                                      child: Text(
-                                    "saved successfully  \n",
-                                    style: TextStyle(
-                                        color: Color.fromARGB(255, 0, 0, 0),
-                                        fontSize: 20),
-                                  )),
-                                  snackPosition: SnackPosition.BOTTOM,
-                                  duration: const Duration(seconds: 2)),
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text("saved successfully"))),
                               Get.back(),
                             }
                           else
                             {
-                              if (ifFlatIDMatch)
-                                {
-                                  Get.snackbar("", "",
-                                      messageText: const Center(
-                                          child: Text(
-                                        "please change flat\n",
-                                        style: TextStyle(
-                                            color: Color.fromARGB(
-                                                255, 255, 22, 22),
-                                            fontSize: 20),
-                                      )),
-                                      snackPosition: SnackPosition.BOTTOM,
-                                      duration: const Duration(seconds: 2))
-                                }
-                              else
-                                {
-                                  Get.snackbar("", "",
-                                      messageText: const Center(
-                                          child: Text(
-                                        "please fill up all * marked field\n",
-                                        style: TextStyle(
-                                            color: Color.fromARGB(
-                                                255, 255, 22, 22),
-                                            fontSize: 20),
-                                      )),
-                                      snackPosition: SnackPosition.BOTTOM,
-                                      duration: const Duration(seconds: 2))
-                                },
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content:
+                                          Text("enter required information")))
                             }
                         },
                       ),

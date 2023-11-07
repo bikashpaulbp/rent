@@ -1,11 +1,19 @@
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import 'package:rent_management/insert_data/tenent.dart';
+import 'package:rent_management/models/building_model.dart';
 import 'package:rent_management/models/flat_model.dart';
 import 'package:rent_management/models/tenant_model.dart';
+import 'package:rent_management/models/user_model.dart';
+import 'package:rent_management/screens/login_screen.dart';
 import 'package:rent_management/services/flat_service.dart';
 import 'package:rent_management/services/tenant_service.dart';
 
@@ -26,17 +34,26 @@ class _TenentPageState extends State<TenentPage> {
   final _newMobileNoController = TextEditingController();
   final _newEmgMobileNoController = TextEditingController();
   final _newNoOfFamilyMemController = TextEditingController();
-  final _newRentAmountController = TextEditingController();
-  final _newGasBillController = TextEditingController();
-  final _newWaterBillController = TextEditingController();
-  final _newUtilityController = TextEditingController();
+  final _newAdvanceAmountController = TextEditingController();
 
   late Stream<List<TenantModel>> tenantStream = const Stream.empty();
   TenantApiService tenantApiService = TenantApiService();
-  FlatApiService flatApiService = FlatApiService();
-  late List<FlatModel> flatList = [];
-  String? flatName;
-  final format = DateFormat('dd MMM y');
+  DateTime dateTime = DateTime(2023, 1, 1);
+  final format = DateFormat("dd MMM y");
+  DateTime? date;
+  UserModel user = UserModel();
+  DateTime? arrivalDate;
+  DateTime? rentAmountChangeDate;
+  AuthStateManager authStateManager = AuthStateManager();
+  UserModel? loggedInUser = UserModel();
+  int? userId;
+  int? buildingId;
+  Uint8List? nidImage;
+  Uint8List? tenantImage;
+  bool isActive = true;
+  File? _tenantImage;
+  File? _nidImage;
+
   @override
   void initState() {
     _fetchTenantData();
@@ -45,13 +62,41 @@ class _TenentPageState extends State<TenentPage> {
   }
 
   void refresh() {
+    getLocalInfo();
     _fetchTenantData();
+  }
+
+  Future<void> getLocalInfo() async {
+    buildingId = await authStateManager.getBuildingId();
+    loggedInUser = await authStateManager.getLoggedInUser();
   }
 
   Future<void> _fetchTenantData() async {
     tenantStream = tenantApiService.getAllTenants().asStream();
+  }
 
-    flatList = await flatApiService.getAllFlats();
+  Future<void> _pickTenantImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _tenantImage = File(pickedFile.path);
+      });
+      tenantImage = await _tenantImage!.readAsBytes();
+    }
+  }
+
+  Future<void> _pickNidImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _nidImage = File(pickedFile.path);
+      });
+      nidImage = await _nidImage!.readAsBytes();
+    }
   }
 
   @override
@@ -110,29 +155,28 @@ class _TenentPageState extends State<TenentPage> {
                         stream: tenantStream,
                         builder: (BuildContext context,
                             AsyncSnapshot<List<TenantModel>> snapshot) {
+                          getLocalInfo();
+                          _fetchTenantData();
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
                             return Center(child: CircularProgressIndicator());
                           } else if (snapshot.hasData &&
                               snapshot.data != null &&
                               snapshot.data!.isNotEmpty) {
-                            List<TenantModel> tenentList = snapshot.data!;
+                            List<TenantModel> tenentList = snapshot.data!
+                                .where((e) => e.buildingId == buildingId)
+                                .toList();
 
                             return ListView.builder(
                               itemCount: tenentList.length,
                               itemBuilder: (BuildContext context, int index) {
                                 TenantModel tenent = tenentList[index];
-                                if (flatList.isNotEmpty) {
-                                  flatName = flatList
-                                      .firstWhere(
-                                          (flat) => flat.id == tenent.flatId)
-                                      .name;
-                                }
 
                                 return ListTile(
                                   title: Container(
                                     width: 500,
-                                    height: 500,
+                                    height:
+                                        MediaQuery.sizeOf(context).height * 1,
                                     child: Card(
                                       elevation: 10,
                                       child: Padding(
@@ -157,36 +201,6 @@ class _TenentPageState extends State<TenentPage> {
                                                             5.0),
                                                     child: Text(
                                                       'Tenent Name: ${tenent.name}',
-                                                      style: const TextStyle(
-                                                        color: Color.fromARGB(
-                                                            255, 0, 0, 0),
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            5.0),
-                                                    child: Text(
-                                                      'Flat Name: $flatName',
-                                                      style: const TextStyle(
-                                                        color: Color.fromARGB(
-                                                            255, 0, 0, 0),
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            5.0),
-                                                    child: Text(
-                                                      'Date of Arrival: ${tenent.arrivalDate != null ? DateFormat('dd MMM y').format(tenent.arrivalDate!) : "N/A"}',
                                                       style: const TextStyle(
                                                         color: Color.fromARGB(
                                                             255, 0, 0, 0),
@@ -276,7 +290,7 @@ class _TenentPageState extends State<TenentPage> {
                                                         const EdgeInsets.all(
                                                             5.0),
                                                     child: Text(
-                                                      'Family Members: ${tenent.noofFamilyMember}',
+                                                      'Family Members: ${tenent.noofFamilyMember ?? ""}',
                                                       style: const TextStyle(
                                                         color: Color.fromARGB(
                                                             255, 0, 0, 0),
@@ -291,7 +305,7 @@ class _TenentPageState extends State<TenentPage> {
                                                         const EdgeInsets.all(
                                                             5.0),
                                                     child: Text(
-                                                      'Rent Amount: ${tenent.rentAmount}',
+                                                      'Advance Amount: ${tenent.advanceAmount ?? ""}',
                                                       style: const TextStyle(
                                                         color: Color.fromARGB(
                                                             255, 0, 0, 0),
@@ -306,7 +320,7 @@ class _TenentPageState extends State<TenentPage> {
                                                         const EdgeInsets.all(
                                                             5.0),
                                                     child: Text(
-                                                      'Gas Bill: ${tenent.gasBill}',
+                                                      'Date of Arrival: ${tenent.arrivalDate != null ? DateFormat('dd MMM y').format(tenent.arrivalDate!) : ""}',
                                                       style: const TextStyle(
                                                         color: Color.fromARGB(
                                                             255, 0, 0, 0),
@@ -321,7 +335,7 @@ class _TenentPageState extends State<TenentPage> {
                                                         const EdgeInsets.all(
                                                             5.0),
                                                     child: Text(
-                                                      'Water Bill: ${tenent.waterBill}',
+                                                      'Date of Change Rent Amount: ${tenent.rentAmountChangeDate != null ? DateFormat('dd MMM y').format(tenent.rentAmountChangeDate!) : ""}',
                                                       style: const TextStyle(
                                                         color: Color.fromARGB(
                                                             255, 0, 0, 0),
@@ -335,30 +349,65 @@ class _TenentPageState extends State<TenentPage> {
                                                     padding:
                                                         const EdgeInsets.all(
                                                             5.0),
-                                                    child: Text(
-                                                      'Utility Bill: ${tenent.utilityBill}',
-                                                      style: const TextStyle(
-                                                        color: Color.fromARGB(
-                                                            255, 0, 0, 0),
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            5.0),
-                                                    child: Text(
-                                                      'Total Amount: ${tenent.totalAmount = (tenent.rentAmount! + tenent.gasBill! + tenent.waterBill! + tenent.utilityBill!)}',
-                                                      style: const TextStyle(
-                                                        color: Color.fromARGB(
-                                                            255, 0, 0, 0),
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          "Tenant Image",
+                                                          style:
+                                                              const TextStyle(
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    22,
+                                                                    167,
+                                                                    192),
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 10,
+                                                        ),
+                                                        Image.memory(
+                                                          tenent.tenantImage!,
+                                                          width: 300,
+                                                          height: 200,
+                                                        ),
+                                                        SizedBox(
+                                                          height: 10,
+                                                        ),
+                                                        Text(
+                                                          "NID Image",
+                                                          style:
+                                                              const TextStyle(
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    22,
+                                                                    167,
+                                                                    192),
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 10,
+                                                        ),
+                                                        Image.memory(
+                                                          tenent
+                                                              .tenantNidImage!,
+                                                          width: 300,
+                                                          height: 200,
+                                                        ),
+                                                      ],
                                                     ),
                                                   ),
                                                 ],
@@ -394,24 +443,13 @@ class _TenentPageState extends State<TenentPage> {
                                                             .text =
                                                         tenent.emgMobileNo
                                                             .toString();
-
+                                                    _newAdvanceAmountController
+                                                            .text =
+                                                        tenent.advanceAmount
+                                                            .toString();
                                                     _newNoOfFamilyMemController
                                                             .text =
                                                         tenent.noofFamilyMember
-                                                            .toString();
-                                                    _newRentAmountController
-                                                            .text =
-                                                        tenent.rentAmount
-                                                            .toString();
-                                                    _newGasBillController.text =
-                                                        tenent.gasBill
-                                                            .toString();
-                                                    _newWaterBillController
-                                                            .text =
-                                                        tenent.waterBill
-                                                            .toString();
-                                                    _newUtilityController.text =
-                                                        tenent.utilityBill
                                                             .toString();
 
                                                     showModalBottomSheet<void>(
@@ -420,7 +458,7 @@ class _TenentPageState extends State<TenentPage> {
                                                           context) {
                                                         return SingleChildScrollView(
                                                           child: Container(
-                                                            height: 900,
+                                                            height: 1000,
                                                             color: const Color
                                                                 .fromARGB(255,
                                                                 255, 255, 255),
@@ -675,7 +713,7 @@ class _TenentPageState extends State<TenentPage> {
                                                                           children: [
                                                                             const SizedBox(
                                                                               child: Text(
-                                                                                'Rent Amount',
+                                                                                'Advance \n Amount',
                                                                                 style: TextStyle(
                                                                                   fontSize: 16,
                                                                                   color: Color.fromARGB(255, 78, 78, 78),
@@ -690,7 +728,7 @@ class _TenentPageState extends State<TenentPage> {
                                                                                 padding: const EdgeInsets.all(8.0),
                                                                                 child: TextFormField(
                                                                                   keyboardType: TextInputType.number,
-                                                                                  controller: _newRentAmountController,
+                                                                                  controller: _newAdvanceAmountController,
                                                                                   decoration: InputDecoration(
                                                                                     border: OutlineInputBorder(
                                                                                       borderRadius: BorderRadius.circular(10),
@@ -701,101 +739,129 @@ class _TenentPageState extends State<TenentPage> {
                                                                             ),
                                                                           ],
                                                                         ),
-                                                                        Row(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.spaceBetween,
-                                                                          children: [
-                                                                            const SizedBox(
-                                                                              child: Text(
-                                                                                'Gas Bill',
-                                                                                style: TextStyle(
-                                                                                  fontSize: 16,
-                                                                                  color: Color.fromARGB(255, 78, 78, 78),
-                                                                                  fontStyle: FontStyle.normal,
-                                                                                ),
+                                                                        DateTimeField(
+                                                                          decoration: InputDecoration(
+                                                                              suffix: const Text(
+                                                                                '*',
+                                                                                style: TextStyle(color: Colors.red),
                                                                               ),
-                                                                            ),
-                                                                            SizedBox(
-                                                                              width: 250,
-                                                                              height: 50,
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsets.all(8.0),
-                                                                                child: TextFormField(
-                                                                                  keyboardType: TextInputType.number,
-                                                                                  controller: _newGasBillController,
-                                                                                  decoration: InputDecoration(
-                                                                                    border: OutlineInputBorder(
-                                                                                      borderRadius: BorderRadius.circular(10),
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ],
+                                                                              labelText: 'select date of arrival',
+                                                                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                                                                              icon: const Icon(Icons.calendar_month)),
+                                                                          onChanged:
+                                                                              (newValue) {
+                                                                            setState(() {
+                                                                              dateTime = newValue!;
+                                                                              arrivalDate = dateTime;
+                                                                            });
+                                                                          },
+                                                                          format:
+                                                                              format,
+                                                                          onShowPicker:
+                                                                              (context, currentValue) {
+                                                                            return showDatePicker(
+                                                                              context: context,
+                                                                              firstDate: DateTime(1900),
+                                                                              initialDate: currentValue ?? DateTime.now(),
+                                                                              lastDate: DateTime(2100),
+                                                                            );
+                                                                          },
                                                                         ),
-                                                                        Row(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.spaceBetween,
-                                                                          children: [
-                                                                            const SizedBox(
-                                                                              child: Text(
-                                                                                'Water Bill',
-                                                                                style: TextStyle(
-                                                                                  fontSize: 16,
-                                                                                  color: Color.fromARGB(255, 78, 78, 78),
-                                                                                  fontStyle: FontStyle.normal,
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                            SizedBox(
-                                                                              width: 250,
-                                                                              height: 50,
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsets.all(8.0),
-                                                                                child: TextFormField(
-                                                                                  keyboardType: TextInputType.number,
-                                                                                  controller: _newWaterBillController,
-                                                                                  decoration: InputDecoration(
-                                                                                    border: OutlineInputBorder(
-                                                                                      borderRadius: BorderRadius.circular(10),
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ],
+                                                                        SizedBox(
+                                                                          height:
+                                                                              20,
                                                                         ),
-                                                                        Row(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.spaceBetween,
-                                                                          children: [
-                                                                            const SizedBox(
-                                                                              child: Text(
-                                                                                'Utility Bill',
-                                                                                style: TextStyle(
-                                                                                  fontSize: 16,
-                                                                                  color: Color.fromARGB(255, 78, 78, 78),
-                                                                                  fontStyle: FontStyle.normal,
-                                                                                ),
+                                                                        DateTimeField(
+                                                                          decoration: InputDecoration(
+                                                                              labelText: 'select date of change rent amount',
+                                                                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                                                                              icon: const Icon(Icons.calendar_month)),
+                                                                          onChanged:
+                                                                              (newValue) {
+                                                                            setState(() {
+                                                                              dateTime = newValue!;
+                                                                              rentAmountChangeDate = dateTime;
+                                                                            });
+                                                                          },
+                                                                          format:
+                                                                              format,
+                                                                          onShowPicker:
+                                                                              (context, currentValue) {
+                                                                            return showDatePicker(
+                                                                              context: context,
+                                                                              firstDate: DateTime(1900),
+                                                                              initialDate: currentValue ?? DateTime.now(),
+                                                                              lastDate: DateTime(2100),
+                                                                            );
+                                                                          },
+                                                                        ),
+                                                                        SizedBox(
+                                                                          height:
+                                                                              20,
+                                                                        ),
+                                                                        Center(
+                                                                          child:
+                                                                              Row(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.spaceEvenly,
+                                                                            children: [
+                                                                              if (_tenantImage != null)
+                                                                                Image.file(
+                                                                                  _tenantImage!,
+                                                                                  width: 100,
+                                                                                  height: 100,
+                                                                                )
+                                                                              else
+                                                                                Icon(Icons.image, size: 100),
+                                                                              SizedBox(height: 20),
+                                                                              TextButton(
+                                                                                child: _tenantImage == null
+                                                                                    ? Text(
+                                                                                        "choose tenant image",
+                                                                                        style: TextStyle(fontSize: 20),
+                                                                                      )
+                                                                                    : Text(
+                                                                                        "change tenant image",
+                                                                                        style: TextStyle(fontSize: 20),
+                                                                                      ),
+                                                                                onPressed: _pickTenantImage,
                                                                               ),
-                                                                            ),
-                                                                            SizedBox(
-                                                                              width: 250,
-                                                                              height: 50,
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsets.all(8.0),
-                                                                                child: TextFormField(
-                                                                                  keyboardType: TextInputType.number,
-                                                                                  controller: _newUtilityController,
-                                                                                  decoration: InputDecoration(
-                                                                                    border: OutlineInputBorder(
-                                                                                      borderRadius: BorderRadius.circular(10),
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                        SizedBox(
+                                                                          height:
+                                                                              20,
+                                                                        ),
+                                                                        Center(
+                                                                          child:
+                                                                              Row(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.spaceEvenly,
+                                                                            children: [
+                                                                              if (_nidImage != null)
+                                                                                Image.file(
+                                                                                  _nidImage!,
+                                                                                  width: 100,
+                                                                                  height: 100,
+                                                                                )
+                                                                              else
+                                                                                Icon(Icons.image, size: 100),
+                                                                              SizedBox(width: 20),
+                                                                              TextButton(
+                                                                                child: _nidImage == null
+                                                                                    ? Text(
+                                                                                        "choose NID image",
+                                                                                        style: TextStyle(fontSize: 20),
+                                                                                      )
+                                                                                    : Text(
+                                                                                        "change NID image",
+                                                                                        style: TextStyle(fontSize: 20),
+                                                                                      ),
+                                                                                onPressed: _pickNidImage,
                                                                               ),
-                                                                            ),
-                                                                          ],
+                                                                            ],
+                                                                          ),
                                                                         ),
                                                                       ],
                                                                     ),
@@ -825,26 +891,18 @@ class _TenentPageState extends State<TenentPage> {
                                                                                 mobileNo: _newMobileNoController.text == "" ? "" : _newMobileNoController.text,
                                                                                 emgMobileNo: _newEmgMobileNoController == "" ? "" : _newMobileNoController.text,
                                                                                 noofFamilyMember: int.parse(_newNoOfFamilyMemController.text),
-                                                                                rentAmount: _newRentAmountController.text == "0.0" ? 0 : double.parse(_newRentAmountController.text),
-                                                                                gasBill: _newGasBillController.text == "0.0" ? 0 : double.parse(_newGasBillController.text),
-                                                                                waterBill: _newWaterBillController.text == "0.0" ? 0 : double.parse(_newWaterBillController.text),
-                                                                                utilityBill: _newUtilityController.text == "0.0" ? 0 : double.parse(_newUtilityController.text),
-                                                                                arrivalDate: tenent.arrivalDate,
-                                                                                flatId: tenent.flatId,
-                                                                                id: tenent.id,
-                                                                                totalAmount: tenent.totalAmount);
+                                                                                advanceAmount: int.parse(_newAdvanceAmountController.text),
+                                                                                arrivalDate: arrivalDate ?? tenent.arrivalDate,
+                                                                                buildingId: buildingId,
+                                                                                isActive: isActive,
+                                                                                rentAmountChangeDate: rentAmountChangeDate ?? tenent.rentAmountChangeDate,
+                                                                                tenantImage: tenantImage,
+                                                                                tenantNidImage: nidImage,
+                                                                                userId: user.id);
                                                                             await tenantApiService.updateTenant(
                                                                                 tenant: updatedTenant,
                                                                                 id: id);
-                                                                            Get.snackbar("",
-                                                                                "",
-                                                                                messageText: const Center(
-                                                                                    child: Text(
-                                                                                  "updated successfully  \n",
-                                                                                  style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 20),
-                                                                                )),
-                                                                                snackPosition: SnackPosition.BOTTOM,
-                                                                                duration: const Duration(seconds: 2));
+                                                                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("updated successfully")));
 
                                                                             setState(() {
                                                                               _fetchTenantData();
@@ -889,23 +947,12 @@ class _TenentPageState extends State<TenentPage> {
                                                     await tenantApiService
                                                         .deleteTenant(
                                                             tenent.id!);
-                                                    Get.snackbar("", "",
-                                                        messageText:
-                                                            const Center(
-                                                                child: Text(
-                                                          "deleted successfully  \n",
-                                                          style: TextStyle(
-                                                              color: Color
-                                                                  .fromARGB(255,
-                                                                      0, 0, 0),
-                                                              fontSize: 20),
-                                                        )),
-                                                        snackPosition:
-                                                            SnackPosition
-                                                                .BOTTOM,
-                                                        duration:
-                                                            const Duration(
-                                                                seconds: 1));
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(SnackBar(
+                                                            content: Text(
+                                                                "deleted successfully")));
+
                                                     setState(() {
                                                       _fetchTenantData();
                                                     });

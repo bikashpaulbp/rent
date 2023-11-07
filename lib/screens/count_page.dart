@@ -56,7 +56,7 @@ class _CountPageState extends State<CountPage> {
   }
 
   Future<void> getBuildingId() async {
-    buildingId = (await authStateManager.getBuildingId())!;
+    buildingId = await authStateManager.getBuildingId();
   }
 
   Future<List<BuildingModel>> fetchBuilding() async {
@@ -310,7 +310,7 @@ class _CountPageState extends State<CountPage> {
                             padding: const EdgeInsets.all(8.0),
                             child: InkWell(
                               onTap: () {
-                                Get.to(MonthlyRent());
+                                // Get.to(MonthlyRent());
                               },
                               child: Card(
                                 shape: BeveledRectangleBorder(
@@ -369,7 +369,7 @@ class _CountPageState extends State<CountPage> {
                                 child: IconButton(
                                   iconSize: 40,
                                   onPressed: () {
-                                    Get.to(DepositPage());
+                                    // Get.to(DepositPage());
                                   },
                                   icon: Icon(Icons.history),
                                 ),
