@@ -53,26 +53,25 @@ class _TenentPageState extends State<TenentPage> {
   bool isActive = true;
   File? _tenantImage;
   File? _nidImage;
-
+  bool isLoading = false;
   @override
   void initState() {
     _fetchTenantData();
-
+    getLocalInfo();
     super.initState();
   }
 
   void refresh() {
-    getLocalInfo();
     setState(() {
       _fetchTenantData();
     });
   }
 
-  Uint8List compressImage(Uint8List imageData, int quality) {
-    final image = img.decodeImage(imageData)!;
-    final compressedImageData = img.encodeJpg(image, quality: quality);
-    return Uint8List.fromList(compressedImageData);
-  }
+  // Uint8List compressImage(Uint8List imageData, int quality) {
+  //   final image = img.decodeImage(imageData)!;
+  //   final compressedImageData = img.encodeJpg(image, quality: quality);
+  //   return Uint8List.fromList(compressedImageData);
+  // }
 
   Future<void> getLocalInfo() async {
     buildingId = await authStateManager.getBuildingId();
@@ -83,37 +82,37 @@ class _TenentPageState extends State<TenentPage> {
     tenantStream = tenantApiService.getAllTenants().asStream();
   }
 
-  Future<void> _pickTenantImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+  // Future<void> _pickTenantImage() async {
+  //   final picker = ImagePicker();
+  //   final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
-    if (pickedFile != null) {
-      final imageFile = File(pickedFile.path);
-      final originalImageData = await imageFile.readAsBytes();
-      final compressedImageData = compressImage(originalImageData, 25);
+  //   if (pickedFile != null) {
+  //     final imageFile = File(pickedFile.path);
+  //     final originalImageData = await imageFile.readAsBytes();
+  //     final compressedImageData = compressImage(originalImageData, 8);
 
-      setState(() {
-        _tenantImage = imageFile;
-        tenantImage = compressedImageData;
-      });
-    }
-  }
+  //     setState(() {
+  //       _tenantImage = imageFile;
+  //       tenantImage = compressedImageData;
+  //     });
+  //   }
+  // }
 
-  Future<void> _pickNidImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+  // Future<void> _pickNidImage() async {
+  //   final picker = ImagePicker();
+  //   final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
-    if (pickedFile != null) {
-      final imageFile = File(pickedFile.path);
-      final originalImageData = await imageFile.readAsBytes();
-      final compressedImageData = compressImage(originalImageData, 25);
+  //   if (pickedFile != null) {
+  //     final imageFile = File(pickedFile.path);
+  //     final originalImageData = await imageFile.readAsBytes();
+  //     final compressedImageData = compressImage(originalImageData, 8);
 
-      setState(() {
-        _nidImage = imageFile;
-        nidImage = compressedImageData;
-      });
-    }
-  }
+  //     setState(() {
+  //       _nidImage = imageFile;
+  //       nidImage = compressedImageData;
+  //     });
+  //   }
+  // }
 
   @override
   void dispose() {
@@ -160,7 +159,7 @@ class _TenentPageState extends State<TenentPage> {
                         builder: (BuildContext context,
                             AsyncSnapshot<List<TenantModel>> snapshot) {
                           getLocalInfo();
-                          _fetchTenantData();
+
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
                             return Center(child: CircularProgressIndicator());
@@ -803,69 +802,13 @@ class _TenentPageState extends State<TenentPage> {
                                                                           height:
                                                                               20,
                                                                         ),
-                                                                        Center(
-                                                                          child:
-                                                                              Row(
-                                                                            mainAxisAlignment:
-                                                                                MainAxisAlignment.spaceEvenly,
-                                                                            children: [
-                                                                              if (_tenantImage != null)
-                                                                                Image.file(
-                                                                                  _tenantImage!,
-                                                                                  width: 100,
-                                                                                  height: 100,
-                                                                                )
-                                                                              else
-                                                                                Icon(Icons.image, size: 100),
-                                                                              SizedBox(height: 20),
-                                                                              TextButton(
-                                                                                child: _tenantImage == null
-                                                                                    ? Text(
-                                                                                        "choose tenant image",
-                                                                                        style: TextStyle(fontSize: 20),
-                                                                                      )
-                                                                                    : Text(
-                                                                                        "change tenant image",
-                                                                                        style: TextStyle(fontSize: 20),
-                                                                                      ),
-                                                                                onPressed: _pickTenantImage,
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                        ),
+                                                                        isLoading ==
+                                                                                false
+                                                                            ? Text("")
+                                                                            : Center(child: CircularProgressIndicator()),
                                                                         SizedBox(
                                                                           height:
-                                                                              20,
-                                                                        ),
-                                                                        Center(
-                                                                          child:
-                                                                              Row(
-                                                                            mainAxisAlignment:
-                                                                                MainAxisAlignment.spaceEvenly,
-                                                                            children: [
-                                                                              if (_nidImage != null)
-                                                                                Image.file(
-                                                                                  _nidImage!,
-                                                                                  width: 100,
-                                                                                  height: 100,
-                                                                                )
-                                                                              else
-                                                                                Icon(Icons.image, size: 100),
-                                                                              SizedBox(width: 20),
-                                                                              TextButton(
-                                                                                child: _nidImage == null
-                                                                                    ? Text(
-                                                                                        "choose NID image",
-                                                                                        style: TextStyle(fontSize: 20),
-                                                                                      )
-                                                                                    : Text(
-                                                                                        "change NID image",
-                                                                                        style: TextStyle(fontSize: 20),
-                                                                                      ),
-                                                                                onPressed: _pickNidImage,
-                                                                              ),
-                                                                            ],
-                                                                          ),
+                                                                              10,
                                                                         ),
                                                                       ],
                                                                     ),
@@ -885,8 +828,13 @@ class _TenentPageState extends State<TenentPage> {
                                                                               const Text('update'),
                                                                           onPressed:
                                                                               () async {
+                                                                            setState(() {
+                                                                              isLoading = true;
+                                                                            });
+
                                                                             int id =
                                                                                 tenent.id!;
+
                                                                             DateTime?
                                                                                 existingArrivalDate =
                                                                                 tenent.arrivalDate;
@@ -905,19 +853,22 @@ class _TenentPageState extends State<TenentPage> {
                                                                                 passportNo: _newPassportNoController.text == "" ? "" : _newPassportNoController.text,
                                                                                 birthCertificateNo: _newBirthCertificateNoController.text == "" ? "" : _newBirthCertificateNoController.text,
                                                                                 mobileNo: _newMobileNoController.text == "" ? "" : _newMobileNoController.text,
-                                                                                emgMobileNo: _newEmgMobileNoController == "" ? "" : _newMobileNoController.text,
+                                                                                emgMobileNo: _newEmgMobileNoController.text == "" ? "" : _newMobileNoController.text,
                                                                                 noofFamilyMember: int.parse(_newNoOfFamilyMemController.text),
                                                                                 advanceAmount: int.parse(_newAdvanceAmountController.text),
                                                                                 arrivalDate: arrivalDate ?? existingArrivalDate,
                                                                                 buildingId: buildingId,
                                                                                 isActive: isActive,
                                                                                 rentAmountChangeDate: rentAmountChangeDate ?? existingRentAmountChangeDate,
-                                                                                tenantImage: tenantImage ?? existingTenantImage,
-                                                                                tenantNidImage: nidImage ?? existingNidImage,
-                                                                                userId: user.id);
-                                                                            await tenantApiService.updateTenant(
-                                                                                tenant: updatedTenant,
-                                                                                id: id);
+                                                                                tenantImage: existingTenantImage,
+                                                                                tenantNidImage: existingNidImage,
+                                                                                userId: tenent.userId,
+                                                                                id: tenent.id);
+                                                                            await tenantApiService.updateTenant(tenant: updatedTenant, id: id).whenComplete(() {
+                                                                              setState(() {
+                                                                                isLoading = false;
+                                                                              });
+                                                                            });
                                                                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("updated successfully")));
 
                                                                             setState(() {

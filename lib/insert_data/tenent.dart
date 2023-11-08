@@ -74,7 +74,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
     if (pickedFile != null) {
       final imageFile = File(pickedFile.path);
       final originalImageData = await imageFile.readAsBytes();
-      final compressedImageData = compressImage(originalImageData, 25);
+      final compressedImageData = compressImage(originalImageData, 8);
 
       setState(() {
         _tenantImage = imageFile;
@@ -90,7 +90,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
     if (pickedFile != null) {
       final imageFile = File(pickedFile.path);
       final originalImageData = await imageFile.readAsBytes();
-      final compressedImageData = compressImage(originalImageData, 25);
+      final compressedImageData = compressImage(originalImageData, 8);
 
       setState(() {
         _nidImage = imageFile;
@@ -360,6 +360,12 @@ class _TenentDataPageState extends State<TenentDataPage> {
                           ],
                         ),
                       ),
+                      isLoading == false
+                          ? Text("")
+                          : Center(child: CircularProgressIndicator()),
+                      SizedBox(
+                        height: 10,
+                      ),
                     ],
                   ),
                   const SizedBox(height: 20),
@@ -377,15 +383,13 @@ class _TenentDataPageState extends State<TenentDataPage> {
                             vertical: 12,
                           ),
                         ),
-                        child: isLoading == false
-                            ? Text(
-                                'Save',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                ),
-                              )
-                            : Center(child: CircularProgressIndicator()),
+                        child: Text(
+                          'Save',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                          ),
+                        ),
                         onPressed: () async => {
                           getBuildingId(),
                           getUser(),
@@ -393,7 +397,9 @@ class _TenentDataPageState extends State<TenentDataPage> {
                               arrivalDate != null &&
                               _advanceAmountController.text.isNotEmpty)
                             {
-                              isLoading = true,
+                              setState(() {
+                                isLoading = true;
+                              }),
                               await tenantApiService
                                   .createTenant(TenantModel(
                                     name: _tenentNameController.text,
