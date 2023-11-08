@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
-
+import 'package:image/image.dart' as img;
 import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -57,13 +57,21 @@ class _TenentPageState extends State<TenentPage> {
   @override
   void initState() {
     _fetchTenantData();
-    setState(() {});
+
     super.initState();
   }
 
   void refresh() {
     getLocalInfo();
-    _fetchTenantData();
+    setState(() {
+      _fetchTenantData();
+    });
+  }
+
+  Uint8List compressImage(Uint8List imageData, int quality) {
+    final image = img.decodeImage(imageData)!;
+    final compressedImageData = img.encodeJpg(image, quality: quality);
+    return Uint8List.fromList(compressedImageData);
   }
 
   Future<void> getLocalInfo() async {
@@ -80,10 +88,14 @@ class _TenentPageState extends State<TenentPage> {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
+      final imageFile = File(pickedFile.path);
+      final originalImageData = await imageFile.readAsBytes();
+      final compressedImageData = compressImage(originalImageData, 25);
+
       setState(() {
-        _tenantImage = File(pickedFile.path);
+        _tenantImage = imageFile;
+        tenantImage = compressedImageData;
       });
-      tenantImage = await _tenantImage!.readAsBytes();
     }
   }
 
@@ -92,10 +104,14 @@ class _TenentPageState extends State<TenentPage> {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
+      final imageFile = File(pickedFile.path);
+      final originalImageData = await imageFile.readAsBytes();
+      final compressedImageData = compressImage(originalImageData, 25);
+
       setState(() {
-        _nidImage = File(pickedFile.path);
+        _nidImage = imageFile;
+        nidImage = compressedImageData;
       });
-      nidImage = await _nidImage!.readAsBytes();
     }
   }
 
@@ -127,30 +143,18 @@ class _TenentPageState extends State<TenentPage> {
           color: const Color.fromARGB(255, 255, 255, 255),
         ),
       ),
-      // appBar: AppBar(
-      //   backgroundColor: Colors.green.shade300,
-      //   title: const Center(child: Text('Tenant List')),
-      // ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Container(
-          height: MediaQuery.of(context).size.height * 1,
+          // height: MediaQuery.of(context).size.height * 7,
           child: SingleChildScrollView(
             child: Column(
               children: [
                 Column(
                   children: [
-                    // const Text(
-                    //   'Tenants',
-                    //   style: TextStyle(
-                    //     fontSize: 16,
-                    //     color: Color.fromARGB(255, 78, 78, 78),
-                    //     fontWeight: FontWeight.bold,
-                    //   ),
-                    // ),
                     const SizedBox(height: 10),
                     SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.72,
+                      height: MediaQuery.of(context).size.height * 0.693,
                       child: StreamBuilder<List<TenantModel>>(
                         stream: tenantStream,
                         builder: (BuildContext context,
@@ -175,8 +179,8 @@ class _TenentPageState extends State<TenentPage> {
                                 return ListTile(
                                   title: Container(
                                     width: 500,
-                                    height:
-                                        MediaQuery.sizeOf(context).height * 1,
+                                    height: MediaQuery.sizeOf(context).height *
+                                        1.05,
                                     child: Card(
                                       elevation: 10,
                                       child: Padding(
@@ -883,6 +887,18 @@ class _TenentPageState extends State<TenentPage> {
                                                                               () async {
                                                                             int id =
                                                                                 tenent.id!;
+                                                                            DateTime?
+                                                                                existingArrivalDate =
+                                                                                tenent.arrivalDate;
+                                                                            DateTime?
+                                                                                existingRentAmountChangeDate =
+                                                                                tenent.rentAmountChangeDate;
+                                                                            Uint8List
+                                                                                existingTenantImage =
+                                                                                tenent.tenantImage!;
+                                                                            Uint8List
+                                                                                existingNidImage =
+                                                                                tenent.tenantNidImage!;
                                                                             TenantModel updatedTenant = TenantModel(
                                                                                 name: _newTenentNameController.text == "" ? "" : _newTenentNameController.text,
                                                                                 nid: _newNidNoController.text == "" ? "" : _newNidNoController.text,
@@ -892,12 +908,12 @@ class _TenentPageState extends State<TenentPage> {
                                                                                 emgMobileNo: _newEmgMobileNoController == "" ? "" : _newMobileNoController.text,
                                                                                 noofFamilyMember: int.parse(_newNoOfFamilyMemController.text),
                                                                                 advanceAmount: int.parse(_newAdvanceAmountController.text),
-                                                                                arrivalDate: arrivalDate ?? tenent.arrivalDate,
+                                                                                arrivalDate: arrivalDate ?? existingArrivalDate,
                                                                                 buildingId: buildingId,
                                                                                 isActive: isActive,
-                                                                                rentAmountChangeDate: rentAmountChangeDate ?? tenent.rentAmountChangeDate,
-                                                                                tenantImage: tenantImage,
-                                                                                tenantNidImage: nidImage,
+                                                                                rentAmountChangeDate: rentAmountChangeDate ?? existingRentAmountChangeDate,
+                                                                                tenantImage: tenantImage ?? existingTenantImage,
+                                                                                tenantNidImage: nidImage ?? existingNidImage,
                                                                                 userId: user.id);
                                                                             await tenantApiService.updateTenant(
                                                                                 tenant: updatedTenant,
