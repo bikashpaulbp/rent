@@ -2,10 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rent_management/models/flat_model.dart';
 import 'package:rent_management/models/floor_model.dart';
+import 'package:rent_management/models/tenant_model.dart';
+import 'package:rent_management/models/user_model.dart';
+import 'package:rent_management/screens/login_screen.dart';
 import 'package:rent_management/services/flat_service.dart';
 import 'package:rent_management/services/floor_service.dart';
 
 import 'package:provider/provider.dart';
+import 'package:rent_management/services/tenant_service.dart';
+import 'package:rent_management/shared_data/floor_data.dart';
+import 'package:rent_management/shared_data/tenent_data.dart';
 
 import '../insert_data/flat.dart';
 import '../shared_data/flat_data.dart';
@@ -20,8 +26,11 @@ class FlatPage extends StatefulWidget {
 class _FlatPageState extends State<FlatPage> {
   FlatApiService flatApiService = FlatApiService();
   FloorApiService floorApiService = FloorApiService();
+  TenantApiService tenantApiService = TenantApiService();
   List<FloorModel> floorList = [];
+  List<TenantModel> tenantList = [];
   String? floorName;
+  String? tenantName;
   late Stream<List<FlatModel>> flatStream = const Stream.empty();
 
   final _newFlatNameController = TextEditingController();
@@ -31,21 +40,40 @@ class _FlatPageState extends State<FlatPage> {
 
   final _newNoOfWashroomController = TextEditingController();
   final _newFlatSizeController = TextEditingController();
+  final _rentAmountController = TextEditingController();
+  final _gasBillController = TextEditingController();
+  final _waterBillController = TextEditingController();
+  final _serviceChargeController = TextEditingController();
+  int? selectedTenantId;
+  int? selectedFloorId;
+  int? buildingId;
 
+  bool isLoading = false;
+  UserModel user = UserModel();
+  AuthStateManager authStateManager = AuthStateManager();
+  bool isActive = true;
   @override
   void initState() {
-    _fetchFlatData();
+    getLocalInfo();
+    _fetchData();
     super.initState();
   }
 
   void refresh() {
-    _fetchFlatData();
+    setState(() {
+      flatStream = flatApiService.getAllFlats().asStream();
+    });
   }
 
-  Future<void> _fetchFlatData() async {
-    flatStream = flatApiService.getAllFlats().asStream();
+  Future<void> getLocalInfo() async {
+    buildingId = await authStateManager.getBuildingId();
+    user = (await authStateManager.getLoggedInUser())!;
+  }
 
+  Future<void> _fetchData() async {
+    flatStream = flatApiService.getAllFlats().asStream();
     floorList = await floorApiService.getAllFloors();
+    tenantList = await tenantApiService.getAllTenants();
   }
 
   @override
@@ -78,10 +106,6 @@ class _FlatPageState extends State<FlatPage> {
           color: const Color.fromARGB(255, 255, 255, 255),
         ),
       ),
-      // appBar: AppBar(
-      //   backgroundColor: Colors.blue.shade300,
-      //   title: const Center(child: Text('Flat List')),
-      // ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Container(
@@ -92,19 +116,11 @@ class _FlatPageState extends State<FlatPage> {
               children: [
                 Column(
                   children: [
-                    // const Text(
-                    //   'Flats',
-                    //   style: TextStyle(
-                    //     fontSize: 20,
-                    //     color: Color.fromARGB(255, 78, 78, 78),
-                    //     fontWeight: FontWeight.bold,
-                    //   ),
-                    // ),
                     Padding(
                       padding: const EdgeInsets.all(1.0),
                       child: SizedBox(
                         width: 400,
-                        height: MediaQuery.of(context).size.height * 0.72,
+                        height: MediaQuery.of(context).size.height * 0.7,
                         child: StreamBuilder<List<FlatModel>>(
                           stream: flatStream,
                           builder: (BuildContext context,
@@ -115,12 +131,19 @@ class _FlatPageState extends State<FlatPage> {
                             } else if (snapshot.hasData &&
                                 snapshot.data != null &&
                                 snapshot.data!.isNotEmpty) {
-                              List<FlatModel> flatList = snapshot.data!;
-
+                              getLocalInfo();
+                              List<FlatModel> flatList = snapshot.data!
+                                  .where((element) =>
+                                      element.buildingId == buildingId)
+                                  .toList();
+                              _fetchData();
                               return ListView.builder(
                                 itemCount: flatList.length,
                                 itemBuilder: (BuildContext context, int index) {
                                   FlatModel flat = flatList[index];
+                                  List<TenantModel> tenants = context
+                                      .watch<TenantData>()
+                                      .tenantListCache;
                                   if (floorList.isNotEmpty) {
                                     floorName = floorList
                                         .firstWhere((e) => e.id == flat.floorId)
@@ -128,7 +151,16 @@ class _FlatPageState extends State<FlatPage> {
                                   } else {
                                     floorName = "floor not found";
                                   }
-
+                                  if (tenantList.isNotEmpty) {
+                                    try {
+                                      tenantName = tenants
+                                          .firstWhere(
+                                              (e) => e.id == flat.tenantId)
+                                          .name;
+                                    } catch (_) {}
+                                  } else {
+                                    tenantName = "tenant not found";
+                                  }
                                   return ListTile(
                                     title: Card(
                                       elevation: 10,
@@ -150,6 +182,20 @@ class _FlatPageState extends State<FlatPage> {
                                                   padding:
                                                       const EdgeInsets.all(5.0),
                                                   child: Text(
+                                                    'Flat Name: ${flat.name.toString()}',
+                                                    style: const TextStyle(
+                                                      color: Color.fromARGB(
+                                                          255, 0, 0, 0),
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(5.0),
+                                                  child: Text(
                                                     'Floor Name: $floorName',
                                                     style: const TextStyle(
                                                       color: Color.fromARGB(
@@ -164,7 +210,7 @@ class _FlatPageState extends State<FlatPage> {
                                                   padding:
                                                       const EdgeInsets.all(5.0),
                                                   child: Text(
-                                                    'Flat Name: ${flat.name.toString()}',
+                                                    'Tenant Name: $tenantName',
                                                     style: const TextStyle(
                                                       color: Color.fromARGB(
                                                           255, 0, 0, 0),
@@ -244,6 +290,62 @@ class _FlatPageState extends State<FlatPage> {
                                                     ),
                                                   ),
                                                 ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(5.0),
+                                                  child: Text(
+                                                    'Rent Amount: ${flat.rentAmount.toString()}',
+                                                    style: const TextStyle(
+                                                      color: Color.fromARGB(
+                                                          255, 0, 0, 0),
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(5.0),
+                                                  child: Text(
+                                                    'Water Bill: ${flat.waterBill.toString()}',
+                                                    style: const TextStyle(
+                                                      color: Color.fromARGB(
+                                                          255, 0, 0, 0),
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(5.0),
+                                                  child: Text(
+                                                    'Gas Bill: ${flat.gasBill.toString()}',
+                                                    style: const TextStyle(
+                                                      color: Color.fromARGB(
+                                                          255, 0, 0, 0),
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(5.0),
+                                                  child: Text(
+                                                    'Service Charge: ${flat.serviceCharge.toString()}',
+                                                    style: const TextStyle(
+                                                      color: Color.fromARGB(
+                                                          255, 0, 0, 0),
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ),
                                               ],
                                             ),
                                           ),
@@ -283,13 +385,25 @@ class _FlatPageState extends State<FlatPage> {
                                                             .text =
                                                         flat.flatSize
                                                             .toString();
+                                                    _rentAmountController.text =
+                                                        flat.rentAmount
+                                                            .toString();
+                                                    _waterBillController.text =
+                                                        flat.waterBill
+                                                            .toString();
+                                                    _gasBillController.text =
+                                                        flat.gasBill.toString();
+                                                    _serviceChargeController
+                                                            .text =
+                                                        flat.serviceCharge
+                                                            .toString();
                                                     showModalBottomSheet<void>(
                                                       context: context,
                                                       builder: (BuildContext
                                                           context) {
                                                         return SingleChildScrollView(
                                                           child: Container(
-                                                            height: 700,
+                                                            height: 900,
                                                             color: const Color
                                                                 .fromARGB(255,
                                                                 255, 255, 255),
@@ -328,6 +442,7 @@ class _FlatPageState extends State<FlatPage> {
                                                                                 ),
                                                                               ),
                                                                             ),
+                                                                            const SizedBox(height: 8),
                                                                             SizedBox(
                                                                               width: 250,
                                                                               height: 50,
@@ -345,6 +460,92 @@ class _FlatPageState extends State<FlatPage> {
                                                                               ),
                                                                             ),
                                                                           ],
+                                                                        ),
+                                                                        SizedBox(
+                                                                            height:
+                                                                                10),
+                                                                        SizedBox(
+                                                                          height:
+                                                                              60,
+                                                                          child:
+                                                                              Consumer<FloorData>(
+                                                                            builder: (context,
+                                                                                floorData,
+                                                                                child) {
+                                                                              getLocalInfo();
+                                                                              floorData.getFloorList();
+                                                                              selectedFloorId = flat.floorId;
+                                                                              List<FloorModel> floorList = floorData.floorList.where((e) => e.buildingId == buildingId).toList();
+
+                                                                              return DropdownButtonFormField<int>(
+                                                                                isExpanded: true,
+                                                                                decoration: InputDecoration(
+                                                                                  labelText: 'Floor',
+                                                                                  border: OutlineInputBorder(
+                                                                                    borderRadius: BorderRadius.circular(10),
+                                                                                  ),
+                                                                                ),
+                                                                                disabledHint: const Text('Add Floor First'),
+                                                                                value: selectedFloorId,
+                                                                                onChanged: (int? value) {
+                                                                                  setState(() {
+                                                                                    selectedFloorId = value!;
+                                                                                    // selectedFloorName = floorList
+                                                                                    //     .firstWhere((floor) => floor.id == selectedFloorId)
+                                                                                    //     .name;
+                                                                                  });
+                                                                                },
+                                                                                items: floorList.map<DropdownMenuItem<int>>((FloorModel floor) {
+                                                                                  return DropdownMenuItem<int>(
+                                                                                    value: floor.id,
+                                                                                    child: Text(floor.name!),
+                                                                                  );
+                                                                                }).toList(),
+                                                                              );
+                                                                            },
+                                                                          ),
+                                                                        ),
+                                                                        SizedBox(
+                                                                            height:
+                                                                                10),
+                                                                        SizedBox(
+                                                                          height:
+                                                                              60,
+                                                                          child:
+                                                                              Consumer<TenantData>(
+                                                                            builder: (context,
+                                                                                tenant,
+                                                                                child) {
+                                                                              getLocalInfo();
+                                                                              selectedTenantId = flat.tenantId;
+                                                                              List<TenantModel> tenantList = tenant.tenantListCache.where((element) => element.buildingId == buildingId).toList();
+                                                                              return DropdownButtonFormField<int>(
+                                                                                isExpanded: true,
+                                                                                decoration: InputDecoration(
+                                                                                  labelText: 'Tenant',
+                                                                                  border: OutlineInputBorder(
+                                                                                    borderRadius: BorderRadius.circular(10),
+                                                                                  ),
+                                                                                ),
+                                                                                disabledHint: const Text('Add Tenant First'),
+                                                                                value: selectedTenantId,
+                                                                                onChanged: (int? value) {
+                                                                                  setState(() {
+                                                                                    selectedTenantId = value!;
+                                                                                    // selectedFloorName = floorList
+                                                                                    //     .firstWhere((floor) => floor.id == selectedFloorId)
+                                                                                    //     .name;
+                                                                                  });
+                                                                                },
+                                                                                items: tenantList.map<DropdownMenuItem<int>>((TenantModel tenant) {
+                                                                                  return DropdownMenuItem<int>(
+                                                                                    value: tenant.id,
+                                                                                    child: Text(tenant.name!),
+                                                                                  );
+                                                                                }).toList(),
+                                                                              );
+                                                                            },
+                                                                          ),
                                                                         ),
                                                                         Row(
                                                                           mainAxisAlignment:
@@ -506,6 +707,134 @@ class _FlatPageState extends State<FlatPage> {
                                                                             ),
                                                                           ],
                                                                         ),
+                                                                        Row(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.spaceBetween,
+                                                                          children: [
+                                                                            const SizedBox(
+                                                                              child: Text(
+                                                                                'Rent Amount',
+                                                                                style: TextStyle(
+                                                                                  fontSize: 16,
+                                                                                  color: Color.fromARGB(255, 78, 78, 78),
+                                                                                  fontStyle: FontStyle.normal,
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                            SizedBox(
+                                                                              width: 250,
+                                                                              height: 50,
+                                                                              child: Padding(
+                                                                                padding: const EdgeInsets.all(8.0),
+                                                                                child: TextFormField(
+                                                                                  keyboardType: TextInputType.number,
+                                                                                  controller: _rentAmountController,
+                                                                                  decoration: InputDecoration(
+                                                                                    border: OutlineInputBorder(
+                                                                                      borderRadius: BorderRadius.circular(10),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                        Row(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.spaceBetween,
+                                                                          children: [
+                                                                            const SizedBox(
+                                                                              child: Text(
+                                                                                'Water Bill',
+                                                                                style: TextStyle(
+                                                                                  fontSize: 16,
+                                                                                  color: Color.fromARGB(255, 78, 78, 78),
+                                                                                  fontStyle: FontStyle.normal,
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                            SizedBox(
+                                                                              width: 250,
+                                                                              height: 50,
+                                                                              child: Padding(
+                                                                                padding: const EdgeInsets.all(8.0),
+                                                                                child: TextFormField(
+                                                                                  keyboardType: TextInputType.number,
+                                                                                  controller: _waterBillController,
+                                                                                  decoration: InputDecoration(
+                                                                                    border: OutlineInputBorder(
+                                                                                      borderRadius: BorderRadius.circular(10),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                        Row(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.spaceBetween,
+                                                                          children: [
+                                                                            const SizedBox(
+                                                                              child: Text(
+                                                                                'Gas Bill',
+                                                                                style: TextStyle(
+                                                                                  fontSize: 16,
+                                                                                  color: Color.fromARGB(255, 78, 78, 78),
+                                                                                  fontStyle: FontStyle.normal,
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                            SizedBox(
+                                                                              width: 250,
+                                                                              height: 50,
+                                                                              child: Padding(
+                                                                                padding: const EdgeInsets.all(8.0),
+                                                                                child: TextFormField(
+                                                                                  keyboardType: TextInputType.number,
+                                                                                  controller: _gasBillController,
+                                                                                  decoration: InputDecoration(
+                                                                                    border: OutlineInputBorder(
+                                                                                      borderRadius: BorderRadius.circular(10),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                        Row(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.spaceBetween,
+                                                                          children: [
+                                                                            const SizedBox(
+                                                                              child: Text(
+                                                                                'Service Charge',
+                                                                                style: TextStyle(
+                                                                                  fontSize: 16,
+                                                                                  color: Color.fromARGB(255, 78, 78, 78),
+                                                                                  fontStyle: FontStyle.normal,
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                            SizedBox(
+                                                                              width: 250,
+                                                                              height: 50,
+                                                                              child: Padding(
+                                                                                padding: const EdgeInsets.all(8.0),
+                                                                                child: TextFormField(
+                                                                                  keyboardType: TextInputType.number,
+                                                                                  controller: _serviceChargeController,
+                                                                                  decoration: InputDecoration(
+                                                                                    border: OutlineInputBorder(
+                                                                                      borderRadius: BorderRadius.circular(10),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
                                                                       ],
                                                                     ),
                                                                   ),
@@ -524,9 +853,12 @@ class _FlatPageState extends State<FlatPage> {
                                                                               const Text('update'),
                                                                           onPressed:
                                                                               () async {
+                                                                            getLocalInfo();
+
                                                                             int?
                                                                                 flatId =
                                                                                 flat.id;
+
                                                                             String
                                                                                 updatedflatName =
                                                                                 _newFlatNameController.text;
@@ -554,22 +886,22 @@ class _FlatPageState extends State<FlatPage> {
                                                                                 washroom: updatedNoOfWashroom,
                                                                                 flatSide: updatedFlatSide,
                                                                                 flatSize: updatedFlatSize,
-                                                                                floorId: flat.floorId);
+                                                                                floorId: flat.floorId,
+                                                                                buildingId: flat.buildingId,
+                                                                                isActive: isActive,
+                                                                                tenantId: selectedTenantId ?? flat.tenantId,
+                                                                                userId: flat.userId,
+                                                                                gasBill: int.parse(_gasBillController.text),
+                                                                                rentAmount: int.parse(_rentAmountController.text),
+                                                                                serviceCharge: int.parse(_serviceChargeController.text),
+                                                                                waterBill: int.parse(_waterBillController.text));
                                                                             await flatApiService.updateFlat(
                                                                                 flat: updatedFlat,
                                                                                 id: flatId!);
-                                                                            Get.snackbar("",
-                                                                                "",
-                                                                                messageText: const Center(
-                                                                                    child: Text(
-                                                                                  "updated successfully  \n",
-                                                                                  style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 20),
-                                                                                )),
-                                                                                snackPosition: SnackPosition.BOTTOM,
-                                                                                duration: const Duration(seconds: 2));
+                                                                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("updated successfully")));
 
                                                                             setState(() {
-                                                                              _fetchFlatData();
+                                                                              _fetchData();
 
                                                                               Navigator.pop(context);
                                                                             });
@@ -616,25 +948,13 @@ class _FlatPageState extends State<FlatPage> {
                                                     int? id = flat.id;
                                                     await flatApiService
                                                         .deleteFlat(id!);
-                                                    Get.snackbar("", "",
-                                                        messageText:
-                                                            const Center(
-                                                                child: Text(
-                                                          "deleted successfully  \n",
-                                                          style: TextStyle(
-                                                              color: Color
-                                                                  .fromARGB(255,
-                                                                      0, 0, 0),
-                                                              fontSize: 20),
-                                                        )),
-                                                        snackPosition:
-                                                            SnackPosition
-                                                                .BOTTOM,
-                                                        duration:
-                                                            const Duration(
-                                                                seconds: 1));
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(SnackBar(
+                                                            content: Text(
+                                                                "deleted successfully")));
                                                     setState(() {
-                                                      _fetchFlatData();
+                                                      _fetchData();
                                                     });
                                                   },
                                                   icon:

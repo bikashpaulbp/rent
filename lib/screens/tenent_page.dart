@@ -51,8 +51,8 @@ class _TenentPageState extends State<TenentPage> {
   Uint8List? nidImage;
   Uint8List? tenantImage;
   bool isActive = true;
-  File? _tenantImage;
-  File? _nidImage;
+  // File? _tenantImage;
+  // File? _nidImage;
   bool isLoading = false;
   @override
   void initState() {
@@ -870,7 +870,7 @@ class _TenentPageState extends State<TenentPage> {
                                                                               });
                                                                             });
                                                                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("updated successfully")));
-
+                                                                            context.read<TenantData>().getTenantList();
                                                                             setState(() {
                                                                               _fetchTenantData();
 
@@ -919,7 +919,9 @@ class _TenentPageState extends State<TenentPage> {
                                                         .showSnackBar(SnackBar(
                                                             content: Text(
                                                                 "deleted successfully")));
-
+                                                    context
+                                                        .read<TenantData>()
+                                                        .getTenantList();
                                                     setState(() {
                                                       _fetchTenantData();
                                                     });

@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:rent_management/models/flat_model.dart';
+import 'package:rent_management/services/flat_service.dart';
 
 class FlatData extends ChangeNotifier {
-  List<FlatModel> _flatList = [];
+  List<FlatModel> flatList = [];
+  FlatApiService flatApiService = FlatApiService();
 
-  List<FlatModel> get flatList => _flatList;
-  void updateFlatList(List<FlatModel> newFlatList) {
-    _flatList = newFlatList;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+  Future<void> getFlatList() async {
+    try {
+      List<FlatModel> allFlatList = await flatApiService.getAllFlats();
+      flatList = allFlatList;
       notifyListeners();
-    });
+    } catch (_) {}
   }
 
   flatListNew() {
-    return _flatList.length;
+    return flatList.length;
   }
 }

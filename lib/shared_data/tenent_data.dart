@@ -4,13 +4,15 @@ import 'package:rent_management/services/tenant_service.dart';
 
 class TenantData extends ChangeNotifier {
   List<TenantModel> tenantList = [];
-
+  List<TenantModel> tenantListCache = [];
   TenantApiService tenantApiService = TenantApiService();
 
   Future<void> getTenantList() async {
     try {
       List<TenantModel> allTenantList = await tenantApiService.getAllTenants();
+
       tenantList = allTenantList;
+      tenantListCache = tenantList;
       notifyListeners();
     } catch (_) {}
   }

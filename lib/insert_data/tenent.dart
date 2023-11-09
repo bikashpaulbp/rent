@@ -7,11 +7,13 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 import 'package:rent_management/models/tenant_model.dart';
 import 'package:rent_management/models/user_model.dart';
 import 'package:rent_management/screens/login_screen.dart';
 import 'package:rent_management/services/tenant_service.dart';
+import 'package:rent_management/shared_data/tenent_data.dart';
 
 // ignore: must_be_immutable
 class TenentDataPage extends StatefulWidget {
@@ -45,7 +47,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
   DateTime? rentAmountChangeDate;
   AuthStateManager authStateManager = AuthStateManager();
   UserModel? loggedInUser = UserModel();
-  int? userId;
+
   int? buildingId;
   Uint8List? nidImage;
   Uint8List? tenantImage;
@@ -74,7 +76,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
     if (pickedFile != null) {
       final imageFile = File(pickedFile.path);
       final originalImageData = await imageFile.readAsBytes();
-      final compressedImageData = compressImage(originalImageData, 8);
+      final compressedImageData = compressImage(originalImageData, 5);
 
       setState(() {
         _tenantImage = imageFile;
@@ -90,7 +92,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
     if (pickedFile != null) {
       final imageFile = File(pickedFile.path);
       final originalImageData = await imageFile.readAsBytes();
-      final compressedImageData = compressImage(originalImageData, 8);
+      final compressedImageData = compressImage(originalImageData, 5);
 
       setState(() {
         _nidImage = imageFile;
@@ -447,6 +449,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
                               widget.refresh(),
                               Get.back(),
                               setState(() {
+                                context.read<TenantData>().getTenantList();
                                 // _fetchTenantData();
 
                                 _tenentNameController.text = "";
@@ -458,6 +461,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
                                 _noOfFamilyMemController.text = "";
                                 _advanceAmountController.text = "";
                               }),
+                              context.read<TenantData>().getTenantList(),
                               ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                       content: Text("saved successfully"))),

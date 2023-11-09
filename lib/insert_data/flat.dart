@@ -3,7 +3,11 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:rent_management/models/flat_model.dart';
 import 'package:rent_management/models/floor_model.dart';
+import 'package:rent_management/models/tenant_model.dart';
+import 'package:rent_management/models/user_model.dart';
+import 'package:rent_management/screens/login_screen.dart';
 import 'package:rent_management/services/flat_service.dart';
+import 'package:rent_management/shared_data/tenent_data.dart';
 
 import '../shared_data/floor_data.dart';
 
@@ -26,9 +30,25 @@ class _FlatDataPageState extends State<FlatDataPage> {
 
   final TextEditingController _noOfWashroomController = TextEditingController();
   final TextEditingController _flatSizeController = TextEditingController();
-
+  final TextEditingController _rentAmountController = TextEditingController();
+  final TextEditingController _gasBillController = TextEditingController();
+  final TextEditingController _waterBillController = TextEditingController();
+  final TextEditingController _serviceChargeController =
+      TextEditingController();
+  int? selectedTenantId;
+  int? buildingId;
   int? selectedFloorId;
-  String? selectedFloorName;
+  bool isLoading = false;
+  UserModel user = UserModel();
+  AuthStateManager authStateManager = AuthStateManager();
+  bool isActive = true;
+
+  @override
+  void initState() {
+    getUser();
+    getBuildingId();
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -41,6 +61,14 @@ class _FlatDataPageState extends State<FlatDataPage> {
     _flatSizeController.dispose();
 
     super.dispose();
+  }
+
+  Future<void> getUser() async {
+    user = (await authStateManager.getLoggedInUser())!;
+  }
+
+  Future<void> getBuildingId() async {
+    buildingId = await authStateManager.getBuildingId();
   }
 
   @override
@@ -84,7 +112,10 @@ class _FlatDataPageState extends State<FlatDataPage> {
               Consumer<FloorData>(
                 builder: (context, floorData, child) {
                   floorData.getFloorList();
-                  List<FloorModel> floorList = floorData.floorList;
+
+                  List<FloorModel> floorList = floorData.floorList
+                      .where((e) => e.buildingId == buildingId)
+                      .toList();
 
                   return DropdownButtonFormField<int>(
                     isExpanded: true,
@@ -103,9 +134,9 @@ class _FlatDataPageState extends State<FlatDataPage> {
                     onChanged: (int? value) {
                       setState(() {
                         selectedFloorId = value!;
-                        selectedFloorName = floorList
-                            .firstWhere((floor) => floor.id == selectedFloorId)
-                            .name;
+                        // selectedFloorName = floorList
+                        //     .firstWhere((floor) => floor.id == selectedFloorId)
+                        //     .name;
                       });
                     },
                     items: floorList
@@ -113,6 +144,46 @@ class _FlatDataPageState extends State<FlatDataPage> {
                       return DropdownMenuItem<int>(
                         value: floor.id,
                         child: Text(floor.name!),
+                      );
+                    }).toList(),
+                  );
+                },
+              ),
+              const SizedBox(height: 8),
+              Consumer<TenantData>(
+                builder: (context, tenant, child) {
+                  getBuildingId();
+
+                  List<TenantModel> tenantList = tenant.tenantListCache
+                      .where((element) => element.buildingId == buildingId)
+                      .toList();
+                  return DropdownButtonFormField<int>(
+                    isExpanded: true,
+                    decoration: InputDecoration(
+                      suffix: const Text(
+                        '*',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                      labelText: 'Tenant',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    disabledHint: const Text('Add Tenant First'),
+                    value: selectedTenantId,
+                    onChanged: (int? value) {
+                      setState(() {
+                        selectedTenantId = value!;
+                        // selectedFloorName = floorList
+                        //     .firstWhere((floor) => floor.id == selectedFloorId)
+                        //     .name;
+                      });
+                    },
+                    items: tenantList
+                        .map<DropdownMenuItem<int>>((TenantModel tenant) {
+                      return DropdownMenuItem<int>(
+                        value: tenant.id,
+                        child: Text(tenant.name!),
                       );
                     }).toList(),
                   );
@@ -143,6 +214,54 @@ class _FlatDataPageState extends State<FlatDataPage> {
                     style: TextStyle(color: Colors.red),
                   ),
                   labelText: 'No. of Bedroom',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextFormField(
+                keyboardType: TextInputType.number,
+                controller: _rentAmountController,
+                decoration: InputDecoration(
+                  suffix: const Text(
+                    '*',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                  labelText: 'Rent Amount',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextFormField(
+                keyboardType: TextInputType.number,
+                controller: _gasBillController,
+                decoration: InputDecoration(
+                  labelText: 'Gas Bill',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextFormField(
+                keyboardType: TextInputType.number,
+                controller: _waterBillController,
+                decoration: InputDecoration(
+                  labelText: 'Water Bill',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextFormField(
+                keyboardType: TextInputType.number,
+                controller: _serviceChargeController,
+                decoration: InputDecoration(
+                  labelText: 'Service Charge',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -189,46 +308,81 @@ class _FlatDataPageState extends State<FlatDataPage> {
                   ),
                 ),
               ),
+              isLoading == false
+                  ? Text("")
+                  : Center(child: CircularProgressIndicator()),
+              SizedBox(
+                height: 10,
+              ),
               const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton(
                     onPressed: () async {
+                      getUser();
+                      int userId = user.id!;
+                      getBuildingId();
+                      setState(() {
+                        isLoading = true;
+                      });
                       if (_flatNameController.text.isNotEmpty &&
                           _noOfMasterbedRoomController.text.isNotEmpty &&
                           _noOfBedroomController.text.isNotEmpty &&
                           _noOfWashroomController.text.isNotEmpty &&
                           _flatSideController.text.isNotEmpty &&
+                          _rentAmountController.text.isNotEmpty &&
                           selectedFloorId != null &&
-                          selectedFloorName != "") {
-                        await flatApiService.createFlat(FlatModel(
-                          floorId: selectedFloorId!,
-                          name: _flatNameController.text,
-                          flatSide: _flatSideController.text,
-                          flatSize: _flatSizeController.text.isNotEmpty
-                              ? int.parse(_flatSizeController.text)
-                              : 0,
-                          masterbedRoom:
-                              int.parse(_noOfMasterbedRoomController.text),
-                          bedroom: int.parse(_noOfBedroomController.text),
-                          washroom: int.parse(_noOfWashroomController.text),
-                        ));
-                        widget.refresh();
+                          selectedTenantId != null) {
+                        await flatApiService
+                            .createFlat(FlatModel(
+                              userId: userId,
+                              buildingId: buildingId,
+                              isActive: isActive,
+                              tenantId: selectedTenantId,
+                              rentAmount: _rentAmountController.text.isNotEmpty
+                                  ? int.parse(_rentAmountController.text)
+                                  : 0,
+                              waterBill: _waterBillController.text.isNotEmpty
+                                  ? int.parse(_waterBillController.text)
+                                  : 0,
+                              gasBill: _gasBillController.text.isNotEmpty
+                                  ? int.parse(_gasBillController.text)
+                                  : 0,
+                              serviceCharge:
+                                  _serviceChargeController.text.isNotEmpty
+                                      ? int.parse(_serviceChargeController.text)
+                                      : 0,
+                              floorId: selectedFloorId!,
+                              name: _flatNameController.text,
+                              flatSide: _flatSideController.text,
+                              flatSize: _flatSizeController.text.isNotEmpty
+                                  ? int.parse(_flatSizeController.text)
+                                  : 0,
+                              masterbedRoom: _noOfMasterbedRoomController
+                                      .text.isNotEmpty
+                                  ? int.parse(_noOfMasterbedRoomController.text)
+                                  : 0,
+                              bedroom: _noOfBedroomController.text.isNotEmpty
+                                  ? int.parse(_noOfBedroomController.text)
+                                  : 0,
+                              washroom: _noOfWashroomController.text.isNotEmpty
+                                  ? int.parse(_noOfWashroomController.text)
+                                  : 0,
+                            ))
+                            .whenComplete(() => setState(
+                                  () {
+                                    isLoading = false;
+                                  },
+                                ));
+
                         Get.back();
 
-                        Get.snackbar("", "",
-                            messageText: const Center(
-                                child: Text(
-                              "saved successfully\n",
-                              style: TextStyle(
-                                  color: Color.fromARGB(255, 0, 0, 0),
-                                  fontSize: 20),
-                            )),
-                            snackPosition: SnackPosition.BOTTOM,
-                            duration: const Duration(seconds: 2));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("saved successfully")));
 
                         setState(() {
+                          widget.refresh();
                           _flatNameController.clear();
                           _noOfMasterbedRoomController.clear();
                           _noOfBedroomController.clear();
@@ -238,18 +392,15 @@ class _FlatDataPageState extends State<FlatDataPage> {
                           _flatSizeController.clear();
 
                           selectedFloorId = null;
+                          selectedTenantId = null;
                         });
                       } else {
-                        Get.snackbar("", "",
-                            messageText: const Center(
-                                child: Text(
-                              " please fill up all * marked field\n",
-                              style: TextStyle(
-                                  color: Color.fromARGB(255, 255, 22, 22),
-                                  fontSize: 20),
-                            )),
-                            snackPosition: SnackPosition.BOTTOM,
-                            duration: const Duration(seconds: 2));
+                        setState(() {
+                          isLoading = false;
+                        });
+
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text("enter required information")));
                       }
                     },
                     style: ElevatedButton.styleFrom(

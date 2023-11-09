@@ -3,7 +3,9 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:provider/provider.dart';
 import 'package:rent_management/models/building_model.dart';
+import 'package:rent_management/models/flat_model.dart';
 import 'package:rent_management/models/floor_model.dart';
+import 'package:rent_management/models/tenant_model.dart';
 import 'package:rent_management/models/user_model.dart';
 import 'package:rent_management/screens/deposit_page.dart';
 import 'package:rent_management/screens/flat_page.dart';
@@ -246,8 +248,15 @@ class _CountPageState extends State<CountPage> {
                                   child: Center(
                                     child: Consumer<FlatData>(
                                         builder: (context, flatData, _) {
+                                      getBuildingId();
+                                      flatData.getFlatList();
+                                      List<FlatModel> flatList = flatData
+                                          .flatList
+                                          .where((element) =>
+                                              element.buildingId == buildingId)
+                                          .toList();
                                       return Text(
-                                        "Total Flat \n${flatData.flatListNew()}",
+                                        "Total Flat \n${flatList.length}",
                                         style: const TextStyle(
                                             fontSize: 24, color: Colors.white),
                                         textAlign: TextAlign.center,
@@ -287,8 +296,15 @@ class _CountPageState extends State<CountPage> {
                                   child: Center(
                                     child: Consumer<TenantData>(
                                         builder: (context, tenantData, _) {
+                                      tenantData.getTenantList();
+                                      getBuildingId();
+                                      List<TenantModel> tenantList = tenantData
+                                          .tenantList
+                                          .where((element) =>
+                                              element.buildingId == buildingId)
+                                          .toList();
                                       return Text(
-                                        "Total Tenant \n${tenantData.tenantListNew()}",
+                                        "Total Tenant \n${tenantList.length}",
                                         style: const TextStyle(
                                             fontSize: 24, color: Colors.white),
                                         textAlign: TextAlign.center,
