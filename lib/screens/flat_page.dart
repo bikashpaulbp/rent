@@ -125,6 +125,7 @@ class _FlatPageState extends State<FlatPage> {
                           stream: flatStream,
                           builder: (BuildContext context,
                               AsyncSnapshot<List<FlatModel>> snapshot) {
+                            
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
                               return Center(child: CircularProgressIndicator());

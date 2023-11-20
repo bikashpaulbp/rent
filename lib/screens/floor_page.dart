@@ -97,7 +97,7 @@ class _FloorPageState extends State<FloorPage> {
                     //     fontWeight: FontWeight.bold,
                     //   ),
                     // ),
-                    Padding(
+                    Padding( 
                       padding: const EdgeInsets.all(1.0),
                       child: Container(
                         width: 500,

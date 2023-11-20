@@ -336,8 +336,11 @@ class _CountPageState extends State<CountPage> {
                                   child: Center(
                                     child: Consumer<RentData>(
                                         builder: (context, rentData, _) {
+                                      getBuildingId();
                                       int unpaidCount = rentData.rentList
-                                          .where((rent) => rent.isPaid == false)
+                                          .where((rent) =>
+                                              rent.isPaid == false &&
+                                              rent.buildingId == buildingId)
                                           .length;
 
                                       return Text(

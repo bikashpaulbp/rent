@@ -8,6 +8,8 @@ import 'package:rent_management/models/deposit_model.dart';
 import 'package:rent_management/models/flat_model.dart';
 import 'package:rent_management/models/rent_model.dart';
 import 'package:rent_management/models/tenant_model.dart';
+import 'package:rent_management/models/user_model.dart';
+import 'package:rent_management/screens/login_screen.dart';
 import 'package:rent_management/services/deposite_service.dart';
 import 'package:rent_management/services/flat_service.dart';
 import 'package:rent_management/services/rent_service.dart';
@@ -45,6 +47,12 @@ class _AllRentState extends State<AllRent> {
   TenantApiService tenantApiService = TenantApiService();
   FlatApiService flatApiService = FlatApiService();
   DepositeApiService depositeApiService = DepositeApiService();
+  UserModel user = UserModel();
+  AuthStateManager authStateManager = AuthStateManager();
+  UserModel? loggedInUser = UserModel();
+  bool isLoading = false;
+  int? buildingId;
+  int? userId;
   int? tenantId;
   int? flatId;
   String? tenantName;
@@ -52,25 +60,33 @@ class _AllRentState extends State<AllRent> {
 
   @override
   void initState() {
-      _fetchRentData();
+    _fetchRentData();
+    getUser();
+    getBuildingId();
     super.initState();
-  
   }
 
   void refresh() {
+    getUser();
+    getBuildingId();
     _fetchRentData();
   }
 
+  Future<void> getUser() async {
+    user = (await authStateManager.getLoggedInUser())!;
+    userId = user.id;
+  }
+
+  Future<void> getBuildingId() async {
+    buildingId = await authStateManager.getBuildingId();
+  }
+
   Future<void> _fetchRentData() async {
-    
     List<TenantModel> tenantList = await tenantApiService.getAllTenants();
     List<FlatModel> flatList = await flatApiService.getAllFlats();
     finalTenantList = tenantList;
     finalFlatList = flatList;
     rentStream = rentApiService.getAllRents().asStream();
-    
-      
-   
   }
 
   @override
@@ -107,27 +123,23 @@ class _AllRentState extends State<AllRent> {
                           if (snapshot.hasData &&
                               snapshot.data != null &&
                               snapshot.data!.isNotEmpty) {
-                            List<RentModel> rentList = snapshot.data!;
+                            getBuildingId();
+                            List<RentModel> rentList = snapshot.data!
+                                .where((element) =>
+                                    element.buildingId == buildingId)
+                                .toList();
 
                             return ListView.builder(
                               itemCount: rentList.length,
                               itemBuilder: (BuildContext context, int index) {
                                 RentModel rent = rentList[index];
-                                // flatId = finalFlatList
-                                //     .firstWhere(
-                                //         (flat) => flat.id == rent.flatId)
-                                //     .id;
-                                // int? finalFlatId = flatId;
+
                                 flatName = finalFlatList
                                     .firstWhere(
                                         (flat) => flat.id == rent.flatId)
                                     .name;
                                 String? finalFlatName = flatName;
-                                // tenantId = finalTenantList
-                                //     .firstWhere(
-                                //         (tenant) => tenant.id == rent.flatId)
-                                //     .id;
-                                // int? finalTenantId = tenantId;
+
                                 tenantName = finalTenantList
                                     .firstWhere(
                                         (tenant) => tenant.id == rent.tenantId)
@@ -284,7 +296,7 @@ class _AllRentState extends State<AllRent> {
                                                                                   child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
                                                                                     Padding(
                                                                                       padding: const EdgeInsets.all(8.0),
-                                                                                      child: Center(child: Text('If You Sure Then Click Confirm')),
+                                                                                      child: Center(child: Text('click confirm')),
                                                                                     ),
                                                                                     SizedBox(height: 15),
                                                                                     Row(
@@ -293,21 +305,17 @@ class _AllRentState extends State<AllRent> {
                                                                                         ElevatedButton(
                                                                                             style: ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.red)),
                                                                                             onPressed: () async {
+                                                                                              getBuildingId();
+                                                                                              getUser();
                                                                                               isPaid = true;
-                                                                                              RentModel updatedRent = RentModel(id: rent.id, rentMonth: rent.rentMonth, totalAmount: rent.totalAmount, isPaid: isPaid, flatId: rent.flatId, tenantId: rent.tenantId);
-                                                                                              DepositeModel deposit = DepositeModel(rentId: rent.id, totalAmount: rent.totalAmount, depositeAmount: rent.totalAmount, dueAmount: 0.0, depositeDate: dateofPayment);
+                                                                                              RentModel updatedRent = RentModel(id: rent.id, buildingId: buildingId, dueAmount: 0, gasBill: rent.gasBill, reciptNo: rent.reciptNo, isPrinted: false, rentAmount: rent.rentAmount, serviceCharge: rent.serviceCharge, waterBill: rent.waterBill, userId: rent.userId, rentMonth: rent.rentMonth, totalAmount: rent.totalAmount, isPaid: isPaid, flatId: rent.flatId, tenantId: rent.tenantId);
+                                                                                              DepositeModel deposit = DepositeModel(rentId: rent.id, totalAmount: rent.totalAmount, depositeAmount: rent.totalAmount, dueAmount: 0, tranDate: dateofPayment, buildingId: buildingId, flatId: rent.flatId, tenantId: rent.tenantId, userId: userId);
                                                                                               Navigator.of(context).pop();
 
                                                                                               await rentApiService.updateRent(id: rent.id!, rent: updatedRent);
                                                                                               await depositeApiService.createDeposite(deposit);
-                                                                                              Get.snackbar("", "",
-                                                                                                  messageText: Center(
-                                                                                                      child: const Text(
-                                                                                                    "status has been changed to paid  \n",
-                                                                                                    style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 20),
-                                                                                                  )),
-                                                                                                  snackPosition: SnackPosition.BOTTOM,
-                                                                                                  duration: const Duration(seconds: 2));
+
+                                                                                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("status has been changed to paid")));
 
                                                                                               setState(() {
                                                                                                 _fetchRentData();
@@ -423,16 +431,9 @@ class _AllRentState extends State<AllRent> {
                                                                                   ElevatedButton(
                                                                                     child: const Text('update'),
                                                                                     onPressed: () async {
-                                                                                      RentModel updatedRent = RentModel(id: rent.id, tenantId: rent.tenantId, flatId: rent.flatId, rentMonth: rent.rentMonth, totalAmount: double.parse(_totalAmountController.text), isPaid: rent.isPaid);
+                                                                                      RentModel updatedRent = RentModel(id: rent.id, tenantId: rent.tenantId, flatId: rent.flatId, rentMonth: rent.rentMonth, totalAmount: int.parse(_totalAmountController.text), isPaid: rent.isPaid, buildingId: rent.buildingId, dueAmount: rent.dueAmount, gasBill: rent.gasBill, isPrinted: false, reciptNo: rent.reciptNo, rentAmount: rent.rentAmount, serviceCharge: rent.serviceCharge, waterBill: rent.waterBill, userId: rent.userId);
                                                                                       await rentApiService.updateRent(id: rent.id!, rent: updatedRent);
-                                                                                      Get.snackbar("", "",
-                                                                                          messageText: const Center(
-                                                                                              child: Text(
-                                                                                            "updated successfully  \n",
-                                                                                            style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 20),
-                                                                                          )),
-                                                                                          snackPosition: SnackPosition.BOTTOM,
-                                                                                          duration: const Duration(seconds: 2));
+                                                                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("updated successfully")));
 
                                                                                       setState(() {
                                                                                         _fetchRentData();
@@ -477,29 +478,13 @@ class _AllRentState extends State<AllRent> {
                                                               await rentApiService
                                                                   .deleteRent(
                                                                       id!);
-                                                              Get.snackbar(
-                                                                  "", "",
-                                                                  messageText:
-                                                                      const Center(
-                                                                          child:
-                                                                              Text(
-                                                                    "deleted successfully  \n",
-                                                                    style: TextStyle(
-                                                                        color: Color.fromARGB(
-                                                                            255,
-                                                                            0,
-                                                                            0,
-                                                                            0),
-                                                                        fontSize:
-                                                                            20),
-                                                                  )),
-                                                                  snackPosition:
-                                                                      SnackPosition
-                                                                          .BOTTOM,
-                                                                  duration:
-                                                                      const Duration(
-                                                                          seconds:
-                                                                              1));
+                                                              ScaffoldMessenger
+                                                                      .of(
+                                                                          context)
+                                                                  .showSnackBar(
+                                                                      SnackBar(
+                                                                          content:
+                                                                              Text("deleted successfully")));
                                                               setState(() {
                                                                 _fetchRentData();
                                                               });

@@ -1,38 +1,53 @@
 class DepositeModel {
   int? id;
-  double? totalAmount;
-  double? depositeAmount;
-  double? dueAmount;
-  DateTime? depositeDate;
+  int? userId;
+  int? totalAmount;
+  int? depositeAmount;
+  int? dueAmount;
+  DateTime? tranDate;
   int? rentId;
+  int? tenantId;
+  int? flatId;
+  int? buildingId;
 
   DepositeModel(
       {this.id,
+      this.userId,
       this.totalAmount,
       this.depositeAmount,
       this.dueAmount,
-      this.depositeDate,
-      this.rentId});
+      this.tranDate,
+      this.rentId,
+      this.tenantId,
+      this.flatId,
+      this.buildingId});
 
   DepositeModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    totalAmount = json['totalAmount']?.toDouble() ?? 0.0;
-    depositeAmount = json['depositeAmount']?.toDouble() ?? 0.0;
-    dueAmount = json['dueAmount']?.toDouble() ?? 0.0;
-    depositeDate = json['depositeDate'] != null
-        ? DateTime.parse(json['depositeDate'])
-        : null;
+    userId = json['userId'];
+    totalAmount = json['totalAmount'];
+    depositeAmount = json['depositeAmount'];
+    dueAmount = json['dueAmount'];
+    tranDate =
+        json['tranDate'] != null ? DateTime.parse(json['depositeDate']) : null;
     rentId = json['rentId'];
+    tenantId = json['tenantId'];
+    flatId = json['flatId'];
+    buildingId = json['buildingId'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
+    data['userId'] = this.userId;
     data['totalAmount'] = this.totalAmount;
     data['depositeAmount'] = this.depositeAmount;
     data['dueAmount'] = this.dueAmount;
-    data['depositeDate'] = this.depositeDate?.toIso8601String();
+    data['tranDate'] = this.tranDate?.toIso8601String();
     data['rentId'] = this.rentId;
+    data['tenantId'] = this.tenantId;
+    data['flatId'] = this.flatId;
+    data['buildingId'] = this.buildingId;
     return data;
   }
 }

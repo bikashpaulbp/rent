@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:rent_management/models/deposit_model.dart';
+import 'package:rent_management/services/deposite_service.dart';
 
 class DepositData extends ChangeNotifier {
-  List<DepositeModel> _depositList = [];
+  List<DepositeModel> depositList = [];
+  DepositeApiService depositApiService = DepositeApiService();
 
-  List<DepositeModel> get depositList => _depositList;
+  Future<void> getDepositList() async {
+    try {
+      List<DepositeModel> allDepositList =
+          await depositApiService.getAllDeposites();
+      depositList = allDepositList;
+      notifyListeners();
+    } catch (_) {}
+  }
 
-
-
-  void updateRentList(List<DepositeModel> newDepositList) {
-    _depositList = newDepositList;
-    notifyListeners();
+  depositListNew() {
+    return depositList.length;
   }
 }
- 

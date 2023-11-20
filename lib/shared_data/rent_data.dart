@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:rent_management/models/rent_model.dart';
+import 'package:rent_management/services/rent_service.dart';
 
 
 class RentData extends ChangeNotifier {
-  List<RentModel> _rentList = [];
+   List<RentModel> rentList = [];
+  RentApiService rentApiService = RentApiService();
 
-  List<RentModel> get rentList => _rentList;
+  Future<void> getRentList() async {
+    try {
+      List<RentModel> allRentList = await rentApiService.getAllRents();
+      rentList = allRentList;
+      notifyListeners();
+    } catch (_) {} 
+  }
 
-  void updateRentList(List<RentModel> newRentList) {
-    _rentList = newRentList;
-    notifyListeners();
+  rentListNew() {
+    return rentList.length;
   }
 }

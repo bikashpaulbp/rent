@@ -12,10 +12,20 @@ class TenantData extends ChangeNotifier {
       List<TenantModel> allTenantList = await tenantApiService.getAllTenants();
 
       tenantList = allTenantList;
-      tenantListCache = tenantList;
+
       notifyListeners();
     } catch (_) {}
   }
+
+  // Future<void> getTenantListCache() async {
+  //   try {
+  //     await getTenantList();
+
+  //     tenantListCache = tenantList;
+
+  //     notifyListeners();
+  //   } catch (_) {}
+  // }
 
   tenantListNew() {
     return tenantList.length;

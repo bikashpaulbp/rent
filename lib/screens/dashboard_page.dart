@@ -225,7 +225,7 @@ class _DashboardState extends State<Dashboard> {
             FloorPage(),
             TenentPage(),
             FlatPage(),
-            // MonthlyRent(),
+            MonthlyRent(),
           ],
         ),
       );

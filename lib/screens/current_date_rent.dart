@@ -7,6 +7,8 @@ import 'package:rent_management/models/deposit_model.dart';
 import 'package:rent_management/models/flat_model.dart';
 import 'package:rent_management/models/rent_model.dart';
 import 'package:rent_management/models/tenant_model.dart';
+import 'package:rent_management/models/user_model.dart';
+import 'package:rent_management/screens/login_screen.dart';
 import 'package:rent_management/services/deposite_service.dart';
 import 'package:rent_management/services/flat_service.dart';
 import 'package:rent_management/services/rent_service.dart';
@@ -59,16 +61,32 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
   TenantApiService tenantApiService = TenantApiService();
   FlatApiService flatApiService = FlatApiService();
   DepositeApiService depositeApiService = DepositeApiService();
+  UserModel user = UserModel();
+  AuthStateManager authStateManager = AuthStateManager();
+  UserModel? loggedInUser = UserModel();
+  bool isLoading = false;
+  int? buildingId;
+  int? userId;
 
   @override
   void initState() {
-     _fetchRentData();
+    _fetchRentData();
+    getUser();
+    getBuildingId();
     super.initState();
-   
   }
 
   void refresh() {
     _fetchRentData();
+  }
+
+  Future<void> getUser() async {
+    user = (await authStateManager.getLoggedInUser())!;
+    userId = user.id;
+  }
+
+  Future<void> getBuildingId() async {
+    buildingId = await authStateManager.getBuildingId();
   }
 
   Future<void> _fetchRentData() async {
@@ -78,9 +96,6 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
     finalTenantList = tenantList;
     finalFlatList = flatList;
     rentStream = rentApiService.getAllRents().asStream();
-    setState(() {
-      Provider.of<RentData>(context, listen: false).updateRentList(rentList);
-    });
   }
 
   @override
@@ -115,7 +130,13 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                         if (snapshot.hasData &&
                             snapshot.data != null &&
                             snapshot.data!.isNotEmpty) {
-                          List<RentModel> rentList = snapshot.data!
+                          getBuildingId();
+                          getUser();
+                          List<RentModel> allRentList = snapshot.data!
+                              .where(
+                                  (element) => element.buildingId == buildingId)
+                              .toList();
+                          List<RentModel> rentList = allRentList
                               .where((rent) => isRentCurrentMonth(
                                   rent,
                                   currentYear = now.year,
@@ -293,20 +314,13 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                                                           style: ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.red)),
                                                                                           onPressed: () async {
                                                                                             isPaid = true;
-                                                                                            RentModel updatedRent = RentModel(id: rent.id, rentMonth: rent.rentMonth, totalAmount: rent.totalAmount, isPaid: isPaid, flatId: rent.flatId, tenantId: rent.tenantId);
-                                                                                            DepositeModel deposit = DepositeModel(rentId: rent.id, totalAmount: rent.totalAmount, depositeAmount: rent.totalAmount, dueAmount: 0.0, depositeDate: dateofPayment);
+                                                                                            RentModel updatedRent = RentModel(id: rent.id, buildingId: buildingId, dueAmount: 0, gasBill: rent.gasBill, reciptNo: rent.reciptNo, isPrinted: false, rentAmount: rent.rentAmount, serviceCharge: rent.serviceCharge, waterBill: rent.waterBill, userId: rent.userId, rentMonth: rent.rentMonth, totalAmount: rent.totalAmount, isPaid: isPaid, flatId: rent.flatId, tenantId: rent.tenantId);
+                                                                                            DepositeModel deposit = DepositeModel(rentId: rent.id, totalAmount: rent.totalAmount, depositeAmount: rent.totalAmount, dueAmount: 0, tranDate: dateofPayment, buildingId: buildingId, flatId: rent.flatId, tenantId: rent.tenantId, userId: userId);
                                                                                             Navigator.of(context).pop();
 
                                                                                             await rentApiService.updateRent(rent: updatedRent, id: rent.id!);
                                                                                             await depositeApiService.createDeposite(deposit);
-                                                                                            Get.snackbar("", "",
-                                                                                                messageText: Center(
-                                                                                                    child: const Text(
-                                                                                                  "status has been changed to paid  \n",
-                                                                                                  style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 20),
-                                                                                                )),
-                                                                                                snackPosition: SnackPosition.BOTTOM,
-                                                                                                duration: const Duration(seconds: 2));
+                                                                                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("status has been changed to paid")));
 
                                                                                             setState(() {
                                                                                               _fetchRentData();
@@ -425,16 +439,9 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                                                 ElevatedButton(
                                                                                   child: const Text('update'),
                                                                                   onPressed: () async {
-                                                                                    RentModel updatedRent = RentModel(id: rent.id, tenantId: rent.tenantId, flatId: rent.flatId, rentMonth: rent.rentMonth, totalAmount: double.parse(_totalAmountController.text), isPaid: rent.isPaid);
+                                                                                    RentModel updatedRent = RentModel(id: rent.id, tenantId: rent.tenantId, flatId: rent.flatId, rentMonth: rent.rentMonth, totalAmount: int.parse(_totalAmountController.text), isPaid: rent.isPaid, buildingId: rent.buildingId, dueAmount: rent.dueAmount, gasBill: rent.gasBill, isPrinted: false, reciptNo: rent.reciptNo, rentAmount: rent.rentAmount, serviceCharge: rent.serviceCharge, waterBill: rent.waterBill, userId: rent.userId);
                                                                                     await rentApiService.updateRent(id: rent.id!, rent: updatedRent);
-                                                                                    Get.snackbar("", "",
-                                                                                        messageText: const Center(
-                                                                                            child: Text(
-                                                                                          "updated successfully  \n",
-                                                                                          style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 20),
-                                                                                        )),
-                                                                                        snackPosition: SnackPosition.BOTTOM,
-                                                                                        duration: const Duration(seconds: 2));
+                                                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("updated successfully")));
 
                                                                                     setState(() {
                                                                                       _fetchRentData();
@@ -478,29 +485,12 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                             await rentApiService
                                                                 .deleteRent(
                                                                     id!);
-                                                            Get.snackbar("", "",
-                                                                messageText:
-                                                                    const Center(
-                                                                        child:
-                                                                            Text(
-                                                                  "deleted successfully  \n",
-                                                                  style: TextStyle(
-                                                                      color: Color
-                                                                          .fromARGB(
-                                                                              255,
-                                                                              0,
-                                                                              0,
-                                                                              0),
-                                                                      fontSize:
-                                                                          20),
-                                                                )),
-                                                                snackPosition:
-                                                                    SnackPosition
-                                                                        .BOTTOM,
-                                                                duration:
-                                                                    const Duration(
-                                                                        seconds:
-                                                                            1));
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .showSnackBar(
+                                                                    SnackBar(
+                                                                        content:
+                                                                            Text("deleted successfully")));
                                                             setState(() {
                                                               _fetchRentData();
                                                             });

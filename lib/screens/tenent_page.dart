@@ -158,14 +158,13 @@ class _TenentPageState extends State<TenentPage> {
                         stream: tenantStream,
                         builder: (BuildContext context,
                             AsyncSnapshot<List<TenantModel>> snapshot) {
-                          getLocalInfo();
-
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
                             return Center(child: CircularProgressIndicator());
                           } else if (snapshot.hasData &&
                               snapshot.data != null &&
                               snapshot.data!.isNotEmpty) {
+                            getLocalInfo();
                             List<TenantModel> tenentList = snapshot.data!
                                 .where((e) => e.buildingId == buildingId)
                                 .toList();
@@ -378,11 +377,16 @@ class _TenentPageState extends State<TenentPage> {
                                                         SizedBox(
                                                           height: 10,
                                                         ),
-                                                        Image.memory(
-                                                          tenent.tenantImage!,
-                                                          width: 300,
-                                                          height: 200,
-                                                        ),
+                                                        tenent.tenantImage ==
+                                                                null
+                                                            ? Text(
+                                                                "no image found")
+                                                            : Image.memory(
+                                                                tenent
+                                                                    .tenantImage!,
+                                                                width: 300,
+                                                                height: 200,
+                                                              ),
                                                         SizedBox(
                                                           height: 10,
                                                         ),
@@ -404,12 +408,16 @@ class _TenentPageState extends State<TenentPage> {
                                                         SizedBox(
                                                           height: 10,
                                                         ),
-                                                        Image.memory(
-                                                          tenent
-                                                              .tenantNidImage!,
-                                                          width: 300,
-                                                          height: 200,
-                                                        ),
+                                                        tenent.tenantNidImage ==
+                                                               null
+                                                            ? Text(
+                                                                "no image found")
+                                                            : Image.memory(
+                                                                tenent
+                                                                    .tenantNidImage!,
+                                                                width: 300,
+                                                                height: 200,
+                                                              ),
                                                       ],
                                                     ),
                                                   ),
@@ -841,12 +849,12 @@ class _TenentPageState extends State<TenentPage> {
                                                                             DateTime?
                                                                                 existingRentAmountChangeDate =
                                                                                 tenent.rentAmountChangeDate;
-                                                                            Uint8List
+                                                                            Uint8List?
                                                                                 existingTenantImage =
-                                                                                tenent.tenantImage!;
-                                                                            Uint8List
+                                                                                tenent.tenantImage ?? null;
+                                                                            Uint8List?
                                                                                 existingNidImage =
-                                                                                tenent.tenantNidImage!;
+                                                                                tenent.tenantNidImage ?? null;
                                                                             TenantModel updatedTenant = TenantModel(
                                                                                 name: _newTenentNameController.text == "" ? "" : _newTenentNameController.text,
                                                                                 nid: _newNidNoController.text == "" ? "" : _newNidNoController.text,

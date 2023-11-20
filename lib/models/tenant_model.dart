@@ -40,10 +40,13 @@ class TenantModel {
 
   factory TenantModel.fromJson(Map<String, dynamic> json) {
     var tenantImageBytes =
-        json['tenantImage'] != null ? base64Decode(json['tenantImage']) : null;
-    var tenantNidImageBytes = json['tenantNidImage'] != null
-        ? base64Decode(json['tenantNidImage'])
-        : null;
+        json['tenantImage'] != null && json['tenantImage'] != ""
+            ? base64Decode(json['tenantImage'])
+            : null;
+    var tenantNidImageBytes =
+        json['tenantNidImage'] != null && json['tenantNidImage'] != ""
+            ? base64Decode(json['tenantNidImage'])
+            : null;
 
     return TenantModel(
       id: json['id'],

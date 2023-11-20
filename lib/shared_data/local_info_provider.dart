@@ -25,7 +25,9 @@ class LocalData extends ChangeNotifier {
 
   Future<void> updateBuildingName(String newName, int id) async {
     await authStateManager.saveBuildingId(id, newName);
+    
     buildingName = await authStateManager.getBuildingName();
+    
     notifyListeners();
   }
 }

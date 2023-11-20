@@ -5,8 +5,12 @@ import 'package:rent_management/models/deposit_model.dart';
 import 'package:rent_management/models/flat_model.dart';
 import 'package:rent_management/models/rent_model.dart';
 import 'package:rent_management/models/tenant_model.dart';
+import 'package:rent_management/models/user_model.dart';
+import 'package:rent_management/screens/all_rent.dart';
 import 'package:rent_management/screens/dashboard_page.dart';
+import 'package:rent_management/screens/login_screen.dart';
 import 'package:rent_management/services/deposite_service.dart';
+import 'package:rent_management/services/flat_service.dart';
 import 'package:rent_management/services/rent_service.dart';
 import 'package:rent_management/shared_data/rent_data.dart';
 
@@ -39,24 +43,44 @@ class _DepositDataPageState extends State<DepositDataPage> {
   List<RentModel> finalRentList = [];
   List<DepositeModel> totalDepositeList = [];
   List<DepositeModel> depositList = [];
-  double? dueAmount = 0;
-  double? totalDeposit = 0;
-  double dueAmountForIsPaid = 0;
+  int? dueAmount = 0;
+  int? totalDeposit = 0;
+  int dueAmountForIsPaid = 0;
   bool isDueAmount = false;
   // double? finalTotalDeposit = 0;
   RentModel? updatedRent;
   RentApiService rentApiService = RentApiService();
+  FlatApiService flatApiService = FlatApiService();
   DepositeApiService depositeApiService = DepositeApiService();
+  List<FlatModel> flatList = [];
+  AuthStateManager authStateManager = AuthStateManager();
+  UserModel? loggedInUser = UserModel();
+  UserModel user = UserModel();
+  bool isLoading = false;
+  int? buildingId;
+  int? userId;
+  int? flatId;
 
   @override
   void initState() {
-    super.initState();
     _fetchDeposite();
+    getUser();
+    getBuildingId();
+    super.initState();
+  }
+
+  Future<void> getUser() async {
+    user = (await authStateManager.getLoggedInUser())!;
+    userId = user.id;
+  }
+
+  Future<void> getBuildingId() async {
+    buildingId = await authStateManager.getBuildingId();
   }
 
   Future<void> _fetchDeposite() async {
     List<RentModel> rentList = await rentApiService.getAllRents();
-    // depositList = await DBHelper.readDepositData();
+
     RentModel rentInfo = rentList.firstWhere((e) => e.id == widget.rentID);
     depositList = await depositeApiService.getAllDeposites();
 
@@ -173,38 +197,33 @@ class _DepositDataPageState extends State<DepositDataPage> {
                                   ),
                                 ),
                                 onPressed: () async => {
+                                  await _fetchDeposite(),
+                                  await getUser(),
+                                  await getBuildingId(),
                                   if (depositAmountTextControlller
                                       .text.isNotEmpty)
                                     {
-                                      // depositList = await depositeApiService
-                                      //     .getAllDeposites(),
-                                      // totalDepositeList = depositList
-                                      //     .where(
-                                      //         (e) => e.rentId == widget.rentID)
-                                      //     .toList(),
-                                      // for (var deposites in totalDepositeList)
-                                      //   {
-                                      //     totalDeposit = totalDeposit! +
-                                      //         deposites.depositeAmount!,
-                                      //   },
                                       await depositeApiService.createDeposite(
                                           DepositeModel(
+                                              buildingId: buildingId,
+                                              flatId: rentInfo.flatId,
+                                              tenantId: rentInfo.tenantId,
+                                              userId: rentInfo.userId,
                                               totalAmount: rentInfo.totalAmount,
-                                              depositeAmount: double.parse(
+                                              depositeAmount: int.parse(
                                                   depositAmountTextControlller
                                                       .text),
                                               dueAmount: rentInfo.totalAmount! -
                                                   (totalDeposit! +
-                                                      double.parse(
+                                                      int.parse(
                                                           depositAmountTextControlller
                                                               .text)),
-                                              depositeDate: date,
+                                              tranDate: date,
                                               rentId: rentInfo.id)),
-
                                       dueAmountForIsPaid = rentInfo
                                               .totalAmount! -
                                           (totalDeposit! +
-                                              double.parse(
+                                              int.parse(
                                                   depositAmountTextControlller
                                                       .text)),
                                       isDueAmount = dueAmountForIsPaid == 0
@@ -212,6 +231,19 @@ class _DepositDataPageState extends State<DepositDataPage> {
                                           : false,
                                       updatedRent = RentModel(
                                           id: rentInfo.id,
+                                          buildingId: rentInfo.buildingId,
+                                          isPrinted: rentInfo.isPrinted,
+                                          dueAmount: rentInfo.totalAmount! -
+                                              (totalDeposit! +
+                                                  int.parse(
+                                                      depositAmountTextControlller
+                                                          .text)),
+                                          gasBill: rentInfo.gasBill,
+                                          reciptNo: rentInfo.reciptNo,
+                                          rentAmount: rentInfo.rentAmount,
+                                          serviceCharge: rentInfo.serviceCharge,
+                                          userId: rentInfo.userId,
+                                          waterBill: rentInfo.waterBill,
                                           flatId: rentInfo.flatId,
                                           tenantId: rentInfo.tenantId,
                                           totalAmount: rentInfo.totalAmount,
@@ -224,37 +256,23 @@ class _DepositDataPageState extends State<DepositDataPage> {
                                         _fetchDeposite();
                                       }),
                                       Get.back(),
-                                      Get.snackbar("", "",
-                                          messageText: const Center(
-                                              child: Text(
-                                            "saved successfully\n",
-                                            style: TextStyle(
-                                                color: Color.fromARGB(
-                                                    255, 0, 0, 0),
-                                                fontSize: 20),
-                                          )),
-                                          snackPosition: SnackPosition.BOTTOM,
-                                          duration: const Duration(seconds: 2))
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              content:
+                                                  Text("saved successfully")))
                                     }
                                   else
                                     {
-                                      Get.snackbar("", "",
-                                          messageText: const Center(
-                                              child: Text(
-                                            "provide deposit amount\n",
-                                            style: TextStyle(
-                                                color: Color.fromARGB(
-                                                    255, 245, 50, 50),
-                                                fontSize: 20),
-                                          )),
-                                          snackPosition: SnackPosition.BOTTOM,
-                                          duration: const Duration(seconds: 2))
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              content: Text(
+                                                  "provide depsit amount")))
                                     }
                                 },
                               ),
                               ElevatedButton(
                                 onPressed: () {
-                                  Get.offAll(const Dashboard());
+                                  Get.offAll(const AllRent());
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.red,

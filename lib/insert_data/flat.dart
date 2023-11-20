@@ -111,6 +111,7 @@ class _FlatDataPageState extends State<FlatDataPage> {
               const SizedBox(height: 8),
               Consumer<FloorData>(
                 builder: (context, floorData, child) {
+                  getBuildingId();
                   floorData.getFloorList();
 
                   List<FloorModel> floorList = floorData.floorList
@@ -153,8 +154,9 @@ class _FlatDataPageState extends State<FlatDataPage> {
               Consumer<TenantData>(
                 builder: (context, tenant, child) {
                   getBuildingId();
+                  tenant.getTenantList();
 
-                  List<TenantModel> tenantList = tenant.tenantListCache
+                  List<TenantModel> tenantList = tenant.tenantList
                       .where((element) => element.buildingId == buildingId)
                       .toList();
                   return DropdownButtonFormField<int>(

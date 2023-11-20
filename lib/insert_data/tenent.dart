@@ -5,6 +5,7 @@ import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -63,12 +64,6 @@ class _TenentDataPageState extends State<TenentDataPage> {
     super.initState();
   }
 
-  Uint8List compressImage(Uint8List imageData, int quality) {
-    final image = img.decodeImage(imageData)!;
-    final compressedImageData = img.encodeJpg(image, quality: quality);
-    return Uint8List.fromList(compressedImageData);
-  }
-
   Future<void> _pickTenantImage() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -76,7 +71,13 @@ class _TenentDataPageState extends State<TenentDataPage> {
     if (pickedFile != null) {
       final imageFile = File(pickedFile.path);
       final originalImageData = await imageFile.readAsBytes();
-      final compressedImageData = compressImage(originalImageData, 5);
+
+      final compressedImageData = await FlutterImageCompress.compressWithList(
+        originalImageData,
+        minWidth: 900,
+        minHeight: 600,
+        quality: 40,
+      );
 
       setState(() {
         _tenantImage = imageFile;
@@ -92,7 +93,13 @@ class _TenentDataPageState extends State<TenentDataPage> {
     if (pickedFile != null) {
       final imageFile = File(pickedFile.path);
       final originalImageData = await imageFile.readAsBytes();
-      final compressedImageData = compressImage(originalImageData, 5);
+
+      final compressedImageData = await FlutterImageCompress.compressWithList(
+        originalImageData,
+        minWidth: 900,
+        minHeight: 600,
+        quality: 40,
+      );
 
       setState(() {
         _nidImage = imageFile;
@@ -437,8 +444,11 @@ class _TenentDataPageState extends State<TenentDataPage> {
                                     isActive: isActive,
                                     rentAmountChangeDate:
                                         rentAmountChangeDate ?? null,
-                                    tenantImage: tenantImage ?? null,
-                                    tenantNidImage: nidImage ?? null,
+                                    tenantImage: tenantImage!.isNotEmpty
+                                        ? tenantImage
+                                        : null,
+                                    tenantNidImage:
+                                        nidImage!.isNotEmpty ? nidImage : null,
                                     userId: user.id,
                                   ))
                                   .whenComplete(() => setState(
