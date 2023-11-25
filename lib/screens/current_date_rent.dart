@@ -13,6 +13,8 @@ import 'package:rent_management/services/deposite_service.dart';
 import 'package:rent_management/services/flat_service.dart';
 import 'package:rent_management/services/rent_service.dart';
 import 'package:rent_management/services/tenant_service.dart';
+import 'package:rent_management/shared_data/flat_data.dart';
+import 'package:rent_management/shared_data/tenent_data.dart';
 
 import '../shared_data/rent_data.dart';
 
@@ -90,13 +92,15 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
   }
 
   Future<void> _fetchRentData() async {
-    List<RentModel> rentList = await rentApiService.getAllRents();
-    List<TenantModel> tenantList = await tenantApiService.getAllTenants();
-    List<FlatModel> flatList = await flatApiService.getAllFlats();
-    finalTenantList = tenantList;
-    finalFlatList = flatList;
     rentStream = rentApiService.getAllRents().asStream();
   }
+
+  // Future<void> _fetchData() async {
+  //   List<TenantModel> allTenantList = await tenantApiService.getAllTenants();
+  //   List<FlatModel> allFlatList = await flatApiService.getAllFlats();
+  //   tenantList = allTenantList;
+  //   flatList = allFlatList;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -146,25 +150,28 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                             itemCount: rentList.length,
                             itemBuilder: (BuildContext context, int index) {
                               RentModel rent = rentList[index];
-                              // flatId = finalFlatList
-                              //     .firstWhere(
-                              //         (flat) => flat.id == rent.flatId)
-                              //     .id;
-                              // int? finalFlatId = flatId;
-                              flatName = finalFlatList
-                                  .firstWhere((flat) => flat.id == rent.flatId)
-                                  .name;
-                              String? finalFlatName = flatName;
-                              // tenantId = finalTenantList
-                              //     .firstWhere(
-                              //         (tenant) => tenant.id == rent.flatId)
-                              //     .id;
-                              // int? finalTenantId = tenantId;
-                              tenantName = finalTenantList
-                                  .firstWhere(
-                                      (tenant) => tenant.id == rent.tenantId)
-                                  .name;
-                              String? finalTenantName = tenantName;
+                              List<TenantModel> tenants =
+                                  context.watch<TenantData>().tenantList;
+                              List<FlatModel> flats =
+                                  context.watch<FlatData>().flatList;
+                              if (flats.isNotEmpty) {
+                                try {
+                                  flatName = flats
+                                      .firstWhere((e) => e.id == rent.flatId)
+                                      .name;
+                                } catch (_) {}
+                              } else {
+                                flatName = "flat not found";
+                              }
+                              if (tenants.isNotEmpty) {
+                                try {
+                                  tenantName = tenants
+                                      .firstWhere((e) => e.id == rent.tenantId)
+                                      .name;
+                                } catch (_) {}
+                              } else {
+                                tenantName = "tenant not found";
+                              }
 
                               return ListTile(
                                 title: Card(
@@ -188,7 +195,7 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                 padding:
                                                     const EdgeInsets.all(5.0),
                                                 child: Text(
-                                                  'Tenent Name: $finalTenantName',
+                                                  'Tenent Name: $tenantName',
                                                   style: const TextStyle(
                                                     color: Color.fromARGB(
                                                         255, 0, 0, 0),
@@ -201,7 +208,7 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                 padding:
                                                     const EdgeInsets.all(5.0),
                                                 child: Text(
-                                                  'Flat Name: $finalFlatName',
+                                                  'Flat Name: $flatName',
                                                   style: const TextStyle(
                                                     color: Color.fromARGB(
                                                         255, 0, 0, 0),

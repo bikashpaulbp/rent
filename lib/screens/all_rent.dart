@@ -14,6 +14,8 @@ import 'package:rent_management/services/deposite_service.dart';
 import 'package:rent_management/services/flat_service.dart';
 import 'package:rent_management/services/rent_service.dart';
 import 'package:rent_management/services/tenant_service.dart';
+import 'package:rent_management/shared_data/flat_data.dart';
+import 'package:rent_management/shared_data/tenent_data.dart';
 
 import '../shared_data/rent_data.dart';
 
@@ -25,11 +27,11 @@ class AllRent extends StatefulWidget {
 }
 
 class _AllRentState extends State<AllRent> {
-  late Stream<List<RentModel>> rentStream = const Stream.empty();
+  Stream<List<RentModel>> rentStream = const Stream.empty();
 
-  List<TenantModel> finalTenantList = [];
+  List<TenantModel> tenantList = [];
 
-  List<FlatModel> finalFlatList = [];
+  List<FlatModel> flatList = [];
 
   final _totalAmountController = TextEditingController();
 
@@ -67,9 +69,10 @@ class _AllRentState extends State<AllRent> {
   }
 
   void refresh() {
+    _fetchRentData();
+    // _fetchData();
     getUser();
     getBuildingId();
-    _fetchRentData();
   }
 
   Future<void> getUser() async {
@@ -82,12 +85,15 @@ class _AllRentState extends State<AllRent> {
   }
 
   Future<void> _fetchRentData() async {
-    List<TenantModel> tenantList = await tenantApiService.getAllTenants();
-    List<FlatModel> flatList = await flatApiService.getAllFlats();
-    finalTenantList = tenantList;
-    finalFlatList = flatList;
     rentStream = rentApiService.getAllRents().asStream();
   }
+
+  // Future<void> _fetchData() async {
+  //   List<TenantModel> allTenantList = await tenantApiService.getAllTenants();
+  //   List<FlatModel> allFlatList = await flatApiService.getAllFlats();
+  //   tenantList = allTenantList;
+  //   flatList = allFlatList;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -116,14 +122,16 @@ class _AllRentState extends State<AllRent> {
                         stream: rentStream,
                         builder: (BuildContext context,
                             AsyncSnapshot<List<RentModel>> snapshot) {
+                          getBuildingId();
+                          // _fetchData();
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
                             return Center(child: CircularProgressIndicator());
                           }
+
                           if (snapshot.hasData &&
                               snapshot.data != null &&
                               snapshot.data!.isNotEmpty) {
-                            getBuildingId();
                             List<RentModel> rentList = snapshot.data!
                                 .where((element) =>
                                     element.buildingId == buildingId)
@@ -133,18 +141,29 @@ class _AllRentState extends State<AllRent> {
                               itemCount: rentList.length,
                               itemBuilder: (BuildContext context, int index) {
                                 RentModel rent = rentList[index];
-
-                                flatName = finalFlatList
-                                    .firstWhere(
-                                        (flat) => flat.id == rent.flatId)
-                                    .name;
-                                String? finalFlatName = flatName;
-
-                                tenantName = finalTenantList
-                                    .firstWhere(
-                                        (tenant) => tenant.id == rent.tenantId)
-                                    .name;
-                                String? finalTenantName = tenantName;
+                                List<TenantModel> tenants =
+                                    context.watch<TenantData>().tenantList;
+                                List<FlatModel> flats =
+                                    context.watch<FlatData>().flatList;
+                                if (flats.isNotEmpty) {
+                                  try {
+                                    flatName = flats
+                                        .firstWhere((e) => e.id == rent.flatId)
+                                        .name;
+                                  } catch (_) {}
+                                } else {
+                                  flatName = "flat not found";
+                                }
+                                if (tenants.isNotEmpty) {
+                                  try {
+                                    tenantName = tenants
+                                        .firstWhere(
+                                            (e) => e.id == rent.tenantId)
+                                        .name;
+                                  } catch (_) {}
+                                } else {
+                                  tenantName = "tenant not found";
+                                }
 
                                 return ListTile(
                                   title: Card(
@@ -168,7 +187,7 @@ class _AllRentState extends State<AllRent> {
                                                   padding:
                                                       const EdgeInsets.all(5.0),
                                                   child: Text(
-                                                    'Tenant Name: $finalTenantName',
+                                                    'Tenant Name: $tenantName',
                                                     style: const TextStyle(
                                                       color: Color.fromARGB(
                                                           255, 0, 0, 0),
@@ -182,7 +201,7 @@ class _AllRentState extends State<AllRent> {
                                                   padding:
                                                       const EdgeInsets.all(5.0),
                                                   child: Text(
-                                                    'Flat Name: $finalFlatName',
+                                                    'Flat Name: $flatName',
                                                     style: const TextStyle(
                                                       color: Color.fromARGB(
                                                           255, 0, 0, 0),
@@ -310,7 +329,6 @@ class _AllRentState extends State<AllRent> {
                                                                                               isPaid = true;
                                                                                               RentModel updatedRent = RentModel(id: rent.id, buildingId: buildingId, dueAmount: 0, gasBill: rent.gasBill, reciptNo: rent.reciptNo, isPrinted: false, rentAmount: rent.rentAmount, serviceCharge: rent.serviceCharge, waterBill: rent.waterBill, userId: rent.userId, rentMonth: rent.rentMonth, totalAmount: rent.totalAmount, isPaid: isPaid, flatId: rent.flatId, tenantId: rent.tenantId);
                                                                                               DepositeModel deposit = DepositeModel(rentId: rent.id, totalAmount: rent.totalAmount, depositeAmount: rent.totalAmount, dueAmount: 0, tranDate: dateofPayment, buildingId: buildingId, flatId: rent.flatId, tenantId: rent.tenantId, userId: userId);
-                                                                                              Navigator.of(context).pop();
 
                                                                                               await rentApiService.updateRent(id: rent.id!, rent: updatedRent);
                                                                                               await depositeApiService.createDeposite(deposit);
@@ -320,6 +338,7 @@ class _AllRentState extends State<AllRent> {
                                                                                               setState(() {
                                                                                                 _fetchRentData();
                                                                                               });
+                                                                                              Navigator.of(context).pop();
                                                                                             },
                                                                                             child: Text('confirm')),
                                                                                         ElevatedButton(

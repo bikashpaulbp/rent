@@ -203,7 +203,7 @@ class _RentDataPageState extends State<RentDataPage> {
 
                       await widget.refresh();
                       await _fetchRentData();
-                      Get.offAll(() => AllRent());
+                      Get.offAll(() => Dashboard());
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("Saved successfully")),
                       );
@@ -233,7 +233,7 @@ class _RentDataPageState extends State<RentDataPage> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    Get.offAll(() => AllRent());
+                    Get.back();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,

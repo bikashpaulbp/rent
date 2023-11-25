@@ -12,6 +12,7 @@ import 'package:rent_management/screens/login_screen.dart';
 import 'package:rent_management/services/deposite_service.dart';
 import 'package:rent_management/services/flat_service.dart';
 import 'package:rent_management/services/rent_service.dart';
+import 'package:rent_management/shared_data/deposit_data.dart';
 import 'package:rent_management/shared_data/rent_data.dart';
 
 // ignore: must_be_immutable
@@ -36,7 +37,8 @@ class _DepositDataPageState extends State<DepositDataPage> {
       TextEditingController();
 
   DateTime date = DateTime.now();
-
+  RentModel? rents;
+  RentModel? rentInfo;
   List<DepositeModel> finalDepositList = [];
   List<TenantModel> finalTenantList = [];
   List<FlatModel> finalFlatList = [];
@@ -79,20 +81,28 @@ class _DepositDataPageState extends State<DepositDataPage> {
   }
 
   Future<void> _fetchDeposite() async {
-    List<RentModel> rentList = await rentApiService.getAllRents();
-
-    RentModel rentInfo = rentList.firstWhere((e) => e.id == widget.rentID);
-    depositList = await depositeApiService.getAllDeposites();
-
-    totalDepositeList =
-        depositList.where((e) => e.rentId == widget.rentID).toList();
-    for (var deposites in totalDepositeList) {
-      totalDeposit = totalDeposit! + deposites.depositeAmount!;
+    List<RentModel> rentList =
+        Provider.of<RentData>(context, listen: false).rentList;
+    if (rentList.isNotEmpty) {
+      try {
+        rents = rentList.firstWhere((e) => e.id == widget.rentID);
+      } catch (_) {}
     }
 
-    dueAmount = rentInfo.totalAmount! - totalDeposit!;
+    depositList = Provider.of<DepositData>(context, listen: false).depositList;
+    if (depositList.isNotEmpty) {
+      try {
+        totalDepositeList =
+            depositList.where((e) => e.rentId == widget.rentID).toList();
+        for (var deposites in totalDepositeList) {
+          totalDeposit = totalDeposit! + deposites.depositeAmount!;
+        }
 
-    dueAmountTextControlller.text = dueAmount.toString();
+        dueAmount = rents!.totalAmount! - totalDeposit!;
+
+        dueAmountTextControlller.text = dueAmount.toString();
+      } catch (_) {}
+    }
   }
 
   @override
@@ -122,13 +132,18 @@ class _DepositDataPageState extends State<DepositDataPage> {
           child: Container(
             child: Consumer<RentData>(
               builder: (context, rentData, child) {
-                RentModel? rentInfo =
-                    rentData.rentList.firstWhere((e) => e.id == widget.rentID);
+                if (rentData.rentList.isNotEmpty) {
+                  try {
+                    rentInfo = rentData.rentList
+                        .firstWhere((e) => e.id == widget.rentID);
 
-                rentMonthTextController.text = rentInfo.rentMonth.toString();
+                    rentMonthTextController.text =
+                        rentInfo!.rentMonth.toString();
 
-                totalAmountTextControlller.text =
-                    rentInfo.totalAmount.toString();
+                    totalAmountTextControlller.text =
+                        rentInfo!.totalAmount.toString();
+                  } catch (_) {}
+                }
 
                 return Container(
                   child: Column(
@@ -206,21 +221,23 @@ class _DepositDataPageState extends State<DepositDataPage> {
                                       await depositeApiService.createDeposite(
                                           DepositeModel(
                                               buildingId: buildingId,
-                                              flatId: rentInfo.flatId,
-                                              tenantId: rentInfo.tenantId,
-                                              userId: rentInfo.userId,
-                                              totalAmount: rentInfo.totalAmount,
+                                              flatId: rentInfo!.flatId,
+                                              tenantId: rentInfo!.tenantId,
+                                              userId: rentInfo!.userId,
+                                              totalAmount:
+                                                  rentInfo!.totalAmount,
                                               depositeAmount: int.parse(
                                                   depositAmountTextControlller
                                                       .text),
-                                              dueAmount: rentInfo.totalAmount! -
+                                              dueAmount: rentInfo!
+                                                      .totalAmount! -
                                                   (totalDeposit! +
                                                       int.parse(
                                                           depositAmountTextControlller
                                                               .text)),
                                               tranDate: date,
-                                              rentId: rentInfo.id)),
-                                      dueAmountForIsPaid = rentInfo
+                                              rentId: rentInfo!.id)),
+                                      dueAmountForIsPaid = rentInfo!
                                               .totalAmount! -
                                           (totalDeposit! +
                                               int.parse(
@@ -230,32 +247,34 @@ class _DepositDataPageState extends State<DepositDataPage> {
                                           ? true
                                           : false,
                                       updatedRent = RentModel(
-                                          id: rentInfo.id,
-                                          buildingId: rentInfo.buildingId,
-                                          isPrinted: rentInfo.isPrinted,
-                                          dueAmount: rentInfo.totalAmount! -
+                                          id: rentInfo!.id,
+                                          buildingId: rentInfo!.buildingId,
+                                          isPrinted: rentInfo!.isPrinted,
+                                          dueAmount: rentInfo!.totalAmount! -
                                               (totalDeposit! +
                                                   int.parse(
                                                       depositAmountTextControlller
                                                           .text)),
-                                          gasBill: rentInfo.gasBill,
-                                          reciptNo: rentInfo.reciptNo,
-                                          rentAmount: rentInfo.rentAmount,
-                                          serviceCharge: rentInfo.serviceCharge,
-                                          userId: rentInfo.userId,
-                                          waterBill: rentInfo.waterBill,
-                                          flatId: rentInfo.flatId,
-                                          tenantId: rentInfo.tenantId,
-                                          totalAmount: rentInfo.totalAmount,
-                                          rentMonth: rentInfo.rentMonth,
+                                          gasBill: rentInfo!.gasBill,
+                                          reciptNo: rentInfo!.reciptNo,
+                                          rentAmount: rentInfo!.rentAmount,
+                                          serviceCharge:
+                                              rentInfo!.serviceCharge,
+                                          userId: rentInfo!.userId,
+                                          waterBill: rentInfo!.waterBill,
+                                          flatId: rentInfo!.flatId,
+                                          tenantId: rentInfo!.tenantId,
+                                          totalAmount: rentInfo!.totalAmount,
+                                          rentMonth: rentInfo!.rentMonth,
                                           isPaid: isDueAmount),
                                       await rentApiService.updateRent(
                                           id: widget.rentID,
                                           rent: updatedRent!),
+                                      widget.refresh,
                                       setState(() {
                                         _fetchDeposite();
                                       }),
-                                      Get.back(),
+                                      Get.offAll(() => Dashboard()),
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(SnackBar(
                                               content:
@@ -272,7 +291,7 @@ class _DepositDataPageState extends State<DepositDataPage> {
                               ),
                               ElevatedButton(
                                 onPressed: () {
-                                  Get.offAll(const AllRent());
+                                  Get.back();
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.red,

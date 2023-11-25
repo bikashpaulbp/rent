@@ -409,7 +409,7 @@ class _TenentPageState extends State<TenentPage> {
                                                           height: 10,
                                                         ),
                                                         tenent.tenantNidImage ==
-                                                               null
+                                                                null
                                                             ? Text(
                                                                 "no image found")
                                                             : Image.memory(

@@ -59,7 +59,7 @@ class _MonthlyRentState extends State<MonthlyRent> {
             backgroundColor: const Color.fromARGB(255, 66, 129, 247),
             child: IconButton(
               onPressed: () {
-                Get.offAll(() => RentDataPage(refresh: refresh));
+                Get.to(() => RentDataPage(refresh: refresh));
               },
               icon: const Icon(Icons.add),
               color: const Color.fromARGB(255, 255, 255, 255),

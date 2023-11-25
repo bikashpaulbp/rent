@@ -125,26 +125,24 @@ class _FlatPageState extends State<FlatPage> {
                           stream: flatStream,
                           builder: (BuildContext context,
                               AsyncSnapshot<List<FlatModel>> snapshot) {
-                            
+                            getLocalInfo();
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
                               return Center(child: CircularProgressIndicator());
                             } else if (snapshot.hasData &&
                                 snapshot.data != null &&
                                 snapshot.data!.isNotEmpty) {
-                              getLocalInfo();
                               List<FlatModel> flatList = snapshot.data!
                                   .where((element) =>
                                       element.buildingId == buildingId)
                                   .toList();
-                              _fetchData();
+
                               return ListView.builder(
                                 itemCount: flatList.length,
                                 itemBuilder: (BuildContext context, int index) {
                                   FlatModel flat = flatList[index];
-                                  List<TenantModel> tenants = context
-                                      .watch<TenantData>()
-                                      .tenantListCache;
+                                  List<TenantModel> tenants =
+                                      context.watch<TenantData>().tenantList;
                                   if (floorList.isNotEmpty) {
                                     floorName = floorList
                                         .firstWhere((e) => e.id == flat.floorId)
@@ -152,7 +150,7 @@ class _FlatPageState extends State<FlatPage> {
                                   } else {
                                     floorName = "floor not found";
                                   }
-                                  if (tenantList.isNotEmpty) {
+                                  if (tenants.isNotEmpty) {
                                     try {
                                       tenantName = tenants
                                           .firstWhere(

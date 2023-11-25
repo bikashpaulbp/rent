@@ -74,8 +74,8 @@ class _TenentDataPageState extends State<TenentDataPage> {
 
       final compressedImageData = await FlutterImageCompress.compressWithList(
         originalImageData,
-        minWidth: 900,
-        minHeight: 600,
+        minWidth: 600,
+        minHeight: 400,
         quality: 40,
       );
 
@@ -96,8 +96,8 @@ class _TenentDataPageState extends State<TenentDataPage> {
 
       final compressedImageData = await FlutterImageCompress.compressWithList(
         originalImageData,
-        minWidth: 900,
-        minHeight: 600,
+        minWidth: 600,
+        minHeight: 400,
         quality: 40,
       );
 
