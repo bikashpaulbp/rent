@@ -23,7 +23,7 @@ class FlatApiService {
         List<dynamic> body = json['data'];
         List<FlatModel> allFlatList =
             body.map((e) => FlatModel.fromJson(e)).toList();
-        print(response.statusCode);
+      
         return allFlatList;
       } else if (response.statusCode == 404) {
         print("Data not found (404)");

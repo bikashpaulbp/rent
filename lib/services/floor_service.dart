@@ -26,7 +26,7 @@ class FloorApiService {
         List<dynamic> body = json['data'];
         List<FloorModel> allFloorList =
             body.map((e) => FloorModel.fromJson(e)).toList();
-        print(response.statusCode);
+      
         return allFloorList;
       } else if (response.statusCode == 404) {
         print("Data not found (404)");

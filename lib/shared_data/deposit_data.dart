@@ -15,6 +15,11 @@ class DepositData extends ChangeNotifier {
     } catch (_) {}
   }
 
+  Future<List<DepositeModel>> returnDepositList() async {
+    await getDepositList();
+    return depositList;
+  }
+
   depositListNew() {
     return depositList.length;
   }

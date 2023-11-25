@@ -26,7 +26,7 @@ class BuildingApiService {
         List<dynamic> body = json['data'];
         List<BuildingModel> allBuildingList =
             body.map((e) => BuildingModel.fromJson(e)).toList();
-        print(response.statusCode);
+      
         return allBuildingList;
       } else if (response.statusCode == 404) {
         print("Data not found (404)");

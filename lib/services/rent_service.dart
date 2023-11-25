@@ -23,7 +23,7 @@ class RentApiService {
         List<dynamic> body = json['data'];
         List<RentModel> allRentList =
             body.map((e) => RentModel.fromJson(e)).toList();
-        print(response.statusCode);
+        
         return allRentList;
       } else if (response.statusCode == 404) {
         print("Data not found (404)");

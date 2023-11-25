@@ -326,7 +326,7 @@ class _CountPageState extends State<CountPage> {
                             padding: const EdgeInsets.all(8.0),
                             child: InkWell(
                               onTap: () {
-                                // Get.to(MonthlyRent());
+                                Get.to(MonthlyRent());
                               },
                               child: Card(
                                 shape: BeveledRectangleBorder(
@@ -336,6 +336,7 @@ class _CountPageState extends State<CountPage> {
                                   child: Center(
                                     child: Consumer<RentData>(
                                         builder: (context, rentData, _) {
+                                      rentData.getRentList();
                                       getBuildingId();
                                       int unpaidCount = rentData.rentList
                                           .where((rent) =>

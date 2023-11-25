@@ -25,7 +25,7 @@ class DepositeApiService {
         List<dynamic> body = json['data'];
         List<DepositeModel> allDepositeList =
             body.map((e) => DepositeModel.fromJson(e)).toList();
-        print(response.statusCode);
+     
         return allDepositeList;
       } else if (response.statusCode == 404) {
         print("Data not found (404)");
@@ -34,14 +34,15 @@ class DepositeApiService {
         throw "Request failed with status: ${response.statusCode}";
       }
     } catch (e) {
-      if (e is SocketException) {
-        print("Network error: ${e.message}");
+      // if (e is SocketException) {
+      //   print("Network error: bbb ${e.message}");
 
-        return [];
-      } else {
-        print("Error: $e");
-        rethrow;
-      }
+      //   return [];
+      // } else {
+      //   print("Error: $e");
+      //   rethrow;
+      // }
+      return [];
     }
   }
 

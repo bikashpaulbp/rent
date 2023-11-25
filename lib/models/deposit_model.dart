@@ -29,7 +29,7 @@ class DepositeModel {
     depositeAmount = json['depositeAmount'];
     dueAmount = json['dueAmount'];
     tranDate =
-        json['tranDate'] != null ? DateTime.parse(json['depositeDate']) : null;
+        json['tranDate'] != null ? DateTime.parse(json['tranDate']) : null;
     rentId = json['rentId'];
     tenantId = json['tenantId'];
     flatId = json['flatId'];

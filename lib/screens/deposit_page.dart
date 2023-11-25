@@ -63,7 +63,7 @@ class _DepositPageState extends State<DepositPage> {
     rentList = await rentApiService.getAllRents();
     flatList = await flatApiService.getAllFlats();
 
-    setState(() {});
+   
   }
 
   @override

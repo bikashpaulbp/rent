@@ -24,7 +24,7 @@ class UserApiService {
         List<dynamic> body = json['data'];
         List<UserModel> allUserList =
             body.map((e) => UserModel.fromJson(e)).toList();
-        print(response.statusCode);
+
         return allUserList;
       } else if (response.statusCode == 404) {
         print("Data not found (404)");

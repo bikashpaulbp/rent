@@ -81,28 +81,27 @@ class _DepositDataPageState extends State<DepositDataPage> {
   }
 
   Future<void> _fetchDeposite() async {
-    List<RentModel> rentList =
-        Provider.of<RentData>(context, listen: false).rentList;
-    if (rentList.isNotEmpty) {
-      try {
-        rents = rentList.firstWhere((e) => e.id == widget.rentID);
-      } catch (_) {}
+    if (!mounted) {
+      return;
     }
 
-    depositList = Provider.of<DepositData>(context, listen: false).depositList;
-    if (depositList.isNotEmpty) {
-      try {
-        totalDepositeList =
-            depositList.where((e) => e.rentId == widget.rentID).toList();
-        for (var deposites in totalDepositeList) {
-          totalDeposit = totalDeposit! + deposites.depositeAmount!;
-        }
+    try {
+      depositList = await Provider.of<DepositData>(context, listen: false)
+          .returnDepositList();
+      List<RentModel> rentList =
+          await Provider.of<RentData>(context, listen: false).returnRentList();
+      totalDepositeList =
+          depositList.where((e) => e.rentId == widget.rentID).toList();
 
-        dueAmount = rents!.totalAmount! - totalDeposit!;
-
-        dueAmountTextControlller.text = dueAmount.toString();
-      } catch (_) {}
+      rents = rentList.firstWhere((e) => e.id == widget.rentID);
+       for (var deposites in totalDepositeList) {
+      totalDeposit = totalDeposit! + deposites.depositeAmount!;
     }
+    dueAmount = rents!.totalAmount! - totalDeposit!;
+
+    dueAmountTextControlller.text = dueAmount.toString();
+    } catch (_) {}
+   
   }
 
   @override
@@ -132,17 +131,18 @@ class _DepositDataPageState extends State<DepositDataPage> {
           child: Container(
             child: Consumer<RentData>(
               builder: (context, rentData, child) {
+                rentData.getRentList();
+                
                 if (rentData.rentList.isNotEmpty) {
                   try {
                     rentInfo = rentData.rentList
                         .firstWhere((e) => e.id == widget.rentID);
-
-                    rentMonthTextController.text =
-                        rentInfo!.rentMonth.toString();
-
-                    totalAmountTextControlller.text =
-                        rentInfo!.totalAmount.toString();
                   } catch (_) {}
+
+                  rentMonthTextController.text = rentInfo!.rentMonth.toString();
+
+                  totalAmountTextControlller.text =
+                      rentInfo!.totalAmount.toString();
                 }
 
                 return Container(
@@ -212,7 +212,7 @@ class _DepositDataPageState extends State<DepositDataPage> {
                                   ),
                                 ),
                                 onPressed: () async => {
-                                  await _fetchDeposite(),
+                                  // await _fetchDeposite(),
                                   await getUser(),
                                   await getBuildingId(),
                                   if (depositAmountTextControlller
@@ -285,7 +285,7 @@ class _DepositDataPageState extends State<DepositDataPage> {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(SnackBar(
                                               content: Text(
-                                                  "provide depsit amount")))
+                                                  "provide deposit amount")))
                                     }
                                 },
                               ),

@@ -26,7 +26,7 @@ class TenantApiService {
         List<dynamic> body = json['data'];
         List<TenantModel> allTenantList =
             body.map((e) => TenantModel.fromJson(e)).toList();
-        print(response.statusCode);
+
         return allTenantList;
       } else if (response.statusCode == 404) {
         print("Data not found (404)");
