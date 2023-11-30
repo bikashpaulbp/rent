@@ -217,7 +217,7 @@ class _TenentPageState extends State<TenentPage> {
                                                         const EdgeInsets.all(
                                                             5.0),
                                                     child: Text(
-                                                      'NID : ${tenent.nid}',
+                                                      'NID : ${tenent.nid ?? ""}',
                                                       style: const TextStyle(
                                                         color: Color.fromARGB(
                                                             255, 0, 0, 0),
@@ -232,7 +232,7 @@ class _TenentPageState extends State<TenentPage> {
                                                         const EdgeInsets.all(
                                                             5.0),
                                                     child: Text(
-                                                      'Passport : ${tenent.passportNo}',
+                                                      'Passport : ${tenent.passportNo ?? ""}',
                                                       style: const TextStyle(
                                                         color: Color.fromARGB(
                                                             255, 0, 0, 0),
@@ -247,7 +247,7 @@ class _TenentPageState extends State<TenentPage> {
                                                         const EdgeInsets.all(
                                                             5.0),
                                                     child: Text(
-                                                      'BirthCertificate: ${tenent.birthCertificateNo}',
+                                                      'BirthCertificate: ${tenent.birthCertificateNo ?? ""}',
                                                       style: const TextStyle(
                                                         color: Color.fromARGB(
                                                             255, 0, 0, 0),
@@ -262,7 +262,7 @@ class _TenentPageState extends State<TenentPage> {
                                                         const EdgeInsets.all(
                                                             5.0),
                                                     child: Text(
-                                                      'Mobile: ${tenent.mobileNo}',
+                                                      'Mobile: ${tenent.mobileNo ?? ""}',
                                                       style: const TextStyle(
                                                         color: Color.fromARGB(
                                                             255, 0, 0, 0),
@@ -277,7 +277,7 @@ class _TenentPageState extends State<TenentPage> {
                                                         const EdgeInsets.all(
                                                             5.0),
                                                     child: Text(
-                                                      'Emergency Mobile: ${tenent.emgMobileNo}',
+                                                      'Emergency Mobile: ${tenent.emgMobileNo ?? ""}',
                                                       style: const TextStyle(
                                                         color: Color.fromARGB(
                                                             255, 0, 0, 0),
@@ -436,7 +436,8 @@ class _TenentPageState extends State<TenentPage> {
                                                     _newTenentNameController
                                                         .text = tenent.name!;
                                                     _newNidNoController.text =
-                                                        tenent.nid.toString();
+                                                        tenent.nid.toString() ??
+                                                            "";
                                                     _newPassportNoController
                                                             .text =
                                                         tenent.passportNo
@@ -836,10 +837,6 @@ class _TenentPageState extends State<TenentPage> {
                                                                               const Text('update'),
                                                                           onPressed:
                                                                               () async {
-                                                                            setState(() {
-                                                                              isLoading = true;
-                                                                            });
-
                                                                             int id =
                                                                                 tenent.id!;
 
@@ -856,14 +853,14 @@ class _TenentPageState extends State<TenentPage> {
                                                                                 existingNidImage =
                                                                                 tenent.tenantNidImage ?? null;
                                                                             TenantModel updatedTenant = TenantModel(
-                                                                                name: _newTenentNameController.text == "" ? "" : _newTenentNameController.text,
-                                                                                nid: _newNidNoController.text == "" ? "" : _newNidNoController.text,
-                                                                                passportNo: _newPassportNoController.text == "" ? "" : _newPassportNoController.text,
-                                                                                birthCertificateNo: _newBirthCertificateNoController.text == "" ? "" : _newBirthCertificateNoController.text,
-                                                                                mobileNo: _newMobileNoController.text == "" ? "" : _newMobileNoController.text,
-                                                                                emgMobileNo: _newEmgMobileNoController.text == "" ? "" : _newMobileNoController.text,
-                                                                                noofFamilyMember: int.parse(_newNoOfFamilyMemController.text),
-                                                                                advanceAmount: int.parse(_newAdvanceAmountController.text),
+                                                                                name: _newTenentNameController.text == "null" || _newTenentNameController.text == "" ? "" : _newTenentNameController.text,
+                                                                                nid: _newNidNoController.text == "null" || _newNidNoController.text == "" ? "" : _newNidNoController.text,
+                                                                                passportNo: _newPassportNoController.text == "null" || _newPassportNoController.text == "" ? "" : _newPassportNoController.text,
+                                                                                birthCertificateNo: _newBirthCertificateNoController.text == "null" || _newBirthCertificateNoController.text == "" ? "" : _newBirthCertificateNoController.text,
+                                                                                mobileNo: _newMobileNoController.text == "null" || _newMobileNoController.text == "" ? "" : _newMobileNoController.text,
+                                                                                emgMobileNo: _newEmgMobileNoController.text == "null" || _newEmgMobileNoController.text == "" ? "" : _newEmgMobileNoController.text,
+                                                                                noofFamilyMember: _newNoOfFamilyMemController.text == "null" || _newNoOfFamilyMemController.text == "" ? 0 : int.parse(_newNoOfFamilyMemController.text),
+                                                                                advanceAmount: _newAdvanceAmountController.text == "null" || _newAdvanceAmountController.text == "" ? 0 : int.parse(_newAdvanceAmountController.text),
                                                                                 arrivalDate: arrivalDate ?? existingArrivalDate,
                                                                                 buildingId: buildingId,
                                                                                 isActive: isActive,
@@ -872,11 +869,7 @@ class _TenentPageState extends State<TenentPage> {
                                                                                 tenantNidImage: existingNidImage,
                                                                                 userId: tenent.userId,
                                                                                 id: tenent.id);
-                                                                            await tenantApiService.updateTenant(tenant: updatedTenant, id: id).whenComplete(() {
-                                                                              setState(() {
-                                                                                isLoading = false;
-                                                                              });
-                                                                            });
+                                                                            await tenantApiService.updateTenant(tenant: updatedTenant, id: id).whenComplete(() {});
                                                                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("updated successfully")));
                                                                             context.read<TenantData>().getTenantList();
                                                                             setState(() {

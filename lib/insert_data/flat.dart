@@ -310,9 +310,6 @@ class _FlatDataPageState extends State<FlatDataPage> {
                   ),
                 ),
               ),
-              isLoading == false
-                  ? Text("")
-                  : Center(child: CircularProgressIndicator()),
               SizedBox(
                 height: 10,
               ),
@@ -320,109 +317,111 @@ class _FlatDataPageState extends State<FlatDataPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  ElevatedButton(
-                    onPressed: () async {
-                      getUser();
-                      int userId = user.id!;
-                      getBuildingId();
-                      setState(() {
-                        isLoading = true;
-                      });
-                      if (_flatNameController.text.isNotEmpty &&
-                          _noOfMasterbedRoomController.text.isNotEmpty &&
-                          _noOfBedroomController.text.isNotEmpty &&
-                          _noOfWashroomController.text.isNotEmpty &&
-                          _flatSideController.text.isNotEmpty &&
-                          _rentAmountController.text.isNotEmpty &&
-                          selectedFloorId != null &&
-                          selectedTenantId != null) {
-                        await flatApiService
-                            .createFlat(FlatModel(
-                              userId: userId,
-                              buildingId: buildingId,
-                              isActive: isActive,
-                              tenantId: selectedTenantId,
-                              rentAmount: _rentAmountController.text.isNotEmpty
-                                  ? int.parse(_rentAmountController.text)
-                                  : 0,
-                              waterBill: _waterBillController.text.isNotEmpty
-                                  ? int.parse(_waterBillController.text)
-                                  : 0,
-                              gasBill: _gasBillController.text.isNotEmpty
-                                  ? int.parse(_gasBillController.text)
-                                  : 0,
-                              serviceCharge:
-                                  _serviceChargeController.text.isNotEmpty
-                                      ? int.parse(_serviceChargeController.text)
-                                      : 0,
-                              floorId: selectedFloorId!,
-                              name: _flatNameController.text,
-                              flatSide: _flatSideController.text,
-                              flatSize: _flatSizeController.text.isNotEmpty
-                                  ? int.parse(_flatSizeController.text)
-                                  : 0,
-                              masterbedRoom: _noOfMasterbedRoomController
-                                      .text.isNotEmpty
-                                  ? int.parse(_noOfMasterbedRoomController.text)
-                                  : 0,
-                              bedroom: _noOfBedroomController.text.isNotEmpty
-                                  ? int.parse(_noOfBedroomController.text)
-                                  : 0,
-                              washroom: _noOfWashroomController.text.isNotEmpty
-                                  ? int.parse(_noOfWashroomController.text)
-                                  : 0,
-                            ))
-                            .whenComplete(() => setState(
-                                  () {
-                                    isLoading = false;
-                                  },
-                                ));
+                  isLoading == true
+                      ? Center(child: CircularProgressIndicator())
+                      : ElevatedButton(
+                          onPressed: () async {
+                            setState(() {
+                              isLoading = true;
+                            });
+                            getUser();
+                            int userId = user.id!;
+                            getBuildingId();
 
-                        Get.back();
+                            if (_flatNameController.text.isNotEmpty &&
+                                _noOfMasterbedRoomController.text.isNotEmpty &&
+                                _noOfBedroomController.text.isNotEmpty &&
+                                _noOfWashroomController.text.isNotEmpty &&
+                                _flatSideController.text.isNotEmpty &&
+                                _rentAmountController.text.isNotEmpty &&
+                                selectedFloorId != null &&
+                                selectedTenantId != null) {
+                              await flatApiService.createFlat(FlatModel(
+                                userId: userId,
+                                buildingId: buildingId,
+                                isActive: isActive,
+                                tenantId: selectedTenantId,
+                                rentAmount:
+                                    _rentAmountController.text.isNotEmpty
+                                        ? int.parse(_rentAmountController.text)
+                                        : 0,
+                                waterBill: _waterBillController.text.isNotEmpty
+                                    ? int.parse(_waterBillController.text)
+                                    : 0,
+                                gasBill: _gasBillController.text.isNotEmpty
+                                    ? int.parse(_gasBillController.text)
+                                    : 0,
+                                serviceCharge: _serviceChargeController
+                                        .text.isNotEmpty
+                                    ? int.parse(_serviceChargeController.text)
+                                    : 0,
+                                floorId: selectedFloorId!,
+                                name: _flatNameController.text,
+                                flatSide: _flatSideController.text,
+                                flatSize: _flatSizeController.text.isNotEmpty
+                                    ? int.parse(_flatSizeController.text)
+                                    : 0,
+                                masterbedRoom:
+                                    _noOfMasterbedRoomController.text.isNotEmpty
+                                        ? int.parse(
+                                            _noOfMasterbedRoomController.text)
+                                        : 0,
+                                bedroom: _noOfBedroomController.text.isNotEmpty
+                                    ? int.parse(_noOfBedroomController.text)
+                                    : 0,
+                                washroom: _noOfWashroomController
+                                        .text.isNotEmpty
+                                    ? int.parse(_noOfWashroomController.text)
+                                    : 0,
+                              ));
 
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text("saved successfully")));
+                              Get.back();
 
-                        setState(() {
-                          widget.refresh();
-                          _flatNameController.clear();
-                          _noOfMasterbedRoomController.clear();
-                          _noOfBedroomController.clear();
-                          _noOfWashroomController.clear();
-                          _flatSideController.clear();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text("saved successfully")));
 
-                          _flatSizeController.clear();
+                              setState(() {
+                                widget.refresh();
+                                _flatNameController.clear();
+                                _noOfMasterbedRoomController.clear();
+                                _noOfBedroomController.clear();
+                                _noOfWashroomController.clear();
+                                _flatSideController.clear();
 
-                          selectedFloorId = null;
-                          selectedTenantId = null;
-                        });
-                      } else {
-                        setState(() {
-                          isLoading = false;
-                        });
+                                _flatSizeController.clear();
 
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text("enter required information")));
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.teal,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 12,
-                      ),
-                    ),
-                    child: const Text(
-                      'Save',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
+                                selectedFloorId = null;
+                                selectedTenantId = null;
+                              });
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content:
+                                          Text("enter required information")));
+                            }
+                            setState(() {
+                              isLoading = false;
+                            });
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.teal,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 12,
+                            ),
+                          ),
+                          child: const Text(
+                            'Save',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
                   ElevatedButton(
                     onPressed: () {
                       Get.back();

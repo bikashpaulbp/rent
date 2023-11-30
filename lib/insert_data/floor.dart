@@ -20,6 +20,7 @@ class _FloorDataPageState extends State<FloorDataPage> {
   AuthStateManager authStateManager = AuthStateManager();
   UserModel? loggedInUser = UserModel();
   int? buildingId;
+  bool isLoading = false;
   @override
   void initState() {
     getLocalInfo();
@@ -79,51 +80,64 @@ class _FloorDataPageState extends State<FloorDataPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    ElevatedButton(
-                      onPressed: () async {
-                        if (_floorController.text.isNotEmpty &&
-                            buildingId != null) {
-                          await floorApiService
-                              .createFloor(
-                            FloorModel(
-                              name: _floorController.text,
-                              buildingId: buildingId,
-                              isActive: true,
-                              userId: loggedInUser!.id,
+                    isLoading == false
+                        ? ElevatedButton(
+                            onPressed: () async {
+                              setState(() {
+                                isLoading = true;
+                              });
+                              if (_floorController.text.isNotEmpty &&
+                                  buildingId != null) {
+                                await floorApiService
+                                    .createFloor(
+                                  FloorModel(
+                                    name: _floorController.text,
+                                    buildingId: buildingId,
+                                    isActive: true,
+                                    userId: loggedInUser!.id,
+                                  ),
+                                )
+                                    .whenComplete(() {
+                                  Get.back();
+                                  _floorController.clear();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content: Text("saved successfully")));
+                                });
+                              } else if (buildingId == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content:
+                                            Text("please add building first")));
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content:
+                                            Text("please provide floor name")));
+                              }
+                              setState(() {
+                                isLoading = false;
+                              });
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.teal,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 12,
+                              ),
+                            ),
+                            child: const Text(
+                              'Save',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
                             ),
                           )
-                              .whenComplete(() {
-                            Get.back();
-                            _floorController.clear();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text("saved successfully")));
-                          });
-                        } else if (buildingId == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text("please add building first")));
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text("please provide floor name")));
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.teal,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 12,
-                        ),
-                      ),
-                      child: const Text(
-                        'Save',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
+                        : Center(child: CircularProgressIndicator()),
                     ElevatedButton(
                       onPressed: () {
                         Get.back();

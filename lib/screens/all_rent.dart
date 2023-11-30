@@ -229,6 +229,20 @@ class _AllRentState extends State<AllRent> {
                                                   padding:
                                                       const EdgeInsets.all(5.0),
                                                   child: Text(
+                                                    'Due Amount: ${rent.dueAmount == 0 || rent.dueAmount == null ? rent.totalAmount : rent.dueAmount}',
+                                                    style: const TextStyle(
+                                                      color: Color.fromARGB(
+                                                          255, 0, 0, 0),
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(5.0),
+                                                  child: Text(
                                                     'Month: ${rent.rentMonth != null ? DateFormat('dd MMM yy').format(rent.rentMonth!) : "N/A"}',
                                                     style: const TextStyle(
                                                       color: Color.fromARGB(

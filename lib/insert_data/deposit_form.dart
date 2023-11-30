@@ -94,14 +94,13 @@ class _DepositDataPageState extends State<DepositDataPage> {
           depositList.where((e) => e.rentId == widget.rentID).toList();
 
       rents = rentList.firstWhere((e) => e.id == widget.rentID);
-       for (var deposites in totalDepositeList) {
-      totalDeposit = totalDeposit! + deposites.depositeAmount!;
-    }
-    dueAmount = rents!.totalAmount! - totalDeposit!;
+      for (var deposites in totalDepositeList) {
+        totalDeposit = totalDeposit! + deposites.depositeAmount!;
+      }
+      dueAmount = rents!.totalAmount! - totalDeposit!;
 
-    dueAmountTextControlller.text = dueAmount.toString();
+      dueAmountTextControlller.text = dueAmount.toString();
     } catch (_) {}
-   
   }
 
   @override
@@ -132,7 +131,7 @@ class _DepositDataPageState extends State<DepositDataPage> {
             child: Consumer<RentData>(
               builder: (context, rentData, child) {
                 rentData.getRentList();
-                
+
                 if (rentData.rentList.isNotEmpty) {
                   try {
                     rentInfo = rentData.rentList
@@ -193,102 +192,117 @@ class _DepositDataPageState extends State<DepositDataPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.teal,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(25),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 24,
-                                    vertical: 12,
-                                  ),
-                                ),
-                                child: const Text(
-                                  'Save',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                onPressed: () async => {
-                                  // await _fetchDeposite(),
-                                  await getUser(),
-                                  await getBuildingId(),
-                                  if (depositAmountTextControlller
-                                      .text.isNotEmpty)
-                                    {
-                                      await depositeApiService.createDeposite(
-                                          DepositeModel(
-                                              buildingId: buildingId,
-                                              flatId: rentInfo!.flatId,
-                                              tenantId: rentInfo!.tenantId,
-                                              userId: rentInfo!.userId,
-                                              totalAmount:
-                                                  rentInfo!.totalAmount,
-                                              depositeAmount: int.parse(
-                                                  depositAmountTextControlller
-                                                      .text),
-                                              dueAmount: rentInfo!
-                                                      .totalAmount! -
-                                                  (totalDeposit! +
-                                                      int.parse(
-                                                          depositAmountTextControlller
-                                                              .text)),
-                                              tranDate: date,
-                                              rentId: rentInfo!.id)),
-                                      dueAmountForIsPaid = rentInfo!
-                                              .totalAmount! -
-                                          (totalDeposit! +
-                                              int.parse(
-                                                  depositAmountTextControlller
-                                                      .text)),
-                                      isDueAmount = dueAmountForIsPaid == 0
-                                          ? true
-                                          : false,
-                                      updatedRent = RentModel(
-                                          id: rentInfo!.id,
-                                          buildingId: rentInfo!.buildingId,
-                                          isPrinted: rentInfo!.isPrinted,
-                                          dueAmount: rentInfo!.totalAmount! -
-                                              (totalDeposit! +
-                                                  int.parse(
-                                                      depositAmountTextControlller
-                                                          .text)),
-                                          gasBill: rentInfo!.gasBill,
-                                          reciptNo: rentInfo!.reciptNo,
-                                          rentAmount: rentInfo!.rentAmount,
-                                          serviceCharge:
-                                              rentInfo!.serviceCharge,
-                                          userId: rentInfo!.userId,
-                                          waterBill: rentInfo!.waterBill,
-                                          flatId: rentInfo!.flatId,
-                                          tenantId: rentInfo!.tenantId,
-                                          totalAmount: rentInfo!.totalAmount,
-                                          rentMonth: rentInfo!.rentMonth,
-                                          isPaid: isDueAmount),
-                                      await rentApiService.updateRent(
-                                          id: widget.rentID,
-                                          rent: updatedRent!),
-                                      widget.refresh,
-                                      setState(() {
-                                        _fetchDeposite();
-                                      }),
-                                      Get.offAll(() => Dashboard()),
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                              content:
-                                                  Text("saved successfully")))
-                                    }
-                                  else
-                                    {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                              content: Text(
-                                                  "provide deposit amount")))
-                                    }
-                                },
-                              ),
+                              isLoading == true
+                                  ? Center(child: CircularProgressIndicator())
+                                  : ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.teal,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(25),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 24,
+                                          vertical: 12,
+                                        ),
+                                      ),
+                                      child: const Text(
+                                        'Save',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      onPressed: () async => {
+                                        // await _fetchDeposite(),
+                                        setState(() {
+                                          isLoading = true;
+                                        }),
+                                        await getUser(),
+                                        await getBuildingId(),
+                                        if (depositAmountTextControlller
+                                            .text.isNotEmpty)
+                                          {
+                                            await depositeApiService
+                                                .createDeposite(DepositeModel(
+                                                    buildingId: buildingId,
+                                                    flatId: rentInfo!.flatId,
+                                                    tenantId:
+                                                        rentInfo!.tenantId,
+                                                    userId: rentInfo!.userId,
+                                                    totalAmount:
+                                                        rentInfo!.totalAmount,
+                                                    depositeAmount: int.parse(
+                                                        depositAmountTextControlller
+                                                            .text),
+                                                    dueAmount: rentInfo!
+                                                            .totalAmount! -
+                                                        (totalDeposit! +
+                                                            int.parse(
+                                                                depositAmountTextControlller
+                                                                    .text)),
+                                                    tranDate: date,
+                                                    rentId: rentInfo!.id)),
+                                            dueAmountForIsPaid = rentInfo!
+                                                    .totalAmount! -
+                                                (totalDeposit! +
+                                                    int.parse(
+                                                        depositAmountTextControlller
+                                                            .text)),
+                                            isDueAmount =
+                                                dueAmountForIsPaid == 0
+                                                    ? true
+                                                    : false,
+                                            updatedRent = RentModel(
+                                                id: rentInfo!.id,
+                                                buildingId:
+                                                    rentInfo!.buildingId,
+                                                isPrinted: rentInfo!.isPrinted,
+                                                dueAmount: rentInfo!
+                                                        .totalAmount! -
+                                                    (totalDeposit! +
+                                                        int.parse(
+                                                            depositAmountTextControlller
+                                                                .text)),
+                                                gasBill: rentInfo!.gasBill,
+                                                reciptNo: rentInfo!.reciptNo,
+                                                rentAmount:
+                                                    rentInfo!.rentAmount,
+                                                serviceCharge:
+                                                    rentInfo!.serviceCharge,
+                                                userId: rentInfo!.userId,
+                                                waterBill: rentInfo!.waterBill,
+                                                flatId: rentInfo!.flatId,
+                                                tenantId: rentInfo!.tenantId,
+                                                totalAmount:
+                                                    rentInfo!.totalAmount,
+                                                rentMonth: rentInfo!.rentMonth,
+                                                isPaid: isDueAmount),
+                                            await rentApiService.updateRent(
+                                                id: widget.rentID,
+                                                rent: updatedRent!),
+                                            widget.refresh,
+                                            setState(() {
+                                              _fetchDeposite();
+                                            }),
+                                            Get.offAll(() => Dashboard()),
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(SnackBar(
+                                                    content: Text(
+                                                        "saved successfully")))
+                                          }
+                                        else
+                                          {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(SnackBar(
+                                                    content: Text(
+                                                        "provide deposit amount")))
+                                          },
+                                        setState(() {
+                                          isLoading = false;
+                                        }),
+                                      },
+                                    ),
                               ElevatedButton(
                                 onPressed: () {
                                   Get.back();

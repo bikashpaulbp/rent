@@ -23,6 +23,7 @@ class _BuildingPageState extends State<BuildingPage> {
   List<BuildingModel> buildingList = [];
   UserModel? loggedInUser = UserModel();
   bool loading = false;
+
   @override
   void initState() {
     setState(() {
@@ -134,6 +135,11 @@ class _BuildingPageState extends State<BuildingPage> {
                                             child: Container(
                                               height: 100,
                                               child: Card(
+                                                color: index % 2 == 0
+                                                    ? const Color.fromARGB(
+                                                        255, 255, 255, 255)
+                                                    : Color.fromARGB(
+                                                        255, 175, 175, 175),
                                                 elevation: 10,
                                                 child: Padding(
                                                   padding:
@@ -159,17 +165,24 @@ class _BuildingPageState extends State<BuildingPage> {
                                                             child: RichText(
                                                               text: TextSpan(
                                                                 children: [
-                                                                  const TextSpan(
+                                                                  TextSpan(
                                                                     text:
                                                                         'Name: ',
                                                                     style:
                                                                         TextStyle(
-                                                                      color: Color
-                                                                          .fromARGB(
+                                                                      color: index % 2 ==
+                                                                              0
+                                                                          ? const Color
+                                                                              .fromARGB(
                                                                               255,
-                                                                              0,
-                                                                              0,
-                                                                              0),
+                                                                              61,
+                                                                              61,
+                                                                              61)
+                                                                          : Color.fromARGB(
+                                                                              255,
+                                                                              255,
+                                                                              255,
+                                                                              255),
                                                                       fontSize:
                                                                           16,
                                                                       fontWeight:
@@ -181,9 +194,20 @@ class _BuildingPageState extends State<BuildingPage> {
                                                                     text: building
                                                                         .name,
                                                                     style:
-                                                                        const TextStyle(
-                                                                      color: Colors
-                                                                          .black,
+                                                                        TextStyle(
+                                                                      color: index % 2 ==
+                                                                              0
+                                                                          ? const Color
+                                                                              .fromARGB(
+                                                                              255,
+                                                                              61,
+                                                                              61,
+                                                                              61)
+                                                                          : Color.fromARGB(
+                                                                              255,
+                                                                              255,
+                                                                              255,
+                                                                              255),
                                                                       fontSize:
                                                                           16,
                                                                       fontWeight:
@@ -203,17 +227,24 @@ class _BuildingPageState extends State<BuildingPage> {
                                                             child: RichText(
                                                               text: TextSpan(
                                                                 children: [
-                                                                  const TextSpan(
+                                                                  TextSpan(
                                                                     text:
                                                                         'Address: ',
                                                                     style:
                                                                         TextStyle(
-                                                                      color: Color
-                                                                          .fromARGB(
+                                                                      color: index % 2 ==
+                                                                              0
+                                                                          ? const Color
+                                                                              .fromARGB(
                                                                               255,
-                                                                              0,
-                                                                              0,
-                                                                              0),
+                                                                              61,
+                                                                              61,
+                                                                              61)
+                                                                          : Color.fromARGB(
+                                                                              255,
+                                                                              255,
+                                                                              255,
+                                                                              255),
                                                                       fontSize:
                                                                           16,
                                                                       fontWeight:
@@ -225,9 +256,19 @@ class _BuildingPageState extends State<BuildingPage> {
                                                                     text: building
                                                                         .address,
                                                                     style:
-                                                                        const TextStyle(
-                                                                      color: Colors
-                                                                          .black,
+                                                                        TextStyle(
+                                                                      color: index % 2 ==
+                                                                              0
+                                                                          ? Color.fromARGB(
+                                                                              255,
+                                                                              61,
+                                                                              61,
+                                                                              61)
+                                                                          : Color.fromARGB(
+                                                                              255,
+                                                                              255,
+                                                                              255,
+                                                                              255),
                                                                       fontSize:
                                                                           16,
                                                                       fontWeight:

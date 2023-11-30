@@ -130,107 +130,121 @@ class _RentDataPageState extends State<RentDataPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                ElevatedButton(
-                  onPressed: () async {
-                    await _fetchRentData();
-                    await getBuildingId();
-                    flatList = allFlatList
-                        .where((element) => element.buildingId == buildingId)
-                        .toList();
-                    rentList = allRentList
-                        .where((element) => element.buildingId == buildingId)
-                        .toList();
+                isLoading == true
+                    ? Center(child: CircularProgressIndicator())
+                    : ElevatedButton(
+                        onPressed: () async {
+                          setState(() {
+                            isLoading = true;
+                          });
+                          await _fetchRentData();
+                          await getBuildingId();
+                          flatList = allFlatList
+                              .where(
+                                  (element) => element.buildingId == buildingId)
+                              .toList();
+                          rentList = allRentList
+                              .where(
+                                  (element) => element.buildingId == buildingId)
+                              .toList();
 
-                    if (date != null && flatList.isNotEmpty) {
-                      for (RentModel rent in rentList) {
-                        formattedDate =
-                            DateFormat('dd MMM y').format(rent.rentMonth!);
-                        rentMonth =
-                            DateFormat('dd MMM y').parse(formattedDate!);
-                        rentYear = DateFormat('dd MMM y').parse(formattedDate!);
+                          if (date != null && flatList.isNotEmpty) {
+                            for (RentModel rent in rentList) {
+                              formattedDate = DateFormat('dd MMM y')
+                                  .format(rent.rentMonth!);
+                              rentMonth =
+                                  DateFormat('dd MMM y').parse(formattedDate!);
+                              rentYear =
+                                  DateFormat('dd MMM y').parse(formattedDate!);
 
-                        if (rentMonth!.month == dateTime.month &&
-                            rentYear!.year == dateTime.year) {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text(
-                                "Rent already added for the selected month"),
-                          ));
-                          return;
-                        }
-                      }
+                              if (rentMonth!.month == dateTime.month &&
+                                  rentYear!.year == dateTime.year) {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(
+                                  content: Text(
+                                      "Rent already added for the selected month"),
+                                ));
+                                return;
+                              }
+                            }
 
-                      for (var i in flatList) {
-                        getBuildingId();
-                        getUser();
-                        flatModel = FlatModel(
-                          id: i.id,
-                          name: i.name,
-                          floorId: i.floorId,
-                          buildingId: i.buildingId,
-                          userId: i.userId,
-                          tenantId: i.tenantId,
-                          bedroom: i.bedroom,
-                          washroom: i.washroom,
-                          flatSide: i.flatSide,
-                          flatSize: i.flatSize,
-                          isActive: i.isActive,
-                          masterbedRoom: i.bedroom,
-                          gasBill: i.gasBill,
-                          serviceCharge: i.serviceCharge,
-                          waterBill: i.waterBill,
-                          rentAmount: i.rentAmount,
-                        );
+                            for (var i in flatList) {
+                              getBuildingId();
+                              getUser();
+                              flatModel = FlatModel(
+                                id: i.id,
+                                name: i.name,
+                                floorId: i.floorId,
+                                buildingId: i.buildingId,
+                                userId: i.userId,
+                                tenantId: i.tenantId,
+                                bedroom: i.bedroom,
+                                washroom: i.washroom,
+                                flatSide: i.flatSide,
+                                flatSize: i.flatSize,
+                                isActive: i.isActive,
+                                masterbedRoom: i.bedroom,
+                                gasBill: i.gasBill,
+                                serviceCharge: i.serviceCharge,
+                                waterBill: i.waterBill,
+                                rentAmount: i.rentAmount,
+                              );
 
-                        await rentApiService.createRent(RentModel(
-                          userId: flatModel!.userId,
-                          buildingId: flatModel!.buildingId,
-                          flatId: flatModel!.id,
-                          tenantId: flatModel!.tenantId,
-                          dueAmount: 0,
-                          isPrinted: false,
-                          rentAmount: flatModel!.rentAmount,
-                          serviceCharge: flatModel!.serviceCharge,
-                          gasBill: flatModel!.gasBill,
-                          waterBill: flatModel!.waterBill,
-                          totalAmount: flatModel!.rentAmount! +
-                              flatModel!.serviceCharge! +
-                              flatModel!.gasBill! +
-                              flatModel!.waterBill!,
-                          rentMonth: date,
-                          isPaid: isPaid,
-                        ));
-                      }
+                              await rentApiService.createRent(RentModel(
+                                userId: flatModel!.userId,
+                                buildingId: flatModel!.buildingId,
+                                flatId: flatModel!.id,
+                                tenantId: flatModel!.tenantId,
+                                dueAmount: 0,
+                                isPrinted: false,
+                                rentAmount: flatModel!.rentAmount,
+                                serviceCharge: flatModel!.serviceCharge,
+                                gasBill: flatModel!.gasBill,
+                                waterBill: flatModel!.waterBill,
+                                totalAmount: flatModel!.rentAmount! +
+                                    flatModel!.serviceCharge! +
+                                    flatModel!.gasBill! +
+                                    flatModel!.waterBill!,
+                                rentMonth: date,
+                                isPaid: isPaid,
+                              ));
+                            }
 
-                      await widget.refresh();
-                      await _fetchRentData();
-                      Get.offAll(() => Dashboard());
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Saved successfully")),
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Please select a month")),
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 12,
-                    ),
-                  ),
-                  child: const Text(
-                    'Save',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
+                            await widget.refresh();
+                            await _fetchRentData();
+                            Get.offAll(() => Dashboard());
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("Saved successfully")),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content: Text(
+                                      "Please select a month or add flat")),
+                            );
+                          }
+                          setState(() {
+                            isLoading = false;
+                          });
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.teal,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 12,
+                          ),
+                        ),
+                        child: const Text(
+                          'Save',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
                 ElevatedButton(
                   onPressed: () {
                     Get.back();

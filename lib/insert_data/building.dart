@@ -91,13 +91,10 @@ class _BuildingDataPageState extends State<BuildingDataPage> {
             ),
           ),
           Center(
-            child: SizedBox(
-                height: 50,
-                width: 50,
-                child: isLoading == true
-                    ? Center(child: CircularProgressIndicator())
-                    : null),
-          ),
+              child: SizedBox(
+            height: 50,
+            width: 50,
+          )),
           Expanded(
             child: Align(
               alignment: Alignment.bottomCenter,
@@ -106,63 +103,68 @@ class _BuildingDataPageState extends State<BuildingDataPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    ElevatedButton(
-                      onPressed: () async {
-                        setState(() {
-                          isLoading = true;
-                        });
-                        if (_buildingNameController.text.isNotEmpty &&
-                            _addressController.text.isNotEmpty) {
-                          await fetchLoggedInUser();
-                          print(loggedInUser!.email);
-                          await buildingApiService
-                              .createBuilding(
-                            BuildingModel(
-                                userId: loggedInUser!.id,
-                                name: _buildingNameController.text.toString(),
-                                address: _addressController.text.toString(),
-                                isActive: true),
-                          )
-                              .then((_) {
-                            widget.refresh();
-                            setState(() {
-                              isLoading = false;
-                            });
+                    isLoading == true
+                        ? Center(child: CircularProgressIndicator())
+                        : ElevatedButton(
+                            onPressed: () async {
+                              setState(() {
+                                isLoading = true;
+                              });
+                              if (_buildingNameController.text.isNotEmpty &&
+                                  _addressController.text.isNotEmpty) {
+                                await fetchLoggedInUser();
 
-                            // widget.refresh();
-                            // Get.back();
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                content: Text("building saved successfully")));
-                            Navigator.of(context).pop();
-                            _buildingNameController.clear();
-                            _addressController.clear();
-                          });
-                        } else {
-                          setState(() {
-                            isLoading = false;
-                          });
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text("please provide all information")));
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.teal,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 12,
-                        ),
-                      ),
-                      child: const Text(
-                        'Save',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
+                                await buildingApiService
+                                    .createBuilding(
+                                  BuildingModel(
+                                      userId: loggedInUser!.id,
+                                      name: _buildingNameController.text
+                                          .toString(),
+                                      address:
+                                          _addressController.text.toString(),
+                                      isActive: true),
+                                )
+                                    .then((_) {
+                                  widget.refresh();
+
+                                  // widget.refresh();
+                                  // Get.back();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content: Text(
+                                              "building saved successfully")));
+                                  Navigator.of(context).pop();
+                                  _buildingNameController.clear();
+                                  _addressController.clear();
+                                });
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(
+                                            "please provide all information")));
+                              }
+                              setState(() {
+                                isLoading = false;
+                              });
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.teal,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 12,
+                              ),
+                            ),
+                            child: const Text(
+                              'Save',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
                     ElevatedButton(
                       onPressed: () {
                         Navigator.of(context).pop();

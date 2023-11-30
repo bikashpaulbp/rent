@@ -369,9 +369,6 @@ class _TenentDataPageState extends State<TenentDataPage> {
                           ],
                         ),
                       ),
-                      isLoading == false
-                          ? Text("")
-                          : Center(child: CircularProgressIndicator()),
                       SizedBox(
                         height: 10,
                       ),
@@ -381,111 +378,112 @@ class _TenentDataPageState extends State<TenentDataPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.teal,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 12,
-                          ),
-                        ),
-                        child: Text(
-                          'Save',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                          ),
-                        ),
-                        onPressed: () async => {
-                          getBuildingId(),
-                          getUser(),
-                          if (_tenentNameController.text.isNotEmpty &&
-                              arrivalDate != null &&
-                              _advanceAmountController.text.isNotEmpty)
-                            {
-                              setState(() {
-                                isLoading = true;
-                              }),
-                              await tenantApiService
-                                  .createTenant(TenantModel(
-                                    name: _tenentNameController.text,
-                                    nid: _nidNoController.text.isNotEmpty
-                                        ? _nidNoController.text
-                                        : "",
-                                    passportNo:
-                                        _passportNoController.text.isNotEmpty
-                                            ? _passportNoController.text
-                                            : "",
-                                    birthCertificateNo:
-                                        _birthCertificateNoController
-                                                .text.isNotEmpty
-                                            ? _birthCertificateNoController.text
-                                            : "",
-                                    mobileNo:
-                                        _mobileNoController.text.isNotEmpty
-                                            ? _mobileNoController.text
-                                            : "",
-                                    emgMobileNo:
-                                        _emgMobileNoController.text.isNotEmpty
-                                            ? _emgMobileNoController.text
-                                            : "",
-                                    noofFamilyMember:
-                                        _noOfFamilyMemController.text.isNotEmpty
-                                            ? int.parse(
-                                                _noOfFamilyMemController.text)
-                                            : 0,
-                                    arrivalDate: arrivalDate,
-                                    advanceAmount: int.parse(
-                                        _advanceAmountController.text),
-                                    buildingId: buildingId,
-                                    isActive: isActive,
-                                    rentAmountChangeDate:
-                                        rentAmountChangeDate ?? null,
-                                    tenantImage: tenantImage!.isNotEmpty
-                                        ? tenantImage
-                                        : null,
-                                    tenantNidImage:
-                                        nidImage!.isNotEmpty ? nidImage : null,
-                                    userId: user.id,
-                                  ))
-                                  .whenComplete(() => setState(
-                                        () {
-                                          isLoading = false;
-                                        },
-                                      )),
-                              widget.refresh(),
-                              Get.back(),
-                              setState(() {
-                                context.read<TenantData>().getTenantList();
-                                // _fetchTenantData();
+                      isLoading == true
+                          ? Center(child: CircularProgressIndicator())
+                          : ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.teal,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(25),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 12,
+                                ),
+                              ),
+                              child: Text(
+                                'Save',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              onPressed: () async => {
+                                setState(() {
+                                  isLoading = true;
+                                }),
+                                getBuildingId(),
+                                getUser(),
+                                if (_tenentNameController.text.isNotEmpty &&
+                                    arrivalDate != null &&
+                                    _advanceAmountController.text.isNotEmpty)
+                                  {
+                                    await tenantApiService
+                                        .createTenant(TenantModel(
+                                      name: _tenentNameController.text,
+                                      nid: _nidNoController.text.isNotEmpty
+                                          ? _nidNoController.text
+                                          : "",
+                                      passportNo:
+                                          _passportNoController.text.isNotEmpty
+                                              ? _passportNoController.text
+                                              : "",
+                                      birthCertificateNo:
+                                          _birthCertificateNoController
+                                                  .text.isNotEmpty
+                                              ? _birthCertificateNoController
+                                                  .text
+                                              : "",
+                                      mobileNo:
+                                          _mobileNoController.text.isNotEmpty
+                                              ? _mobileNoController.text
+                                              : "",
+                                      emgMobileNo:
+                                          _emgMobileNoController.text.isNotEmpty
+                                              ? _emgMobileNoController.text
+                                              : "",
+                                      noofFamilyMember: _noOfFamilyMemController
+                                              .text.isNotEmpty
+                                          ? int.parse(
+                                              _noOfFamilyMemController.text)
+                                          : 0,
+                                      arrivalDate: arrivalDate,
+                                      advanceAmount: int.parse(
+                                          _advanceAmountController.text),
+                                      buildingId: buildingId,
+                                      isActive: isActive,
+                                      rentAmountChangeDate:
+                                          rentAmountChangeDate ?? null,
+                                      tenantImage: tenantImage ?? null,
+                                      tenantNidImage: nidImage ?? null,
+                                      userId: user.id,
+                                    )),
+                                    widget.refresh(),
+                                    Get.back(),
+                                    setState(() {
+                                      context
+                                          .read<TenantData>()
+                                          .getTenantList();
+                                      // _fetchTenantData();
 
-                                _tenentNameController.text = "";
-                                _nidNoController.text = "";
-                                _passportNoController.text = "";
-                                _birthCertificateNoController.text = "";
-                                _mobileNoController.text = "";
-                                _emgMobileNoController.text = "";
-                                _noOfFamilyMemController.text = "";
-                                _advanceAmountController.text = "";
-                              }),
-                              context.read<TenantData>().getTenantList(),
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content: Text("saved successfully"))),
-                              Get.back(),
-                            }
-                          else
-                            {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content:
-                                          Text("enter required information")))
-                            }
-                        },
-                      ),
+                                      _tenentNameController.text = "";
+                                      _nidNoController.text = "";
+                                      _passportNoController.text = "";
+                                      _birthCertificateNoController.text = "";
+                                      _mobileNoController.text = "";
+                                      _emgMobileNoController.text = "";
+                                      _noOfFamilyMemController.text = "";
+                                      _advanceAmountController.text = "";
+                                    }),
+                                    context.read<TenantData>().getTenantList(),
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                            content:
+                                                Text("saved successfully"))),
+                                    Get.back(),
+                                  }
+                                else
+                                  {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                            content: Text(
+                                                "enter required information")))
+                                  },
+                                setState(() {
+                                  isLoading = false;
+                                })
+                              },
+                            ),
                       ElevatedButton(
                         onPressed: () {
                           Get.back();
