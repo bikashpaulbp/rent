@@ -1,4 +1,3 @@
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,6 +8,7 @@ import 'package:rent_management/classes/rent_info.dart';
 import 'package:rent_management/classes/tenent_info.dart';
 import 'package:rent_management/db_helper.dart';
 import 'package:rent_management/insert_data/rent.dart';
+import 'package:rent_management/insert_data/rent_manual.dart';
 import 'package:rent_management/screens/current_date_rent.dart';
 
 import '../shared_data/rent_data.dart';
@@ -26,7 +26,6 @@ class _MonthlyRentState extends State<MonthlyRent> {
   TenentInfo? tenentInfo;
   List<TenentInfo> tenentList = [];
 
-  final _totalAmountController = TextEditingController();
 
   final format = DateFormat("yyyy-MM-dd");
 
@@ -58,7 +57,9 @@ class _MonthlyRentState extends State<MonthlyRent> {
           floatingActionButton: CircleAvatar(
               backgroundColor: Color.fromARGB(255, 197, 197, 197),
               child: IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  Get.offAll(RentDataPage());
+                },
                 icon: Icon(Icons.add),
                 color: Color.fromARGB(255, 255, 255, 255),
               )),
@@ -76,10 +77,10 @@ class _MonthlyRentState extends State<MonthlyRent> {
                             backgroundColor:
                                 MaterialStatePropertyAll(Colors.amber)),
                         onPressed: () {
-                          Get.offAll(RentDataPage());
+                          Get.offAll(RentManual());
                         },
                         icon: Icon(Icons.add),
-                        label: Text("add rent")),
+                        label: Text("manually")),
                   )
                 ],
               ),

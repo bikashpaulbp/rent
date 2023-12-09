@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:rent_management/classes/flat_info.dart';
 import 'package:rent_management/classes/tenent_info.dart';
 
 class TenantData extends ChangeNotifier {
@@ -17,4 +16,8 @@ class TenantData extends ChangeNotifier {
   tenantListNew() {
     return _tenantList.length;
   }
+
+  firstWhere(bool Function(dynamic tenant) param0) {}
+
+  where(bool Function(dynamic e) param0) {}
 }

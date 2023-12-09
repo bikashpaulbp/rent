@@ -1,19 +1,15 @@
 import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/snackbar/snackbar.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:rent_management/screens/tenent_page.dart';
 import 'package:rent_management/shared_data/tenent_data.dart';
 import '../classes/flat_info.dart';
-import '../classes/floor_info.dart';
 import '../classes/tenent_info.dart';
 import '../db_helper.dart';
 import '../screens/dashboard_page.dart';
 import '../shared_data/flat_data.dart';
-import '../shared_data/floor_data.dart';
 
 class TenentDataPage extends StatefulWidget {
   const TenentDataPage({super.key});
