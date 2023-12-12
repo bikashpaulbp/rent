@@ -215,7 +215,7 @@ class _PrintingPageState extends State<PrintingPage> {
     if (device != null && device.address != null) {
       await bluetoothPrint.connect(device);
       Map<String, dynamic> config = Map();
-      config['paperWidth'] = 800;
+      // config['paperWidth'] = 800;
       List<LineText> list = [];
       list.add(LineText(
           type: LineText.TYPE_TEXT,
@@ -328,9 +328,17 @@ class _PrintingPageState extends State<PrintingPage> {
           linefeed: 3,
           underline: 2));
       list.add(LineText(
+        type: LineText.TYPE_TEXT,
+        content: "This is a computer-generated document",
+        weight: 2,
+        width: 2,
+        height: 2,
+        align: LineText.ALIGN_CENTER,
+        linefeed: 1,
+      ));
+      list.add(LineText(
           type: LineText.TYPE_TEXT,
-          content:
-              "This is a computer-generated document.\nNo signature is required. ",
+          content: "No signature is required. ",
           weight: 2,
           width: 2,
           height: 2,
@@ -347,8 +355,8 @@ class _PrintingPageState extends State<PrintingPage> {
         linefeed: 2,
       ));
 
-      await bluetoothPrint.printLabel(config, list);
-      
+      await bluetoothPrint.printReceipt(config, list);
+
       await bluetoothPrint.disconnect();
     }
   }
