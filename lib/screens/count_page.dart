@@ -389,7 +389,7 @@ class _CountPageState extends State<CountPage> {
                                 child: IconButton(
                                   iconSize: 40,
                                   onPressed: () {
-                                    // Get.to(DepositPage());
+                                    Get.to(DepositPage());
                                   },
                                   icon: Icon(Icons.history),
                                 ),

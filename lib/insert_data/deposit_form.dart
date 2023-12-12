@@ -265,7 +265,7 @@ class _DepositDataPageState extends State<DepositDataPage> {
                                                             depositAmountTextControlller
                                                                 .text)),
                                                 gasBill: rentInfo!.gasBill,
-                                                reciptNo: rentInfo!.reciptNo,
+                                                // reciptNo: rentInfo!.reciptNo,
                                                 rentAmount:
                                                     rentInfo!.rentAmount,
                                                 serviceCharge:

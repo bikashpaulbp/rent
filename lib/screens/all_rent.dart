@@ -235,7 +235,7 @@ class _AllRentState extends State<AllRent> {
                                                           255, 0, 0, 0),
                                                       fontSize: 16,
                                                       fontWeight:
-                                                          FontWeight.bold,
+                                                          FontWeight.bold, 
                                                     ),
                                                   ),
                                                 ),
@@ -341,7 +341,7 @@ class _AllRentState extends State<AllRent> {
                                                                                               getBuildingId();
                                                                                               getUser();
                                                                                               isPaid = true;
-                                                                                              RentModel updatedRent = RentModel(id: rent.id, buildingId: buildingId, dueAmount: 0, gasBill: rent.gasBill, reciptNo: rent.reciptNo, isPrinted: false, rentAmount: rent.rentAmount, serviceCharge: rent.serviceCharge, waterBill: rent.waterBill, userId: rent.userId, rentMonth: rent.rentMonth, totalAmount: rent.totalAmount, isPaid: isPaid, flatId: rent.flatId, tenantId: rent.tenantId);
+                                                                                              RentModel updatedRent = RentModel(id: rent.id, buildingId: buildingId, dueAmount: 0, gasBill: rent.gasBill, isPrinted: false, rentAmount: rent.rentAmount, serviceCharge: rent.serviceCharge, waterBill: rent.waterBill, userId: rent.userId, rentMonth: rent.rentMonth, totalAmount: rent.totalAmount, isPaid: isPaid, flatId: rent.flatId, tenantId: rent.tenantId);
                                                                                               DepositeModel deposit = DepositeModel(rentId: rent.id, totalAmount: rent.totalAmount, depositeAmount: rent.totalAmount, dueAmount: 0, tranDate: dateofPayment, buildingId: buildingId, flatId: rent.flatId, tenantId: rent.tenantId, userId: userId);
 
                                                                                               await rentApiService.updateRent(id: rent.id!, rent: updatedRent);
@@ -464,7 +464,7 @@ class _AllRentState extends State<AllRent> {
                                                                                   ElevatedButton(
                                                                                     child: const Text('update'),
                                                                                     onPressed: () async {
-                                                                                      RentModel updatedRent = RentModel(id: rent.id, tenantId: rent.tenantId, flatId: rent.flatId, rentMonth: rent.rentMonth, totalAmount: int.parse(_totalAmountController.text), isPaid: rent.isPaid, buildingId: rent.buildingId, dueAmount: rent.dueAmount, gasBill: rent.gasBill, isPrinted: false, reciptNo: rent.reciptNo, rentAmount: rent.rentAmount, serviceCharge: rent.serviceCharge, waterBill: rent.waterBill, userId: rent.userId);
+                                                                                      RentModel updatedRent = RentModel(id: rent.id, tenantId: rent.tenantId, flatId: rent.flatId, rentMonth: rent.rentMonth, totalAmount: int.parse(_totalAmountController.text), isPaid: rent.isPaid, buildingId: rent.buildingId, dueAmount: rent.dueAmount, gasBill: rent.gasBill, isPrinted: false, rentAmount: rent.rentAmount, serviceCharge: rent.serviceCharge, waterBill: rent.waterBill, userId: rent.userId);
                                                                                       await rentApiService.updateRent(id: rent.id!, rent: updatedRent);
                                                                                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("updated successfully")));
 

@@ -51,9 +51,10 @@ class _TenentPageState extends State<TenentPage> {
   Uint8List? nidImage;
   Uint8List? tenantImage;
   bool isActive = true;
-  // File? _tenantImage;
-  // File? _nidImage;
   bool isLoading = false;
+
+  num? containerSize;
+
   @override
   void initState() {
     _fetchTenantData();
@@ -174,11 +175,19 @@ class _TenentPageState extends State<TenentPage> {
                               itemBuilder: (BuildContext context, int index) {
                                 TenantModel tenent = tenentList[index];
 
+                                containerSize = (tenent.tenantImage == null &&
+                                        tenent.tenantNidImage == null)
+                                    ? 0.6
+                                    : (tenent.tenantImage == null ||
+                                            tenent.tenantNidImage == null)
+                                        ? 0.8
+                                        : 1.05;
+
                                 return ListTile(
                                   title: Container(
                                     width: 500,
                                     height: MediaQuery.sizeOf(context).height *
-                                        1.05,
+                                        containerSize!,
                                     child: Card(
                                       elevation: 10,
                                       child: Padding(

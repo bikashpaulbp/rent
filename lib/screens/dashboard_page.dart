@@ -1,12 +1,14 @@
 import 'package:bottom_nav_bar/bottom_nav_bar.dart';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:rent_management/insert_data/building.dart';
 import 'package:rent_management/models/user_model.dart';
 import 'package:rent_management/screens/building_page.dart';
 import 'package:rent_management/screens/count_page.dart';
 import 'package:rent_management/screens/flat_page.dart';
 import 'package:rent_management/screens/login_screen.dart';
+import 'package:rent_management/screens/print_rent.dart';
 import 'package:rent_management/screens/tenent_page.dart';
 
 import 'floor_page.dart';
@@ -164,6 +166,37 @@ class _DashboardState extends State<Dashboard> {
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
                           color: Color.fromARGB(255, 238, 155, 30),
+                        ),
+                      )
+                    ]),
+                  )),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: InkWell(
+                  onTap: () {
+                    _closeDrawer();
+                    // Navigator.of(context).push(MaterialPageRoute(
+                    //     builder: (context) => BuildingPage()));
+                    Get.to(PrintRent());
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(children: [
+                      Icon(
+                        Icons.print,
+                        color: Color.fromARGB(255, 30, 238, 37),
+                        size: 30,
+                      ),
+                      SizedBox(
+                        width: 30,
+                      ),
+                      Text(
+                        "Print Rent Receipt",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: Color.fromARGB(255, 30, 238, 37),
                         ),
                       )
                     ]),
