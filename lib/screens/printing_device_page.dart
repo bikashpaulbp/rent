@@ -348,7 +348,7 @@ class _PrintingPageState extends State<PrintingPage> {
       ));
 
       await bluetoothPrint.printLabel(config, list);
-      await bluetoothPrint.printTest();
+      
       await bluetoothPrint.disconnect();
     }
   }
