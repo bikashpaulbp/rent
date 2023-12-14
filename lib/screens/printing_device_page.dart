@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:bluetooth_print/bluetooth_print.dart';
 import 'package:bluetooth_print/bluetooth_print_model.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:rent_management/models/rent_model.dart';
 
@@ -25,339 +28,337 @@ class PrintingPage extends StatefulWidget {
 
 class _PrintingPageState extends State<PrintingPage> {
   DateTime printingDate = DateTime.now();
-  bool isLoading = false;
   BluetoothPrint bluetoothPrint = BluetoothPrint.instance;
-  List<BluetoothDevice> _devices = [];
-  String _deviceMsg = "";
-  StreamSubscription<List<BluetoothDevice>>? scanSubscription;
+  NumberFormat formatter = NumberFormat("0,00,000", "en_US");
+  bool _connected = false;
+  BluetoothDevice? _device;
+  String tips = 'no device connected';
+
+  DateTime date = DateTime.now();
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => initPrinter());
+    WidgetsBinding.instance.addPostFrameCallback((_) => initBluetooth());
   }
 
-  Future<void> initPrinter() async {
-    setState(() {
-      isLoading = true;
-    });
-    try {
-      await BluetoothPrint.instance.startScan(timeout: Duration(seconds: 5));
-      scanSubscription = BluetoothPrint.instance.scanResults.listen((event) {
-        if (!mounted) return;
-        setState(() {
-          _devices = event;
-          isLoading = false;
-        });
-        if (_devices.isEmpty) {
+  Future<void> initBluetooth() async {
+    bluetoothPrint.startScan(timeout: Duration(seconds: 5));
+
+    bool isConnected = await bluetoothPrint.isConnected ?? false;
+
+    bluetoothPrint.state.listen((state) {
+      print('******************* cur device status: $state');
+
+      switch (state) {
+        case BluetoothPrint.CONNECTED:
           setState(() {
-            _deviceMsg = "No Devices";
-            isLoading = false;
+            _connected = true;
+            tips = 'connect success';
           });
-        }
-      }, onDone: () async {
-        await BluetoothPrint.instance.stopScan();
-        await scanSubscription?.cancel();
+          break;
+        case BluetoothPrint.DISCONNECTED:
+          setState(() {
+            _connected = false;
+            tips = 'disconnect success';
+          });
+          break;
+        default:
+          break;
+      }
+    });
+
+    if (!mounted) return;
+
+    if (isConnected) {
+      setState(() {
+        _connected = true;
       });
-    } catch (_) {}
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Select Printer"),
-        ),
-        body: _devices.isEmpty
-            ? Center(
-                child: isLoading == false
-                    ? Text(_deviceMsg ?? "")
-                    : CircularProgressIndicator(),
+      appBar: AppBar(
+        title: const Text('Print Receipt'),
+      ),
+      body: RefreshIndicator(
+        onRefresh: () =>
+            bluetoothPrint.startScan(timeout: Duration(seconds: 4)),
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                    child: Text(tips),
+                  ),
+                ],
+              ),
+              Divider(),
+              StreamBuilder<List<BluetoothDevice>>(
+                stream: bluetoothPrint.scanResults,
+                initialData: [],
+                builder: (c, snapshot) => Column(
+                  children: snapshot.data!
+                      .map((d) => ListTile(
+                            title: Text(d.name ?? ''),
+                            subtitle: Text(d.address ?? ''),
+                            onTap: () async {
+                              setState(() {
+                                _device = d;
+                              });
+                            },
+                            trailing:
+                                _device != null && _device!.address == d.address
+                                    ? Icon(
+                                        Icons.check,
+                                        color: Colors.green,
+                                      )
+                                    : null,
+                          ))
+                      .toList(),
+                ),
+              ),
+              Divider(),
+              Container(
+                padding: EdgeInsets.fromLTRB(20, 5, 20, 10),
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        OutlinedButton(
+                          child: Text('connect'),
+                          onPressed: _connected
+                              ? null
+                              : () async {
+                                  if (_device != null &&
+                                      _device!.address != null) {
+                                    setState(() {
+                                      tips = 'connecting...';
+                                    });
+                                    await bluetoothPrint.connect(_device!);
+                                  } else {
+                                    setState(() {
+                                      tips = 'please select device';
+                                    });
+                                    print('please select device');
+                                  }
+                                },
+                        ),
+                        SizedBox(width: 10.0),
+                        OutlinedButton(
+                          child: Text('disconnect'),
+                          onPressed: _connected
+                              ? () async {
+                                  setState(() {
+                                    tips = 'disconnecting...';
+                                  });
+                                  await bluetoothPrint.disconnect();
+                                }
+                              : null,
+                        ),
+                      ],
+                    ),
+                    Divider(),
+                    OutlinedButton(
+                      child: Text('print receipt'),
+                      onPressed: _connected
+                          ? () async {
+                              Map<String, dynamic> config = Map();
+                              // config['width'] = 80;
+                              config['height'] = 130;
+                              config['gap'] = 2;
+                              List<LineText> list = [];
+
+                              // ByteData data =
+                              //     await rootBundle.load("assets/hold.png");
+                              // List<int> imageBytes = data.buffer.asUint8List(
+                              //     data.offsetInBytes, data.lengthInBytes);
+                              // String base64Image = base64Encode(imageBytes);
+                              // list.add(LineText(
+                              //     type: LineText.TYPE_IMAGE,
+                              //     content: base64Image,
+                              //     size: 2,
+                              //     align: LineText.ALIGN_CENTER,
+                              //     linefeed: 1));
+                               list.add(LineText(
+                                  type: LineText.TYPE_TEXT,
+                                  content: "Bill Receipt",
+                                  align: LineText.ALIGN_CENTER,
+                                  linefeed: 1,
+                                  underline: 1));
+                              list.add(LineText(linefeed: 1));
+                              list.add(LineText(
+                                  type: LineText.TYPE_TEXT,
+                                  content: "Bill Receipt",
+                                  align: LineText.ALIGN_CENTER,
+                                  linefeed: 1,
+                                  underline: 1));
+                              list.add(LineText(linefeed: 1));
+                              list.add(LineText(
+                                  type: LineText.TYPE_TEXT,
+                                  content: "Receipt No",
+                                  size: 5,
+                                  weight: 30,
+                                  align: LineText.ALIGN_CENTER,
+                                  linefeed: 1,
+                                  underline: 1));
+                              list.add(LineText(
+                                  type: LineText.TYPE_TEXT,
+                                  content: "${widget.rent.reciptNo}",
+                                  weight: 30,
+                                  align: LineText.ALIGN_CENTER,
+                                  linefeed: 1,
+                                  underline: 1));
+                              list.add(LineText(linefeed: 1));
+                              list.add(LineText(
+                                  type: LineText.TYPE_TEXT,
+                                  content: "Tenant Name: ${widget.tenantName}",
+                                  relativeX: 2,
+                                  weight: 30,
+                                  align: LineText.ALIGN_CENTER,
+                                  linefeed: 1,
+                                  underline: 1));
+                              list.add(LineText(
+                                  type: LineText.TYPE_TEXT,
+                                  content: "Floor Name: ${widget.floorName}",
+                                  weight: 30,
+                                  align: LineText.ALIGN_CENTER,
+                                  linefeed: 1,
+                                  underline: 1));
+                              list.add(LineText(
+                                  type: LineText.TYPE_TEXT,
+                                  content: "Flat Name: ${widget.flatName}",
+                                  weight: 30,
+                                  align: LineText.ALIGN_CENTER,
+                                  linefeed: 1,
+                                  underline: 1));
+                              list.add(LineText(
+                                  type: LineText.TYPE_TEXT,
+                                  content:
+                                      "Rent Amount: ${formatter.format(widget.rent.rentAmount)} BDT",
+                                  weight: 30,
+                                  align: LineText.ALIGN_CENTER,
+                                  linefeed: 1,
+                                  underline: 1));
+                              list.add(LineText(
+                                  type: LineText.TYPE_TEXT,
+                                  content:
+                                      "Water Bill: ${formatter.format(widget.rent.waterBill)} BDT",
+                                  weight: 30,
+                                  align: LineText.ALIGN_CENTER,
+                                  linefeed: 1,
+                                  underline: 1));
+                              list.add(LineText(
+                                  type: LineText.TYPE_TEXT,
+                                  content:
+                                      "Gas Bill: ${formatter.format(widget.rent.gasBill)} BDT",
+                                  weight: 30,
+                                  align: LineText.ALIGN_CENTER,
+                                  linefeed: 1,
+                                  underline: 1));
+                              list.add(LineText(
+                                  type: LineText.TYPE_TEXT,
+                                  content:
+                                      "Service Charge: ${formatter.format(widget.rent.serviceCharge)} BDT",
+                                  weight: 30,
+                                  align: LineText.ALIGN_CENTER,
+                                  linefeed: 1,
+                                  underline: 1));
+                              list.add(LineText(
+                                  type: LineText.TYPE_TEXT,
+                                  content:
+                                      "Total Amount: ${formatter.format(widget.rent.totalAmount)} BDT",
+                                  weight: 30,
+                                  align: LineText.ALIGN_CENTER,
+                                  linefeed: 1,
+                                  underline: 1));
+                              list.add(LineText(linefeed: 1));
+                              list.add(LineText(
+                                  type: LineText.TYPE_TEXT,
+                                  content:
+                                      "Rent Month: ${DateFormat(' MMM yyy').format(widget.rent.rentMonth!)}",
+                                  weight: 30,
+                                  align: LineText.ALIGN_CENTER,
+                                  linefeed: 1,
+                                  underline: 1));
+
+                              list.add(LineText(linefeed: 1));
+                              list.add(LineText(
+                                  type: LineText.TYPE_TEXT,
+                                  content: "Printing Date",
+                                  weight: 30,
+                                  align: LineText.ALIGN_CENTER,
+                                  linefeed: 1,
+                                  underline: 2));
+                              list.add(LineText(
+                                  type: LineText.TYPE_TEXT,
+                                  content:
+                                      "${DateFormat('E d MMM y hh:mm a').format(date)}",
+                                  weight: 30,
+                                  align: LineText.ALIGN_CENTER,
+                                  linefeed: 1,
+                                  underline: 2));
+                              list.add(LineText(linefeed: 1));
+                              list.add(LineText(
+                                type: LineText.TYPE_TEXT,
+                                content:
+                                    "This is a computer-generated document",
+                                weight: 30,
+                                align: LineText.ALIGN_CENTER,
+                                linefeed: 1,
+                              ));
+                              list.add(LineText(
+                                  type: LineText.TYPE_TEXT,
+                                  content: "No signature is required",
+                                  weight: 30,
+                                  align: LineText.ALIGN_CENTER,
+                                  linefeed: 1,
+                                  underline: 1));
+                              list.add(LineText(linefeed: 1));
+                              list.add(LineText(
+                                type: LineText.TYPE_TEXT,
+                                content: "App Developed By Bikash Paul",
+                                weight: 30,
+                                align: LineText.ALIGN_RIGHT,
+                                linefeed: 2,
+                              ));
+                              list.add(LineText(linefeed: 1));
+                              list.add(LineText(linefeed: 1));
+                              await bluetoothPrint.printReceipt(config, list);
+                            }
+                          : null,
+                    ),
+                  ],
+                ),
               )
-            : ListView.builder(
-                itemCount: _devices.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    leading: Icon(Icons.print),
-                    title: Text(_devices[index].name!),
-                    subtitle: Text(_devices[index].address!),
-                    onTap: () {
-                      _startPrint(_devices[index], widget.rent, printingDate);
-                    },
-                  );
-                },
-              ));
-  }
-
-  // Future<List<int>> _startPrint(
-  //     BluetoothDevice device, RentModel rent, DateTime date) async {
-  //   List<int> bytes = [];
-  //   if (device != null && device.address != null) {
-  //     await bluetoothPrint.connect(device);
-  //     final profile = await CapabilityProfile.load();
-  //     final generator = Generator(PaperSize.mm80, profile);
-
-  //     bytes += generator.text("Rent Management",
-  //         linesAfter: 1,
-  //         styles: PosStyles(
-  //           align: PosAlign.center,
-  //           underline: true,
-  //           width: PosTextSize.size3,
-  //           height: PosTextSize.size3,
-  //         ));
-  //     bytes += generator.text("Receipt No. ${rent.reciptNo}",
-  //         linesAfter: 1,
-  //         styles: PosStyles(
-  //           align: PosAlign.center,
-  //           underline: false,
-  //           width: PosTextSize.size1,
-  //           height: PosTextSize.size1,
-  //         ));
-  //     bytes += generator.text("${rent.reciptNo}",
-  //         linesAfter: 1,
-  //         styles: PosStyles(
-  //           align: PosAlign.center,
-  //           underline: true,
-  //           width: PosTextSize.size1,
-  //           height: PosTextSize.size1,
-  //         ));
-  //     bytes += generator.text("Tenant Name:      ${widget.tenantName}",
-  //         linesAfter: 1,
-  //         styles: PosStyles(
-  //           align: PosAlign.left,
-  //           underline: true,
-  //         ));
-
-  //     bytes += generator.text("Floor Name:      ${widget.floorName}",
-  //         linesAfter: 1,
-  //         styles: PosStyles(
-  //           align: PosAlign.left,
-  //           underline: true,
-  //         ));
-  //     bytes += generator.text("Flat Name:      ${widget.flatName}",
-  //         linesAfter: 1,
-  //         styles: PosStyles(
-  //           align: PosAlign.left,
-  //           underline: true,
-  //         ));
-  //     bytes += generator.text("Rent Amount:     BDT- ${rent.rentAmount}",
-  //         linesAfter: 1,
-  //         styles: PosStyles(
-  //           align: PosAlign.left,
-  //           underline: true,
-  //         ));
-  //     bytes += generator.text("Water Bill:      BDT- ${rent.waterBill}",
-  //         linesAfter: 1,
-  //         styles: PosStyles(
-  //           align: PosAlign.left,
-  //           underline: true,
-  //         ));
-  //     bytes += generator.text("Gas Bill:     BDT- ${rent.gasBill}",
-  //         linesAfter: 1,
-  //         styles: PosStyles(
-  //           align: PosAlign.left,
-  //           underline: true,
-  //         ));
-  //     bytes += generator.text("Service Charge:     BDT- ${rent.serviceCharge}",
-  //         linesAfter: 1,
-  //         styles: PosStyles(
-  //           align: PosAlign.left,
-  //           underline: true,
-  //         ));
-  //     bytes += generator.text("Total Amount:      BDT- ${rent.totalAmount}",
-  //         linesAfter: 1,
-  //         styles: PosStyles(
-  //           align: PosAlign.left,
-  //           underline: true,
-  //         ));
-  //     bytes += generator.text(
-  //         "Rent Month:     ${DateFormat(' MMM yyy').format(rent.rentMonth!)}",
-  //         linesAfter: 1,
-  //         styles: PosStyles(
-  //           align: PosAlign.left,
-  //           underline: true,
-  //         ));
-  //     bytes += generator.text(
-  //         "Printing Date:      ${DateFormat('E d MMM y hh:mm a').format(date)}",
-  //         linesAfter: 1,
-  //         styles: PosStyles(
-  //           align: PosAlign.left,
-  //           underline: true,
-  //         ));
-  //     bytes += generator.text("This is a computer-generated document.",
-  //         linesAfter: 1,
-  //         styles: PosStyles(
-  //           align: PosAlign.center,
-  //           underline: false,
-  //         ));
-  //     bytes += generator.text("No signature is required.",
-  //         linesAfter: 1,
-  //         styles: PosStyles(
-  //           align: PosAlign.center,
-  //           underline: true,
-  //         ));
-  //     bytes += generator.text("App Developed By Bikash Paul",
-  //         linesAfter: 1,
-  //         styles: PosStyles(
-  //           align: PosAlign.right,
-  //           underline: false,
-  //         ));
-
-  //     bytes += generator.feed(2);
-  //     bytes += generator.cut();
-
-  //   }
-
-  //   return bytes;
-  // }
-
-  Future<void> _startPrint(
-      BluetoothDevice device, RentModel rent, DateTime date) async {
-    if (device != null && device.address != null) {
-      await bluetoothPrint.connect(device);
-      Map<String, dynamic> config = Map();
-      // config['paperWidth'] = 800;
-      List<LineText> list = [];
-      list.add(LineText(
-          type: LineText.TYPE_TEXT,
-          content: "Rent Management",
-          weight: 2,
-          width: 2,
-          height: 2,
-          align: LineText.ALIGN_CENTER,
-          linefeed: 2,
-          underline: 2));
-      list.add(LineText(
-          type: LineText.TYPE_TEXT,
-          content: "Receipt No. ${rent.reciptNo}",
-          weight: 2,
-          width: 2,
-          height: 2,
-          align: LineText.ALIGN_CENTER,
-          linefeed: 1,
-          underline: 1));
-      list.add(LineText(
-          type: LineText.TYPE_TEXT,
-          content: "Tenant Name:      ${widget.tenantName}",
-          weight: 2,
-          width: 2,
-          height: 2,
-          align: LineText.ALIGN_LEFT,
-          linefeed: 1,
-          underline: 1));
-      list.add(LineText(
-          type: LineText.TYPE_TEXT,
-          content: "Floor Name:     ${widget.floorName}",
-          weight: 2,
-          width: 2,
-          height: 2,
-          align: LineText.ALIGN_LEFT,
-          linefeed: 1,
-          underline: 1));
-      list.add(LineText(
-          type: LineText.TYPE_TEXT,
-          content: "Flat Name:      ${widget.flatName}",
-          weight: 2,
-          width: 2,
-          height: 2,
-          align: LineText.ALIGN_LEFT,
-          linefeed: 1,
-          underline: 1));
-      list.add(LineText(
-          type: LineText.TYPE_TEXT,
-          content: "Rent Amount:     BDT- ${rent.rentAmount}",
-          weight: 2,
-          width: 2,
-          height: 2,
-          align: LineText.ALIGN_LEFT,
-          linefeed: 1,
-          underline: 1));
-      list.add(LineText(
-          type: LineText.TYPE_TEXT,
-          content: "Water Bill:      BDT- ${rent.waterBill}",
-          weight: 2,
-          width: 2,
-          height: 2,
-          align: LineText.ALIGN_LEFT,
-          linefeed: 1,
-          underline: 1));
-      list.add(LineText(
-          type: LineText.TYPE_TEXT,
-          content: "Gas Bill:     BDT- ${rent.gasBill}",
-          weight: 2,
-          width: 2,
-          height: 2,
-          align: LineText.ALIGN_LEFT,
-          linefeed: 1,
-          underline: 1));
-      list.add(LineText(
-          type: LineText.TYPE_TEXT,
-          content: "Service Charge:     BDT- ${rent.serviceCharge}",
-          weight: 2,
-          width: 2,
-          height: 2,
-          align: LineText.ALIGN_LEFT,
-          linefeed: 1,
-          underline: 1));
-      list.add(LineText(
-          type: LineText.TYPE_TEXT,
-          content: "Total Amount:      BDT- ${rent.totalAmount}",
-          weight: 2,
-          width: 2,
-          height: 2,
-          align: LineText.ALIGN_LEFT,
-          linefeed: 1,
-          underline: 1));
-      list.add(LineText(
-          type: LineText.TYPE_TEXT,
-          content:
-              "Rent Month:     ${DateFormat(' MMM yyy').format(rent.rentMonth!)}",
-          weight: 2,
-          width: 2,
-          height: 2,
-          align: LineText.ALIGN_LEFT,
-          linefeed: 1,
-          underline: 1));
-      list.add(LineText(
-          type: LineText.TYPE_TEXT,
-          content:
-              "Printing Date:      ${DateFormat('E d MMM y hh:mm a').format(date)}",
-          weight: 2,
-          width: 2,
-          height: 2,
-          align: LineText.ALIGN_RIGHT,
-          linefeed: 3,
-          underline: 2));
-      list.add(LineText(
-        type: LineText.TYPE_TEXT,
-        content: "This is a computer-generated document",
-        weight: 2,
-        width: 2,
-        height: 2,
-        align: LineText.ALIGN_CENTER,
-        linefeed: 1,
-      ));
-      list.add(LineText(
-          type: LineText.TYPE_TEXT,
-          content: "No signature is required. ",
-          weight: 2,
-          width: 2,
-          height: 2,
-          align: LineText.ALIGN_CENTER,
-          linefeed: 2,
-          underline: 1));
-      list.add(LineText(
-        type: LineText.TYPE_TEXT,
-        content: "App Developed By Bikash Paul",
-        weight: 2,
-        width: 2,
-        height: 2,
-        align: LineText.ALIGN_RIGHT,
-        linefeed: 2,
-      ));
-
-      await bluetoothPrint.printReceipt(config, list);
-
-      await bluetoothPrint.disconnect();
-    }
+            ],
+          ),
+        ),
+      ),
+      floatingActionButton: StreamBuilder<bool>(
+        stream: bluetoothPrint.isScanning,
+        initialData: false,
+        builder: (c, snapshot) {
+          if (snapshot.data == true) {
+            return FloatingActionButton(
+              child: Icon(Icons.stop),
+              onPressed: () => bluetoothPrint.stopScan(),
+              backgroundColor: Colors.red,
+            );
+          } else {
+            return FloatingActionButton(
+                child: Icon(Icons.search),
+                onPressed: () =>
+                    bluetoothPrint.startScan(timeout: Duration(seconds: 4)));
+          }
+        },
+      ),
+    );
   }
 }
