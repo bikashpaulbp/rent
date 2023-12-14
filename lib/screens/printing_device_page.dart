@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:bluetooth_print/bluetooth_print.dart';
 import 'package:bluetooth_print/bluetooth_print_model.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:rent_management/models/rent_model.dart';
 import 'package:rent_management/services/rent_service.dart';
@@ -86,6 +88,13 @@ class _PrintingPageState extends State<PrintingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            widget.refresh;
+            Get.back();
+          },
+        ),
         title: const Text('Print Receipt'),
       ),
       body: RefreshIndicator(

@@ -46,9 +46,9 @@ class _PrintRentState extends State<PrintRent> {
 
   int? tenantId;
   int? flatId;
-  String? tenantName;
-  String? flatName;
-  String? floorName;
+  // String? tenantName;
+  // String? flatName;
+  // String? floorName;
 
   DateTime dateofPayment = DateTime.now();
 
@@ -74,8 +74,8 @@ class _PrintRentState extends State<PrintRent> {
   int? buildingId;
   int? userId;
   String? buildingAddress;
-  void refresh() {
-    _fetchRentData();
+  void refresh() async {
+    await _fetchRentData();
   }
 
   Future<void> getUser() async {
@@ -209,52 +209,67 @@ class _PrintRentState extends State<PrintRent> {
                           itemCount: rentList.length,
                           itemBuilder: (BuildContext context, int index) {
                             RentModel rent = rentList[index];
-                            List<TenantModel> tenants =
-                                context.watch<TenantData>().tenantList;
-                            List<FlatModel> flats =
-                                context.watch<FlatData>().flatList;
-                            List<FloorModel> floors =
-                                context.watch<FloorData>().floorList;
-                            List<BuildingModel> buildings =
-                                context.watch<BuildingProvider>().buildingList;
+                            List<String> getRentItemValues() {
+                              String? tenantName;
+                              String? flatName;
+                              String? floorName;
 
-                            if (floors.isNotEmpty) {
-                              try {
-                                int? flatId = flats
-                                    .firstWhere((e) => e.id == rent.flatId)
-                                    .id;
-                                int? floorId = flats
-                                    .firstWhere((e) => e.id == flatId)
-                                    .floorId;
-                                floorName = floors
-                                    .firstWhere((e) => e.id == floorId)
-                                    .name;
-                                buildingAddress = buildings
-                                    .firstWhere(
-                                        (element) => element.id == buildingId)
-                                    .address;
-                              } catch (_) {}
-                            } else {
-                              flatName = "floor not found";
+                              List<TenantModel> tenants =
+                                  context.watch<TenantData>().tenantList;
+                              List<FlatModel> flats =
+                                  context.watch<FlatData>().flatList;
+                              List<FloorModel> floors =
+                                  context.watch<FloorData>().floorList;
+                              List<BuildingModel> buildings = context
+                                  .watch<BuildingProvider>()
+                                  .buildingList;
+
+                              if (floors.isNotEmpty) {
+                                try {
+                                  int? flatId = flats
+                                      .firstWhere((e) => e.id == rent.flatId)
+                                      .id;
+                                  int? floorId = flats
+                                      .firstWhere((e) => e.id == flatId)
+                                      .floorId;
+                                  floorName = floors
+                                      .firstWhere((e) => e.id == floorId)
+                                      .name;
+                                  buildingAddress = buildings
+                                      .firstWhere(
+                                          (element) => element.id == buildingId)
+                                      .address;
+                                } catch (_) {}
+                              } else {
+                                flatName = "floor not found";
+                              }
+                              if (flats.isNotEmpty) {
+                                try {
+                                  flatName = flats
+                                      .firstWhere((e) => e.id == rent.flatId)
+                                      .name;
+                                } catch (_) {}
+                              } else {
+                                flatName = "flat not found";
+                              }
+                              if (tenants.isNotEmpty) {
+                                try {
+                                  tenantName = tenants
+                                      .firstWhere((e) => e.id == rent.tenantId)
+                                      .name;
+                                } catch (_) {}
+                              } else {
+                                tenantName = "tenant not found";
+                              }
+
+                              return [
+                                floorName ?? 'Unknown Floor',
+                                flatName ?? 'Unknown Flat',
+                                tenantName ?? 'Unknown Tenant',
+                              ];
                             }
-                            if (flats.isNotEmpty) {
-                              try {
-                                flatName = flats
-                                    .firstWhere((e) => e.id == rent.flatId)
-                                    .name;
-                              } catch (_) {}
-                            } else {
-                              flatName = "flat not found";
-                            }
-                            if (tenants.isNotEmpty) {
-                              try {
-                                tenantName = tenants
-                                    .firstWhere((e) => e.id == rent.tenantId)
-                                    .name;
-                              } catch (_) {}
-                            } else {
-                              tenantName = "tenant not found";
-                            }
+
+                            var values = getRentItemValues();
 
                             return ListTile(
                               title: Card(
@@ -303,7 +318,7 @@ class _PrintRentState extends State<PrintRent> {
                                               padding:
                                                   const EdgeInsets.all(5.0),
                                               child: Text(
-                                                'Tenant Name: $tenantName',
+                                                'Tenant Name: ${values[2]}',
                                                 style: const TextStyle(
                                                   color: Color.fromARGB(
                                                       255, 0, 0, 0),
@@ -316,7 +331,7 @@ class _PrintRentState extends State<PrintRent> {
                                               padding:
                                                   const EdgeInsets.all(5.0),
                                               child: Text(
-                                                'Floor Name: $floorName',
+                                                'Floor Name: ${values[0]}',
                                                 style: const TextStyle(
                                                   color: Color.fromARGB(
                                                       255, 0, 0, 0),
@@ -329,7 +344,7 @@ class _PrintRentState extends State<PrintRent> {
                                               padding:
                                                   const EdgeInsets.all(5.0),
                                               child: Text(
-                                                'Flat Name: $flatName',
+                                                'Flat Name: ${values[1]}',
                                                 style: const TextStyle(
                                                   color: Color.fromARGB(
                                                       255, 0, 0, 0),
@@ -456,9 +471,9 @@ class _PrintRentState extends State<PrintRent> {
                                                 onPressed: () async {
                                                   Get.to(PrintingPage(
                                                     rent: rent,
-                                                    floorName: floorName,
-                                                    tenantName: tenantName,
-                                                    flatName: flatName,
+                                                    floorName: values[2],
+                                                    tenantName: values[0],
+                                                    flatName: values[1],
                                                     buildingAddress:
                                                         buildingAddress,
                                                     refresh: refresh,
