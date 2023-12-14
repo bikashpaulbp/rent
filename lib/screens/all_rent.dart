@@ -117,13 +117,13 @@ class _AllRentState extends State<AllRent> {
                       ),
                     ),
                     SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.65,
+                      height: MediaQuery.of(context).size.height * 0.6,
                       child: StreamBuilder<List<RentModel>>(
                         stream: rentStream,
                         builder: (BuildContext context,
                             AsyncSnapshot<List<RentModel>> snapshot) {
                           getBuildingId();
-                          // _fetchData();
+                          _fetchRentData();
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
                             return Center(child: CircularProgressIndicator());
@@ -235,7 +235,7 @@ class _AllRentState extends State<AllRent> {
                                                           255, 0, 0, 0),
                                                       fontSize: 16,
                                                       fontWeight:
-                                                          FontWeight.bold, 
+                                                          FontWeight.bold,
                                                     ),
                                                   ),
                                                 ),

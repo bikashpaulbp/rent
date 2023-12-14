@@ -7,6 +7,7 @@ import 'package:bluetooth_print/bluetooth_print_model.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:rent_management/models/rent_model.dart';
+import 'package:rent_management/services/rent_service.dart';
 
 // ignore: must_be_immutable
 class PrintingPage extends StatefulWidget {
@@ -37,6 +38,8 @@ class _PrintingPageState extends State<PrintingPage> {
   String tips = 'no device connected';
 
   DateTime date = DateTime.now();
+
+  RentApiService rentApiService = RentApiService();
 
   @override
   void initState() {
@@ -345,7 +348,15 @@ class _PrintingPageState extends State<PrintingPage> {
                               ));
                               list.add(LineText(linefeed: 1));
                               list.add(LineText(linefeed: 1));
-                              await bluetoothPrint.printReceipt(config, list);
+                              await bluetoothPrint
+                                  .printReceipt(config, list)
+                                  .whenComplete(() async {
+                                RentModel updatedRent =
+                                    RentModel(isPrinted: true);
+
+                                await rentApiService.updateRent(
+                                    id: widget.rent.id!, rent: updatedRent);
+                              });
                             }
                           : null,
                     ),
