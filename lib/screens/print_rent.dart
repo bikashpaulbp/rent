@@ -91,11 +91,7 @@ class _PrintRentState extends State<PrintRent> {
     rentStream = rentApiService.getAllRents().asStream();
   }
 
-  // BluetoothPrint bluetoothPrint = BluetoothPrint.instance;
-
-  // List<BluetoothDevice> _devices = [];
-  // String _deviceMsg = "";
-
+ 
   @override
   void initState() {
     _fetchRentData();
@@ -104,22 +100,6 @@ class _PrintRentState extends State<PrintRent> {
 
     super.initState();
   }
-
-  // Future<void> initPrinter() async {
-  //   bluetoothPrint.startScan(timeout: Duration(seconds: 2));
-  //   if (!mounted) return;
-  //   bluetoothPrint.scanResults.listen((event) {
-  //     if (!mounted) return;
-  //     setState(() {
-  //       _devices = event;
-  //     });
-  //     if (_devices.isEmpty) {
-  //       setState(() {
-  //         _deviceMsg = "No Devices";
-  //       });
-  //     }
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -418,19 +398,7 @@ class _PrintRentState extends State<PrintRent> {
                                                 ),
                                               ),
                                             ),
-                                            // Padding(
-                                            //   padding:
-                                            //       const EdgeInsets.all(5.0),
-                                            //   child: Text(
-                                            //     'Due Amount: ${rent.dueAmount == 0 || rent.dueAmount == null ? rent.totalAmount : rent.dueAmount}',
-                                            //     style: const TextStyle(
-                                            //       color: Color.fromARGB(
-                                            //           255, 0, 0, 0),
-                                            //       fontSize: 16,
-                                            //       fontWeight: FontWeight.bold,
-                                            //     ),
-                                            //   ),
-                                            // ),
+                                         
                                             Padding(
                                               padding:
                                                   const EdgeInsets.all(5.0),
@@ -492,7 +460,7 @@ class _PrintRentState extends State<PrintRent> {
                         );
                       } else {
                         return const Center(
-                            child: Text('no  monthly rents available.'));
+                            child: Text('no  monthly rent available.'));
                       }
                     },
                   ),

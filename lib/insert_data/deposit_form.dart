@@ -1,5 +1,7 @@
+import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:rent_management/models/deposit_model.dart';
 import 'package:rent_management/models/flat_model.dart';
@@ -37,6 +39,8 @@ class _DepositDataPageState extends State<DepositDataPage> {
       TextEditingController();
 
   DateTime date = DateTime.now();
+  DateTime? depositeDate;
+  final format = DateFormat("dd MMM y");
   RentModel? rents;
   RentModel? rentInfo;
   List<DepositeModel> finalDepositList = [];
@@ -189,6 +193,32 @@ class _DepositDataPageState extends State<DepositDataPage> {
                             ],
                           ),
                           const SizedBox(height: 16),
+                          DateTimeField(
+                            decoration: InputDecoration(
+                                suffix: const Text(
+                                  '*',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                                labelText: 'deposit date',
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                                icon: const Icon(Icons.calendar_month)),
+                            onChanged: (newValue) {
+                              setState(() {
+                                depositeDate = newValue!;
+                              });
+                            },
+                            format: format,
+                            onShowPicker: (context, currentValue) {
+                              return showDatePicker(
+                                context: context,
+                                firstDate: DateTime(1900),
+                                initialDate: currentValue ?? DateTime.now(),
+                                lastDate: DateTime(2100),
+                              );
+                            },
+                          ),
+                          SizedBox(height: 16),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
@@ -241,7 +271,8 @@ class _DepositDataPageState extends State<DepositDataPage> {
                                                             int.parse(
                                                                 depositAmountTextControlller
                                                                     .text)),
-                                                    tranDate: date,
+                                                    tranDate:
+                                                        depositeDate ?? date,
                                                     rentId: rentInfo!.id)),
                                             dueAmountForIsPaid = rentInfo!
                                                     .totalAmount! -

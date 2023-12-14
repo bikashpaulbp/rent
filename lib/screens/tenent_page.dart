@@ -773,7 +773,7 @@ class _TenentPageState extends State<TenentPage> {
                                                                               (newValue) {
                                                                             setState(() {
                                                                               dateTime = newValue!;
-                                                                              arrivalDate = dateTime;
+                                                                              arrivalDate = dateTime; 
                                                                             });
                                                                           },
                                                                           format:

@@ -59,6 +59,9 @@ class _AllRentState extends State<AllRent> {
   int? flatId;
   String? tenantName;
   String? flatName;
+  DateTime? selectedDate;
+  int? year;
+  int? month;
 
   @override
   void initState() {
@@ -75,6 +78,17 @@ class _AllRentState extends State<AllRent> {
     getBuildingId();
   }
 
+  bool isRentCurrentMonth(RentModel rent, int currentYear, int currentMonth) {
+    try {
+      DateTime date = rent.rentMonth!;
+      int year = date.year;
+      int month = date.month;
+      return year == currentYear && month == currentMonth;
+    } catch (_) {
+      return false;
+    }
+  }
+
   Future<void> getUser() async {
     user = (await authStateManager.getLoggedInUser())!;
     userId = user.id;
@@ -87,13 +101,6 @@ class _AllRentState extends State<AllRent> {
   Future<void> _fetchRentData() async {
     rentStream = rentApiService.getAllRents().asStream();
   }
-
-  // Future<void> _fetchData() async {
-  //   List<TenantModel> allTenantList = await tenantApiService.getAllTenants();
-  //   List<FlatModel> allFlatList = await flatApiService.getAllFlats();
-  //   tenantList = allTenantList;
-  //   flatList = allFlatList;
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -108,16 +115,66 @@ class _AllRentState extends State<AllRent> {
                 Column(
                   children: [
                     const SizedBox(height: 10),
-                    const Text(
-                      'Rent',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Color.fromARGB(255, 78, 78, 78),
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        const Text(
+                          'Rent',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Color.fromARGB(255, 78, 78, 78),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        selectedDate != null
+                            ? ElevatedButton(
+                                style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all(
+                                        Color.fromARGB(255, 230, 1, 1))),
+                                onPressed: () {
+                                  setState(() {
+                                    selectedDate = null;
+                                  });
+                                },
+                                child: Text("Reset"))
+                            : SizedBox(
+                                width: 100,
+                              ),
+                        ElevatedButton(
+                          onPressed: () async {
+                            DateTime? picked = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime(2101),
+                              builder: (BuildContext context, Widget? child) {
+                                return Theme(
+                                  data: ThemeData.light().copyWith(
+                                    primaryColor: Colors.blue,
+                                    hintColor: Colors.blue,
+                                    colorScheme:
+                                        ColorScheme.light(primary: Colors.blue),
+                                    buttonTheme: ButtonThemeData(
+                                        textTheme: ButtonTextTheme.primary),
+                                  ),
+                                  child: child!,
+                                );
+                              },
+                            );
+
+                            if (picked != null && picked != selectedDate) {
+                              setState(() {
+                                selectedDate =
+                                    DateTime(picked.year, picked.month);
+                              });
+                            }
+                          },
+                          child: Text('Choose Rent Month'),
+                        ),
+                      ],
                     ),
                     SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.6,
+                      height: MediaQuery.of(context).size.height * 0.57,
                       child: StreamBuilder<List<RentModel>>(
                         stream: rentStream,
                         builder: (BuildContext context,
@@ -132,11 +189,24 @@ class _AllRentState extends State<AllRent> {
                           if (snapshot.hasData &&
                               snapshot.data != null &&
                               snapshot.data!.isNotEmpty) {
-                            List<RentModel> rentList = snapshot.data!
+                            List<RentModel> allRentList = snapshot.data!
                                 .where((element) =>
                                     element.buildingId == buildingId)
                                 .toList();
 
+                            List<RentModel> rentList;
+
+                            if (selectedDate != null) {
+                              rentList = allRentList
+                                  .where((rent) => isRentCurrentMonth(
+                                        rent,
+                                        year = selectedDate!.year,
+                                        month = selectedDate!.month,
+                                      ))
+                                  .toList();
+                            } else {
+                              rentList = List.from(allRentList);
+                            }
                             return ListView.builder(
                               itemCount: rentList.length,
                               itemBuilder: (BuildContext context, int index) {
