@@ -6,6 +6,7 @@ import 'dart:async';
 import 'package:bluetooth_print/bluetooth_print.dart';
 import 'package:bluetooth_print/bluetooth_print_model.dart';
 import 'package:provider/provider.dart';
+import 'package:rent_management/models/building_model.dart';
 import 'package:rent_management/models/flat_model.dart';
 import 'package:rent_management/models/floor_model.dart';
 import 'package:rent_management/models/rent_model.dart';
@@ -18,6 +19,7 @@ import 'package:rent_management/services/flat_service.dart';
 import 'package:rent_management/services/floor_service.dart';
 import 'package:rent_management/services/rent_service.dart';
 import 'package:rent_management/services/tenant_service.dart';
+import 'package:rent_management/shared_data/building_provider.dart';
 import 'package:rent_management/shared_data/flat_data.dart';
 import 'package:rent_management/shared_data/floor_data.dart';
 import 'package:rent_management/shared_data/tenent_data.dart';
@@ -71,7 +73,7 @@ class _PrintRentState extends State<PrintRent> {
   bool isLoading = false;
   int? buildingId;
   int? userId;
-
+  String? buildingAddress;
   void refresh() {
     _fetchRentData();
   }
@@ -192,6 +194,7 @@ class _PrintRentState extends State<PrintRent> {
                           snapshot.data!.isNotEmpty) {
                         getBuildingId();
                         getUser();
+
                         List<RentModel> allRentList = snapshot.data!
                             .where(
                                 (element) => element.buildingId == buildingId)
@@ -212,6 +215,8 @@ class _PrintRentState extends State<PrintRent> {
                                 context.watch<FlatData>().flatList;
                             List<FloorModel> floors =
                                 context.watch<FloorData>().floorList;
+                            List<BuildingModel> buildings =
+                                context.watch<BuildingProvider>().buildingList;
 
                             if (floors.isNotEmpty) {
                               try {
@@ -224,6 +229,10 @@ class _PrintRentState extends State<PrintRent> {
                                 floorName = floors
                                     .firstWhere((e) => e.id == floorId)
                                     .name;
+                                buildingAddress = buildings
+                                    .firstWhere(
+                                        (element) => element.id == buildingId)
+                                    .address;
                               } catch (_) {}
                             } else {
                               flatName = "floor not found";
@@ -450,10 +459,14 @@ class _PrintRentState extends State<PrintRent> {
                                                     floorName: floorName,
                                                     tenantName: tenantName,
                                                     flatName: flatName,
+                                                    buildingAddress:
+                                                        buildingAddress,
                                                     refresh: refresh,
                                                   ));
                                                 },
-                                                child: rent.isPrinted == false? Text('Print'):Text('Re-print'))
+                                                child: rent.isPrinted == false
+                                                    ? Text('Print')
+                                                    : Text('Re-print'))
                                           ]),
                                     ],
                                   ),

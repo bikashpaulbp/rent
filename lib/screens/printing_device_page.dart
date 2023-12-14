@@ -14,6 +14,7 @@ class PrintingPage extends StatefulWidget {
   String? tenantName;
   String? flatName;
   String? floorName;
+  String? buildingAddress;
   void Function() refresh;
   PrintingPage(
       {required this.rent,
@@ -21,6 +22,7 @@ class PrintingPage extends StatefulWidget {
       required this.tenantName,
       required this.flatName,
       required this.floorName,
+      required this.buildingAddress,
       super.key});
   @override
   State<PrintingPage> createState() => _PrintingPageState();
@@ -29,7 +31,7 @@ class PrintingPage extends StatefulWidget {
 class _PrintingPageState extends State<PrintingPage> {
   DateTime printingDate = DateTime.now();
   BluetoothPrint bluetoothPrint = BluetoothPrint.instance;
-  NumberFormat formatter = NumberFormat("0,00,000", "en_US");
+  NumberFormat formatter = NumberFormat("###,###");
   bool _connected = false;
   BluetoothDevice? _device;
   String tips = 'no device connected';
@@ -94,7 +96,9 @@ class _PrintingPageState extends State<PrintingPage> {
                 children: <Widget>[
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                    child: Text(tips),
+                    child: _connected == true
+                        ? Text("Device Connected")
+                        : Text(tips),
                   ),
                 ],
               ),
@@ -105,8 +109,12 @@ class _PrintingPageState extends State<PrintingPage> {
                 builder: (c, snapshot) => Column(
                   children: snapshot.data!
                       .map((d) => ListTile(
-                            title: Text(d.name ?? ''),
-                            subtitle: Text(d.address ?? ''),
+                            title: _connected == true
+                                ? Text(d.name!)
+                                : Text(d.name ?? ''),
+                            subtitle: _connected == true
+                                ? Text(d.address!)
+                                : Text(d.address ?? ''),
                             onTap: () async {
                               setState(() {
                                 _device = d;
@@ -186,20 +194,24 @@ class _PrintingPageState extends State<PrintingPage> {
                               //     size: 2,
                               //     align: LineText.ALIGN_CENTER,
                               //     linefeed: 1));
-                               list.add(LineText(
+                              list.add(LineText(
                                   type: LineText.TYPE_TEXT,
                                   content: "Bill Receipt",
                                   align: LineText.ALIGN_CENTER,
+                                  height: 1,
+                                  width: 1,
                                   linefeed: 1,
                                   underline: 1));
                               list.add(LineText(linefeed: 1));
                               list.add(LineText(
                                   type: LineText.TYPE_TEXT,
-                                  content: "Bill Receipt",
+                                  content:
+                                      "Holding No:     ${widget.buildingAddress}",
                                   align: LineText.ALIGN_CENTER,
                                   linefeed: 1,
                                   underline: 1));
                               list.add(LineText(linefeed: 1));
+
                               list.add(LineText(
                                   type: LineText.TYPE_TEXT,
                                   content: "Receipt No",
@@ -218,71 +230,74 @@ class _PrintingPageState extends State<PrintingPage> {
                               list.add(LineText(linefeed: 1));
                               list.add(LineText(
                                   type: LineText.TYPE_TEXT,
-                                  content: "Tenant Name: ${widget.tenantName}",
+                                  content:
+                                      "       Tenant Name   :   ${widget.tenantName}",
                                   relativeX: 2,
                                   weight: 30,
-                                  align: LineText.ALIGN_CENTER,
-                                  linefeed: 1,
-                                  underline: 1));
-                              list.add(LineText(
-                                  type: LineText.TYPE_TEXT,
-                                  content: "Floor Name: ${widget.floorName}",
-                                  weight: 30,
-                                  align: LineText.ALIGN_CENTER,
-                                  linefeed: 1,
-                                  underline: 1));
-                              list.add(LineText(
-                                  type: LineText.TYPE_TEXT,
-                                  content: "Flat Name: ${widget.flatName}",
-                                  weight: 30,
-                                  align: LineText.ALIGN_CENTER,
+                                  align: LineText.ALIGN_LEFT,
                                   linefeed: 1,
                                   underline: 1));
                               list.add(LineText(
                                   type: LineText.TYPE_TEXT,
                                   content:
-                                      "Rent Amount: ${formatter.format(widget.rent.rentAmount)} BDT",
+                                      "       Floor Name    :   ${widget.floorName}",
                                   weight: 30,
-                                  align: LineText.ALIGN_CENTER,
+                                  align: LineText.ALIGN_LEFT,
                                   linefeed: 1,
                                   underline: 1));
                               list.add(LineText(
                                   type: LineText.TYPE_TEXT,
                                   content:
-                                      "Water Bill: ${formatter.format(widget.rent.waterBill)} BDT",
+                                      "       Flat Name     :   ${widget.flatName}",
                                   weight: 30,
-                                  align: LineText.ALIGN_CENTER,
+                                  align: LineText.ALIGN_LEFT,
                                   linefeed: 1,
                                   underline: 1));
                               list.add(LineText(
                                   type: LineText.TYPE_TEXT,
                                   content:
-                                      "Gas Bill: ${formatter.format(widget.rent.gasBill)} BDT",
+                                      "       Rent Amount   :   ${formatter.format(widget.rent.rentAmount)} BDT",
                                   weight: 30,
-                                  align: LineText.ALIGN_CENTER,
+                                  align: LineText.ALIGN_LEFT,
                                   linefeed: 1,
                                   underline: 1));
                               list.add(LineText(
                                   type: LineText.TYPE_TEXT,
                                   content:
-                                      "Service Charge: ${formatter.format(widget.rent.serviceCharge)} BDT",
+                                      "       Water Bill    :   ${formatter.format(widget.rent.waterBill)} BDT",
                                   weight: 30,
-                                  align: LineText.ALIGN_CENTER,
+                                  align: LineText.ALIGN_LEFT,
                                   linefeed: 1,
                                   underline: 1));
                               list.add(LineText(
                                   type: LineText.TYPE_TEXT,
                                   content:
-                                      "Total Amount: ${formatter.format(widget.rent.totalAmount)} BDT",
+                                      "       Gas Bill      :   ${formatter.format(widget.rent.gasBill)} BDT",
                                   weight: 30,
-                                  align: LineText.ALIGN_CENTER,
+                                  align: LineText.ALIGN_LEFT,
+                                  linefeed: 1,
+                                  underline: 1));
+                              list.add(LineText(
+                                  type: LineText.TYPE_TEXT,
+                                  content:
+                                      "       Service Charge:   ${formatter.format(widget.rent.serviceCharge)} BDT",
+                                  weight: 30,
+                                  align: LineText.ALIGN_LEFT,
+                                  linefeed: 1,
+                                  underline: 1));
+                              list.add(LineText(
+                                  type: LineText.TYPE_TEXT,
+                                  content:
+                                      "       Total Amount  :   ${formatter.format(widget.rent.totalAmount)} BDT",
+                                  weight: 30,
+                                  align: LineText.ALIGN_LEFT,
                                   linefeed: 1,
                                   underline: 1));
                               list.add(LineText(linefeed: 1));
                               list.add(LineText(
                                   type: LineText.TYPE_TEXT,
                                   content:
-                                      "Rent Month: ${DateFormat(' MMM yyy').format(widget.rent.rentMonth!)}",
+                                      "Rent Month:    ${DateFormat(' MMM yyy').format(widget.rent.rentMonth!)}",
                                   weight: 30,
                                   align: LineText.ALIGN_CENTER,
                                   linefeed: 1,
