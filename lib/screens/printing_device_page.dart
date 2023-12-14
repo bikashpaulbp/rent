@@ -357,15 +357,12 @@ class _PrintingPageState extends State<PrintingPage> {
                               ));
                               list.add(LineText(linefeed: 1));
                               list.add(LineText(linefeed: 1));
-                              await bluetoothPrint
-                                  .printReceipt(config, list)
-                                  .whenComplete(() async {
-                                RentModel updatedRent =
-                                    RentModel(isPrinted: true);
+                              await bluetoothPrint.printReceipt(config, list);
+                              RentModel updatedRent =
+                                  RentModel(isPrinted: true);
 
-                                await rentApiService.updateRent(
-                                    id: widget.rent.id!, rent: updatedRent);
-                              });
+                              await rentApiService.updateRent(
+                                  id: widget.rent.id!, rent: updatedRent);
                             }
                           : null,
                     ),
