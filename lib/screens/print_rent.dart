@@ -471,8 +471,8 @@ class _PrintRentState extends State<PrintRent> {
                                                 onPressed: () async {
                                                   Get.to(PrintingPage(
                                                     rent: rent,
-                                                    floorName: values[2],
-                                                    tenantName: values[0],
+                                                    floorName: values[0],
+                                                    tenantName: values[2],
                                                     flatName: values[1],
                                                     buildingAddress:
                                                         buildingAddress,
