@@ -6,7 +6,6 @@ import 'package:rent_management/models/flat_model.dart';
 import 'package:rent_management/models/rent_model.dart';
 import 'package:rent_management/models/tenant_model.dart';
 import 'package:rent_management/models/user_model.dart';
-import 'package:rent_management/screens/all_rent.dart';
 import 'package:rent_management/screens/login_screen.dart';
 import 'package:rent_management/services/deposite_service.dart';
 import 'package:rent_management/services/flat_service.dart';
@@ -131,7 +130,7 @@ class _RentDataPageState extends State<RentDataPage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 isLoading == true
-                    ? Center(child: CircularProgressIndicator())
+                    ? const Center(child: CircularProgressIndicator())
                     : ElevatedButton(
                         onPressed: () async {
                           setState(() {
@@ -160,7 +159,7 @@ class _RentDataPageState extends State<RentDataPage> {
                               if (rentMonth!.month == dateTime.month &&
                                   rentYear!.year == dateTime.year) {
                                 ScaffoldMessenger.of(context)
-                                    .showSnackBar(SnackBar(
+                                    .showSnackBar(const SnackBar(
                                   content: Text(
                                       "Rent already added for the selected month"),
                                 ));
@@ -212,13 +211,13 @@ class _RentDataPageState extends State<RentDataPage> {
 
                             await widget.refresh();
                             await _fetchRentData();
-                            Get.offAll(() => Dashboard());
+                            Get.offAll(() => const Dashboard());
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text("Saved successfully")),
+                              const SnackBar(content: Text("Saved successfully")),
                             );
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
+                              const SnackBar(
                                   content: Text(
                                       "Please select a month or add flat")),
                             );

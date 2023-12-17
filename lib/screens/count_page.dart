@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:provider/provider.dart';
 import 'package:rent_management/models/building_model.dart';
 import 'package:rent_management/models/flat_model.dart';
@@ -83,7 +82,7 @@ class _CountPageState extends State<CountPage> {
             children: [
               Column(
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   Padding(
@@ -147,15 +146,15 @@ class _CountPageState extends State<CountPage> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.apartment_rounded,
+                                  const Icon(Icons.apartment_rounded,
                                       size: 50, color: Colors.amber),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 20,
                                   ),
                                   Center(
                                     child: Text(
                                       "${localData.buildingName}",
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontSize: 30,
                                         fontWeight: FontWeight.w700,
                                         color:
@@ -166,8 +165,8 @@ class _CountPageState extends State<CountPage> {
                                 ],
                               ),
                             )
-                          : Padding(
-                              padding: const EdgeInsets.all(8.0),
+                          : const Padding(
+                              padding: EdgeInsets.all(8.0),
                               child: Center(
                                 child: Text(
                                   "Select Building",
@@ -184,8 +183,8 @@ class _CountPageState extends State<CountPage> {
                   Container(
                     height: 1,
                     width: MediaQuery.sizeOf(context).width * 0.8,
-                    decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 198, 198, 198)),
+                    decoration: const BoxDecoration(
+                        color: Color.fromARGB(255, 198, 198, 198)),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -197,7 +196,7 @@ class _CountPageState extends State<CountPage> {
                             padding: const EdgeInsets.all(8.0),
                             child: InkWell(
                               onTap: () {
-                                Get.to(FloorPage());
+                                Get.to(const FloorPage());
                               },
                               child: Card(
                                 shape: BeveledRectangleBorder(
@@ -238,7 +237,7 @@ class _CountPageState extends State<CountPage> {
                             padding: const EdgeInsets.all(8.0),
                             child: InkWell(
                               onTap: () {
-                                Get.to(FlatPage());
+                                Get.to(const FlatPage());
                               },
                               child: Card(
                                 shape: BeveledRectangleBorder(
@@ -286,7 +285,7 @@ class _CountPageState extends State<CountPage> {
                             padding: const EdgeInsets.all(8.0),
                             child: InkWell(
                               onTap: () {
-                                Get.to(TenentPage());
+                                Get.to(const TenentPage());
                               },
                               child: Card(
                                 shape: BeveledRectangleBorder(
@@ -326,7 +325,7 @@ class _CountPageState extends State<CountPage> {
                             padding: const EdgeInsets.all(8.0),
                             child: InkWell(
                               onTap: () {
-                                Get.to(MonthlyRent());
+                                Get.to(const MonthlyRent());
                               },
                               child: Card(
                                 shape: BeveledRectangleBorder(
@@ -367,7 +366,7 @@ class _CountPageState extends State<CountPage> {
                   )
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               SingleChildScrollView(
@@ -389,167 +388,167 @@ class _CountPageState extends State<CountPage> {
                                 child: IconButton(
                                   iconSize: 40,
                                   onPressed: () {
-                                    Get.to(DepositPage());
+                                    Get.to(const DepositPage());
                                   },
-                                  icon: Icon(Icons.history),
+                                  icon: const Icon(Icons.history),
                                 ),
                               ),
-                              SizedBox(height: 5),
-                              Center(
+                              const SizedBox(height: 5),
+                              const Center(
                                 child: Text(
                                   'Deposit History',
                                   style: TextStyle(
-                                      color: const Color.fromARGB(
+                                      color: Color.fromARGB(
                                           255, 114, 114, 114),
                                       fontSize: 12),
                                 ),
                               )
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 30,
                           ),
                           Column(
                             children: [
                               CircleAvatar(
                                 backgroundColor:
-                                    Color.fromARGB(255, 255, 205, 55),
+                                    const Color.fromARGB(255, 255, 205, 55),
                                 radius: 30,
                                 child: IconButton(
                                   iconSize: 40,
                                   onPressed: () {},
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.error,
                                     color: Colors.white,
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 5),
-                              Center(
+                              const SizedBox(height: 5),
+                              const Center(
                                 child: Text(
                                   'Not Decided',
                                   style: TextStyle(
-                                      color: const Color.fromARGB(
+                                      color: Color.fromARGB(
                                           255, 114, 114, 114),
                                       fontSize: 12),
                                 ),
                               )
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 30,
                           ),
                           Column(
                             children: [
                               CircleAvatar(
                                 backgroundColor:
-                                    Color.fromARGB(255, 204, 236, 22),
+                                    const Color.fromARGB(255, 204, 236, 22),
                                 radius: 30,
                                 child: IconButton(
                                   iconSize: 40,
                                   onPressed: () {},
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.error,
                                     color: Colors.white,
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 5),
-                              Center(
+                              const SizedBox(height: 5),
+                              const Center(
                                 child: Text(
                                   'Not Decided',
                                   style: TextStyle(
-                                      color: const Color.fromARGB(
+                                      color: Color.fromARGB(
                                           255, 114, 114, 114),
                                       fontSize: 12),
                                 ),
                               )
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 30,
                           ),
                           Column(
                             children: [
                               CircleAvatar(
                                 backgroundColor:
-                                    Color.fromARGB(255, 22, 200, 236),
+                                    const Color.fromARGB(255, 22, 200, 236),
                                 radius: 30,
                                 child: IconButton(
                                   iconSize: 40,
                                   onPressed: () {},
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.error,
                                     color: Colors.white,
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 5),
-                              Center(
+                              const SizedBox(height: 5),
+                              const Center(
                                 child: Text(
                                   'Not Decided',
                                   style: TextStyle(
-                                      color: const Color.fromARGB(
+                                      color: Color.fromARGB(
                                           255, 114, 114, 114),
                                       fontSize: 12),
                                 ),
                               )
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 30,
                           ),
                           Column(
                             children: [
                               CircleAvatar(
                                 backgroundColor:
-                                    Color.fromARGB(255, 204, 35, 255),
+                                    const Color.fromARGB(255, 204, 35, 255),
                                 radius: 30,
                                 child: IconButton(
                                   iconSize: 40,
                                   onPressed: () {},
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.error,
                                     color: Colors.white,
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 5),
-                              Center(
+                              const SizedBox(height: 5),
+                              const Center(
                                 child: Text(
                                   'Not Decided',
                                   style: TextStyle(
-                                      color: const Color.fromARGB(
+                                      color: Color.fromARGB(
                                           255, 114, 114, 114),
                                       fontSize: 12),
                                 ),
                               )
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 30,
                           ),
                           Column(
                             children: [
                               CircleAvatar(
                                 backgroundColor:
-                                    Color.fromARGB(255, 255, 34, 141),
+                                    const Color.fromARGB(255, 255, 34, 141),
                                 radius: 30,
                                 child: IconButton(
                                   iconSize: 40,
                                   onPressed: () {},
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.error,
                                     color: Colors.white,
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 5),
-                              Center(
+                              const SizedBox(height: 5),
+                              const Center(
                                 child: Text(
                                   'Not Decided',
                                   style: TextStyle(
-                                      color: const Color.fromARGB(
+                                      color: Color.fromARGB(
                                           255, 114, 114, 114),
                                       fontSize: 12),
                                 ),

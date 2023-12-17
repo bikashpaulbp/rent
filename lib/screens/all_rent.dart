@@ -22,7 +22,6 @@ import 'package:rent_management/shared_data/flat_data.dart';
 import 'package:rent_management/shared_data/floor_data.dart';
 import 'package:rent_management/shared_data/tenent_data.dart';
 
-import '../shared_data/rent_data.dart';
 
 class AllRent extends StatefulWidget {
   const AllRent({super.key});
@@ -78,7 +77,10 @@ class _AllRentState extends State<AllRent> {
   }
 
   void refresh() {
-    _fetchRentData();
+    setState(() {
+      _fetchRentData();
+    });
+
     // _fetchData();
     getUser();
     getBuildingId();
@@ -136,14 +138,14 @@ class _AllRentState extends State<AllRent> {
                             ? ElevatedButton(
                                 style: ButtonStyle(
                                     backgroundColor: MaterialStateProperty.all(
-                                        Color.fromARGB(255, 230, 1, 1))),
+                                        const Color.fromARGB(255, 230, 1, 1))),
                                 onPressed: () {
                                   setState(() {
                                     selectedDate = null;
                                   });
                                 },
-                                child: Text("Reset"))
-                            : SizedBox(
+                                child: const Text("Reset"))
+                            : const SizedBox(
                                 width: 100,
                               ),
                         ElevatedButton(
@@ -159,8 +161,8 @@ class _AllRentState extends State<AllRent> {
                                     primaryColor: Colors.blue,
                                     hintColor: Colors.blue,
                                     colorScheme:
-                                        ColorScheme.light(primary: Colors.blue),
-                                    buttonTheme: ButtonThemeData(
+                                        const ColorScheme.light(primary: Colors.blue),
+                                    buttonTheme: const ButtonThemeData(
                                         textTheme: ButtonTextTheme.primary),
                                   ),
                                   child: child!,
@@ -175,7 +177,7 @@ class _AllRentState extends State<AllRent> {
                               });
                             }
                           },
-                          child: Text('Choose Rent Month'),
+                          child: const Text('Choose Rent Month'),
                         ),
                       ],
                     ),
@@ -189,7 +191,7 @@ class _AllRentState extends State<AllRent> {
                           _fetchRentData();
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return Center(child: CircularProgressIndicator());
+                            return const Center(child: CircularProgressIndicator());
                           }
 
                           if (snapshot.hasData &&
@@ -458,16 +460,16 @@ class _AllRentState extends State<AllRent> {
                                                                                   height: 100,
                                                                                   color: Colors.white,
                                                                                   child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                                                                    Padding(
-                                                                                      padding: const EdgeInsets.all(8.0),
+                                                                                    const Padding(
+                                                                                      padding: EdgeInsets.all(8.0),
                                                                                       child: Center(child: Text('click confirm')),
                                                                                     ),
-                                                                                    SizedBox(height: 15),
+                                                                                    const SizedBox(height: 15),
                                                                                     Row(
                                                                                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                                                       children: [
                                                                                         ElevatedButton(
-                                                                                            style: ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.red)),
+                                                                                            style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.red)),
                                                                                             onPressed: () async {
                                                                                               getBuildingId();
                                                                                               getUser();
@@ -478,19 +480,19 @@ class _AllRentState extends State<AllRent> {
                                                                                               await rentApiService.updateRent(id: rent.id!, rent: updatedRent);
                                                                                               await depositeApiService.createDeposite(deposit);
 
-                                                                                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("status has been changed to paid")));
+                                                                                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("status has been changed to paid")));
 
                                                                                               setState(() {
                                                                                                 _fetchRentData();
                                                                                               });
                                                                                               Navigator.of(context).pop();
                                                                                             },
-                                                                                            child: Text('confirm')),
+                                                                                            child: const Text('confirm')),
                                                                                         ElevatedButton(
                                                                                             onPressed: () {
                                                                                               Navigator.of(context).pop();
                                                                                             },
-                                                                                            child: Text('cancel')),
+                                                                                            child: const Text('cancel')),
                                                                                       ],
                                                                                     )
                                                                                   ]),
@@ -529,94 +531,104 @@ class _AllRentState extends State<AllRent> {
                                                                         context) {
                                                                   return SingleChildScrollView(
                                                                     child:
-                                                                        Container(
-                                                                      height:
-                                                                          400,
-                                                                      color: const Color
-                                                                          .fromARGB(
-                                                                          255,
-                                                                          255,
-                                                                          255,
-                                                                          255),
-                                                                      child:
-                                                                          Center(
+                                                                        StatefulBuilder(
+                                                                      builder: (context,
+                                                                              setState) =>
+                                                                          Container(
+                                                                        height:
+                                                                            400,
+                                                                        color: const Color
+                                                                            .fromARGB(
+                                                                            255,
+                                                                            255,
+                                                                            255,
+                                                                            255),
                                                                         child:
-                                                                            Column(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.start,
-                                                                          children: <Widget>[
-                                                                            const Padding(
-                                                                              padding: EdgeInsets.all(20.0),
-                                                                              child: Text('Update Your Information'),
-                                                                            ),
-                                                                            Padding(
-                                                                              padding: const EdgeInsets.all(14.0),
-                                                                              child: Column(
-                                                                                children: [
-                                                                                  Row(
-                                                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                                    children: [
-                                                                                      const SizedBox(
-                                                                                        child: Text(
-                                                                                          'Total Amount',
-                                                                                          style: TextStyle(
-                                                                                            fontSize: 16,
-                                                                                            color: Color.fromARGB(255, 78, 78, 78),
-                                                                                            fontStyle: FontStyle.normal,
+                                                                            Center(
+                                                                          child:
+                                                                              Column(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.start,
+                                                                            children: <Widget>[
+                                                                              const Padding(
+                                                                                padding: EdgeInsets.all(20.0),
+                                                                                child: Text('Update Your Information'),
+                                                                              ),
+                                                                              Padding(
+                                                                                padding: const EdgeInsets.all(14.0),
+                                                                                child: Column(
+                                                                                  children: [
+                                                                                    Row(
+                                                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                      children: [
+                                                                                        const SizedBox(
+                                                                                          child: Text(
+                                                                                            'Total Amount',
+                                                                                            style: TextStyle(
+                                                                                              fontSize: 16,
+                                                                                              color: Color.fromARGB(255, 78, 78, 78),
+                                                                                              fontStyle: FontStyle.normal,
+                                                                                            ),
                                                                                           ),
                                                                                         ),
-                                                                                      ),
-                                                                                      SizedBox(
-                                                                                        width: 250,
-                                                                                        height: 50,
-                                                                                        child: Padding(
-                                                                                          padding: const EdgeInsets.all(8.0),
-                                                                                          child: TextFormField(
-                                                                                            keyboardType: TextInputType.number,
-                                                                                            controller: _totalAmountController,
-                                                                                            decoration: InputDecoration(
-                                                                                              border: OutlineInputBorder(
-                                                                                                borderRadius: BorderRadius.circular(10),
+                                                                                        SizedBox(
+                                                                                          width: 250,
+                                                                                          height: 50,
+                                                                                          child: Padding(
+                                                                                            padding: const EdgeInsets.all(8.0),
+                                                                                            child: TextFormField(
+                                                                                              keyboardType: TextInputType.number,
+                                                                                              controller: _totalAmountController,
+                                                                                              decoration: InputDecoration(
+                                                                                                border: OutlineInputBorder(
+                                                                                                  borderRadius: BorderRadius.circular(10),
+                                                                                                ),
                                                                                               ),
                                                                                             ),
                                                                                           ),
                                                                                         ),
-                                                                                      ),
-                                                                                    ],
-                                                                                  ),
-                                                                                ],
+                                                                                      ],
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
                                                                               ),
-                                                                            ),
-                                                                            Padding(
-                                                                              padding: const EdgeInsets.all(8.0),
-                                                                              child: Row(
-                                                                                mainAxisAlignment: MainAxisAlignment.end,
-                                                                                children: [
-                                                                                  ElevatedButton(
-                                                                                    child: const Text('update'),
-                                                                                    onPressed: () async {
-                                                                                      RentModel updatedRent = RentModel(id: rent.id, tenantId: rent.tenantId, flatId: rent.flatId, rentMonth: rent.rentMonth, totalAmount: int.parse(_totalAmountController.text), isPaid: rent.isPaid, buildingId: rent.buildingId, dueAmount: rent.dueAmount, gasBill: rent.gasBill, isPrinted: false, rentAmount: rent.rentAmount, serviceCharge: rent.serviceCharge, waterBill: rent.waterBill, userId: rent.userId);
-                                                                                      await rentApiService.updateRent(id: rent.id!, rent: updatedRent);
-                                                                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("updated successfully")));
+                                                                              Padding(
+                                                                                padding: const EdgeInsets.all(8.0),
+                                                                                child: Row(
+                                                                                  mainAxisAlignment: MainAxisAlignment.end,
+                                                                                  children: [
+                                                                                    isLoading == false
+                                                                                        ? ElevatedButton(
+                                                                                            child: const Text('update'),
+                                                                                            onPressed: () async {
+                                                                                              setState(() {
+                                                                                                isLoading = true;
+                                                                                              });
+                                                                                              RentModel updatedRent = RentModel(id: rent.id, tenantId: rent.tenantId, flatId: rent.flatId, rentMonth: rent.rentMonth, totalAmount: int.parse(_totalAmountController.text), isPaid: rent.isPaid, buildingId: rent.buildingId, dueAmount: rent.dueAmount, gasBill: rent.gasBill, isPrinted: false, rentAmount: rent.rentAmount, serviceCharge: rent.serviceCharge, waterBill: rent.waterBill, userId: rent.userId);
+                                                                                              await rentApiService.updateRent(id: rent.id!, rent: updatedRent);
+                                                                                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("updated successfully")));
 
-                                                                                      setState(() {
-                                                                                        _fetchRentData();
+                                                                                              setState(() {
+                                                                                                isLoading = false;
+                                                                                                refresh();
 
-                                                                                        Navigator.pop(context);
-                                                                                      });
-                                                                                    },
-                                                                                  ),
-                                                                                  const SizedBox(
-                                                                                    width: 20,
-                                                                                  ),
-                                                                                  ElevatedButton(
-                                                                                    child: const Text('Cancel'),
-                                                                                    onPressed: () => Navigator.pop(context),
-                                                                                  ),
-                                                                                ],
+                                                                                                Navigator.pop(context);
+                                                                                              });
+                                                                                            },
+                                                                                          )
+                                                                                        : const CircularProgressIndicator(),
+                                                                                    const SizedBox(
+                                                                                      width: 20,
+                                                                                    ),
+                                                                                    ElevatedButton(
+                                                                                      child: const Text('Cancel'),
+                                                                                      onPressed: () => Navigator.pop(context),
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
                                                                               ),
-                                                                            ),
-                                                                          ],
+                                                                            ],
+                                                                          ),
                                                                         ),
                                                                       ),
                                                                     ),
@@ -631,7 +643,7 @@ class _AllRentState extends State<AllRent> {
                                                       CircleAvatar(
                                                         radius: 15,
                                                         backgroundColor:
-                                                            Color.fromARGB(255,
+                                                            const Color.fromARGB(255,
                                                                 240, 46, 46),
                                                         child: IconButton(
                                                             iconSize: 15,
@@ -646,7 +658,7 @@ class _AllRentState extends State<AllRent> {
                                                                       .of(
                                                                           context)
                                                                   .showSnackBar(
-                                                                      SnackBar(
+                                                                      const SnackBar(
                                                                           content:
                                                                               Text("deleted successfully")));
                                                               setState(() {
@@ -666,7 +678,7 @@ class _AllRentState extends State<AllRent> {
                                                     style: ButtonStyle(
                                                         backgroundColor:
                                                             MaterialStateProperty
-                                                                .all(Color
+                                                                .all(const Color
                                                                     .fromARGB(
                                                                         255,
                                                                         171,
@@ -683,12 +695,12 @@ class _AllRentState extends State<AllRent> {
                                                                             0));
                                                               }
                                                             : null,
-                                                    child: Text('Deposit')),
+                                                    child: const Text('Deposit')),
                                                 ElevatedButton(
                                                     style: ButtonStyle(
                                                         backgroundColor:
                                                             MaterialStateProperty
-                                                                .all(Color
+                                                                .all(const Color
                                                                     .fromARGB(
                                                                         255,
                                                                         12,
@@ -707,8 +719,8 @@ class _AllRentState extends State<AllRent> {
                                                     },
                                                     child:
                                                         rent.isPrinted == false
-                                                            ? Text('   Print  ')
-                                                            : Text('Re-print'))
+                                                            ? const Text('   Print  ')
+                                                            : const Text('Re-print'))
                                               ]),
                                         ],
                                       ),

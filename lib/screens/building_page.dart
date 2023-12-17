@@ -55,10 +55,10 @@ class _BuildingPageState extends State<BuildingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(color: const Color.fromARGB(255, 49, 49, 49)),
+        iconTheme: const IconThemeData(color: Color.fromARGB(255, 49, 49, 49)),
         backgroundColor: Colors.white,
         elevation: 0,
-        title: Center(
+        title: const Center(
             child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -138,7 +138,7 @@ class _BuildingPageState extends State<BuildingPage> {
                                                 color: index % 2 == 0
                                                     ? const Color.fromARGB(
                                                         255, 255, 255, 255)
-                                                    : Color.fromARGB(
+                                                    : const Color.fromARGB(
                                                         255, 175, 175, 175),
                                                 elevation: 10,
                                                 child: Padding(
@@ -178,7 +178,7 @@ class _BuildingPageState extends State<BuildingPage> {
                                                                               61,
                                                                               61,
                                                                               61)
-                                                                          : Color.fromARGB(
+                                                                          : const Color.fromARGB(
                                                                               255,
                                                                               255,
                                                                               255,
@@ -203,7 +203,7 @@ class _BuildingPageState extends State<BuildingPage> {
                                                                               61,
                                                                               61,
                                                                               61)
-                                                                          : Color.fromARGB(
+                                                                          : const Color.fromARGB(
                                                                               255,
                                                                               255,
                                                                               255,
@@ -219,7 +219,7 @@ class _BuildingPageState extends State<BuildingPage> {
                                                               ),
                                                             ),
                                                           ),
-                                                          SizedBox(
+                                                          const SizedBox(
                                                             height: 10,
                                                           ),
                                                           SizedBox(
@@ -240,7 +240,7 @@ class _BuildingPageState extends State<BuildingPage> {
                                                                               61,
                                                                               61,
                                                                               61)
-                                                                          : Color.fromARGB(
+                                                                          : const Color.fromARGB(
                                                                               255,
                                                                               255,
                                                                               255,
@@ -259,12 +259,12 @@ class _BuildingPageState extends State<BuildingPage> {
                                                                         TextStyle(
                                                                       color: index % 2 ==
                                                                               0
-                                                                          ? Color.fromARGB(
+                                                                          ? const Color.fromARGB(
                                                                               255,
                                                                               61,
                                                                               61,
                                                                               61)
-                                                                          : Color.fromARGB(
+                                                                          : const Color.fromARGB(
                                                                               255,
                                                                               255,
                                                                               255,
@@ -398,11 +398,11 @@ class _BuildingPageState extends State<BuildingPage> {
                                                                                     ),
                                                                                   ],
                                                                                 ),
-                                                                                SizedBox(
+                                                                                const SizedBox(
                                                                                   height: 20,
                                                                                 ),
                                                                                 Center(
-                                                                                  child: SizedBox(height: 50, width: 50, child: loading == true ? Center(child: CircularProgressIndicator()) : null),
+                                                                                  child: SizedBox(height: 50, width: 50, child: loading == true ? const Center(child: CircularProgressIndicator()) : null),
                                                                                 ),
                                                                               ],
                                                                             ),
@@ -436,7 +436,7 @@ class _BuildingPageState extends State<BuildingPage> {
                                                                                     );
 
                                                                                     await buildingApiService.updateBuilding(building: updatedBuilding, id: buildingId!).then((_) {
-                                                                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("updated successfully")));
+                                                                                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("updated successfully")));
                                                                                       setState(() {
                                                                                         loading = false;
                                                                                         _fetchBuildingData();
@@ -490,7 +490,7 @@ class _BuildingPageState extends State<BuildingPage> {
                                                                       .of(
                                                                           context)
                                                                   .showSnackBar(
-                                                                      SnackBar(
+                                                                      const SnackBar(
                                                                           content:
                                                                               Text("deleted successfully")));
                                                               setState(() {

@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:rent_management/models/building_model.dart';
 import 'package:rent_management/models/user_model.dart';
-import 'package:rent_management/screens/building_page.dart';
-import 'package:rent_management/screens/dashboard_page.dart';
 import 'package:rent_management/screens/login_screen.dart';
 import 'package:rent_management/services/building_service.dart';
 
@@ -90,7 +87,7 @@ class _BuildingDataPageState extends State<BuildingDataPage> {
               ),
             ),
           ),
-          Center(
+          const Center(
               child: SizedBox(
             height: 50,
             width: 50,
@@ -104,7 +101,7 @@ class _BuildingDataPageState extends State<BuildingDataPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     isLoading == true
-                        ? Center(child: CircularProgressIndicator())
+                        ? const Center(child: CircularProgressIndicator())
                         : ElevatedButton(
                             onPressed: () async {
                               setState(() {
@@ -130,7 +127,7 @@ class _BuildingDataPageState extends State<BuildingDataPage> {
                                   // widget.refresh();
                                   // Get.back();
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
+                                      const SnackBar(
                                           content: Text(
                                               "building saved successfully")));
                                   Navigator.of(context).pop();
@@ -139,7 +136,7 @@ class _BuildingDataPageState extends State<BuildingDataPage> {
                                 });
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
+                                    const SnackBar(
                                         content: Text(
                                             "please provide all information")));
                               }

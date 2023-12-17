@@ -1,7 +1,5 @@
 import 'dart:convert';
-import 'package:data_connection_checker_nulls/data_connection_checker_nulls.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 
 import 'package:rent_management/models/user_model.dart';
 import 'package:rent_management/screens/dashboard_page.dart';
@@ -103,15 +101,15 @@ class _ChooseScreenState extends State<ChooseScreen> {
       future: authStateManager.getIsLoggedIn(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
           isLoggedIn = snapshot.data ?? false;
           if (isLoggedIn) {
-            return Dashboard();
+            return const Dashboard();
           } else {
-            return LoginAndRegisterScreen();
+            return const LoginAndRegisterScreen();
           }
         }
       },
@@ -150,28 +148,28 @@ class _LoginAndRegisterScreenState extends State<LoginAndRegisterScreen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Login'),
-        backgroundColor: Color.fromARGB(255, 0, 179, 206),
+        title: const Text('Login'),
+        backgroundColor: const Color.fromARGB(255, 0, 179, 206),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 50, vertical: 100),
+        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 100),
         child: Column(
           children: [
             inputField('email'),
             inputField('password'),
-            !loginScreenVisible ? SizedBox() : forgotPassword(),
+            !loginScreenVisible ? const SizedBox() : forgotPassword(),
             loginRegisterButton(context),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Text("New user?"),
+                const Text("New user?"),
                 TextButton(
                     onPressed: () {
                       Navigator.of(context).pushReplacement(MaterialPageRoute(
-                        builder: (context) => SignUp(),
+                        builder: (context) => const SignUp(),
                       ));
                     },
-                    child: Text("Sign Up"))
+                    child: const Text("Sign Up"))
               ],
             ),
           ],
@@ -182,7 +180,7 @@ class _LoginAndRegisterScreenState extends State<LoginAndRegisterScreen> {
 
   Widget inputField(fieldType) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.only(bottom: 10),
       child: TextField(
         onChanged: (value) {
           setState(() {
@@ -196,9 +194,9 @@ class _LoginAndRegisterScreenState extends State<LoginAndRegisterScreen> {
         },
         cursorColor: const Color.fromARGB(255, 144, 144, 144),
         decoration: InputDecoration(
-            focusedBorder: UnderlineInputBorder(
+            focusedBorder: const UnderlineInputBorder(
                 borderSide: BorderSide(
-                    color: const Color.fromARGB(255, 121, 121, 121))),
+                    color: Color.fromARGB(255, 121, 121, 121))),
             hintText:
                 fieldType == 'email' ? 'Enter email...' : 'Enter password...',
             hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14)),
@@ -208,7 +206,7 @@ class _LoginAndRegisterScreenState extends State<LoginAndRegisterScreen> {
 
   /// Forgot password ///
   Widget forgotPassword() {
-    return Align(
+    return const Align(
         alignment: Alignment.centerRight,
         child: Text(
           'Contact Your Admin If You Forgot Password',
@@ -220,7 +218,7 @@ class _LoginAndRegisterScreenState extends State<LoginAndRegisterScreen> {
   /// Login  Button
   Widget loginRegisterButton(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(top: 31, bottom: 21),
+      padding: const EdgeInsets.only(top: 31, bottom: 21),
       child: MaterialButton(
           onPressed: email.isEmpty || password.isEmpty
               ? null
@@ -239,7 +237,7 @@ class _LoginAndRegisterScreenState extends State<LoginAndRegisterScreen> {
                           print(loggedInUser.name);
                           Navigator.of(context)
                               .pushReplacement(MaterialPageRoute(
-                            builder: (context) => Dashboard(),
+                            builder: (context) => const Dashboard(),
                           ));
                         });
                       }
@@ -247,7 +245,7 @@ class _LoginAndRegisterScreenState extends State<LoginAndRegisterScreen> {
                       print(loggedInUser.email);
                     } catch (e) {
                       if (userApiService.isLoggedIn == false) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                             content: Text('Invalid email or password')));
                       }
                     }
@@ -256,20 +254,20 @@ class _LoginAndRegisterScreenState extends State<LoginAndRegisterScreen> {
                     });
                   }
                 },
-          padding: EdgeInsets.symmetric(vertical: 13),
+          padding: const EdgeInsets.symmetric(vertical: 13),
           minWidth: double.infinity,
-          color: Color.fromARGB(255, 11, 172, 197),
+          color: const Color.fromARGB(255, 11, 172, 197),
           disabledColor: Colors.grey.shade300,
           textColor: Colors.white,
           child: showLoading
-              ? SizedBox(
+              ? const SizedBox(
                   height: 20,
                   width: 20,
                   child: CircularProgressIndicator(
                     color: Colors.white,
                   ),
                 )
-              : Text('Login')),
+              : const Text('Login')),
     );
   }
 }
@@ -307,15 +305,15 @@ class _SignUpState extends State<SignUp> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Signup'),
-        backgroundColor: Color.fromARGB(255, 0, 179, 206),
+        title: const Text('Signup'),
+        backgroundColor: const Color.fromARGB(255, 0, 179, 206),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 50, vertical: 100),
+        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 100),
         child: Column(
           children: [
-            Text("Create New User"),
-            SizedBox(
+            const Text("Create New User"),
+            const SizedBox(
               height: 20,
             ),
             inputField('name'),
@@ -327,14 +325,14 @@ class _SignUpState extends State<SignUp> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Text("Already registered?"),
+                const Text("Already registered?"),
                 TextButton(
                     onPressed: () {
                       Navigator.of(context).pushReplacement(MaterialPageRoute(
-                        builder: (context) => LoginAndRegisterScreen(),
+                        builder: (context) => const LoginAndRegisterScreen(),
                       ));
                     },
-                    child: Text("Login"))
+                    child: const Text("Login"))
               ],
             ),
           ],
@@ -365,7 +363,7 @@ class _SignUpState extends State<SignUp> {
     }
 
     return Padding(
-      padding: EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.only(bottom: 10),
       child: TextField(
         onChanged: (value) {
           setState(() {
@@ -389,9 +387,9 @@ class _SignUpState extends State<SignUp> {
         cursorColor: const Color.fromARGB(255, 144, 144, 144),
         decoration: InputDecoration(
             semanticCounterText: "*",
-            focusedBorder: UnderlineInputBorder(
+            focusedBorder: const UnderlineInputBorder(
                 borderSide: BorderSide(
-                    color: const Color.fromARGB(255, 121, 121, 121))),
+                    color: Color.fromARGB(255, 121, 121, 121))),
             hintText: hintText(),
             hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14)),
       ),
@@ -400,7 +398,7 @@ class _SignUpState extends State<SignUp> {
 
   Widget signUpButton(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(top: 31, bottom: 21),
+      padding: const EdgeInsets.only(top: 31, bottom: 21),
       child: MaterialButton(
           onPressed: email.isEmpty || password.isEmpty
               ? null
@@ -410,7 +408,7 @@ class _SignUpState extends State<SignUp> {
 
                   if (password != confirmPassword) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('confirm password mismatch')));
+                        const SnackBar(content: Text('confirm password mismatch')));
                     setState(() {
                       showLoading = false;
                     });
@@ -447,7 +445,7 @@ class _SignUpState extends State<SignUp> {
                             .then((_) {
                           Navigator.of(context)
                               .pushReplacement(MaterialPageRoute(
-                            builder: (context) => LoginAndRegisterScreen(),
+                            builder: (context) => const LoginAndRegisterScreen(),
                           ));
                         });
 
@@ -469,20 +467,20 @@ class _SignUpState extends State<SignUp> {
                     }
                   }
                 },
-          padding: EdgeInsets.symmetric(vertical: 13),
+          padding: const EdgeInsets.symmetric(vertical: 13),
           minWidth: double.infinity,
-          color: Color.fromARGB(255, 11, 172, 197),
+          color: const Color.fromARGB(255, 11, 172, 197),
           disabledColor: Colors.grey.shade300,
           textColor: Colors.white,
           child: showLoading
-              ? SizedBox(
+              ? const SizedBox(
                   height: 20,
                   width: 20,
                   child: CircularProgressIndicator(
                     color: Colors.white,
                   ),
                 )
-              : Text('Sign Up')),
+              : const Text('Sign Up')),
     );
   }
 }

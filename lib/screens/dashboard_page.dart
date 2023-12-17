@@ -2,7 +2,6 @@ import 'package:bottom_nav_bar/bottom_nav_bar.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:rent_management/insert_data/building.dart';
 import 'package:rent_management/models/user_model.dart';
 import 'package:rent_management/screens/building_page.dart';
 import 'package:rent_management/screens/count_page.dart';
@@ -60,8 +59,8 @@ class _DashboardState extends State<Dashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Rent Managemet"),
-        backgroundColor: Color.fromARGB(255, 0, 179, 206),
+        title: const Text("Rent Managemet"),
+        backgroundColor: const Color.fromARGB(255, 0, 179, 206),
       ),
       key: _scaffoldKey,
       body: SizedBox.expand(
@@ -80,14 +79,14 @@ class _DashboardState extends State<Dashboard> {
               width: MediaQuery.sizeOf(context).width * 1,
               height: MediaQuery.sizeOf(context).height * 0.15,
               decoration:
-                  BoxDecoration(color: Color.fromARGB(255, 218, 218, 218)),
+                  const BoxDecoration(color: Color.fromARGB(255, 218, 218, 218)),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       FutureBuilder<UserModel?>(
@@ -95,7 +94,7 @@ class _DashboardState extends State<Dashboard> {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return CircularProgressIndicator();
+                            return const CircularProgressIndicator();
                           } else if (snapshot.hasError) {
                             return Text("Error: ${snapshot.error}");
                           } else if (snapshot.hasData) {
@@ -104,13 +103,13 @@ class _DashboardState extends State<Dashboard> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                SizedBox(
+                                const SizedBox(
                                   height: 20,
                                 ),
                                 Center(
                                   child: Text(
                                     "Hi! ${loggedInUser!.name}",
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontWeight: FontWeight.w700,
                                       color: Color.fromARGB(255, 152, 152, 152),
                                     ),
@@ -121,7 +120,7 @@ class _DashboardState extends State<Dashboard> {
                                   child: Center(
                                     child: Text(
                                       "${loggedInUser.email}",
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         color:
                                             Color.fromARGB(255, 152, 152, 152),
                                       ),
@@ -131,14 +130,14 @@ class _DashboardState extends State<Dashboard> {
                               ],
                             );
                           } else {
-                            return Text("No user data available.");
+                            return const Text("No user data available.");
                           }
                         },
                       ),
                     ]),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Padding(
@@ -149,8 +148,8 @@ class _DashboardState extends State<Dashboard> {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => BuildingPage()));
                   },
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                  child: const Padding(
+                    padding: EdgeInsets.all(8.0),
                     child: Row(children: [
                       Icon(
                         Icons.apartment,
@@ -178,10 +177,10 @@ class _DashboardState extends State<Dashboard> {
                     _closeDrawer();
                     // Navigator.of(context).push(MaterialPageRoute(
                     //     builder: (context) => BuildingPage()));
-                    Get.to(PrintRent());
+                    Get.to(const PrintRent());
                   },
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                  child: const Padding(
+                    padding: EdgeInsets.all(8.0),
                     child: Row(children: [
                       Icon(
                         Icons.print,
@@ -202,12 +201,12 @@ class _DashboardState extends State<Dashboard> {
                     ]),
                   )),
             ),
-            Spacer(),
+            const Spacer(),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
                   child: Text(
                     "You are done!",
                     style: TextStyle(
@@ -215,11 +214,11 @@ class _DashboardState extends State<Dashboard> {
                         color: Color.fromARGB(255, 152, 152, 152)),
                   ),
                 ),
-                Spacer(),
+                const Spacer(),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
-                    style: ButtonStyle(
+                    style: const ButtonStyle(
                         backgroundColor: MaterialStatePropertyAll(
                             Color.fromARGB(255, 90, 215, 232))),
                     onPressed: () async {
@@ -227,11 +226,11 @@ class _DashboardState extends State<Dashboard> {
                       await authStateManager.removeBuildingName();
                       await authStateManager.removeLoggedInUser().then((_) {
                         Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => ChooseScreen(),
+                          builder: (context) => const ChooseScreen(),
                         ));
                       });
                     },
-                    child: Row(
+                    child: const Row(
                       children: [
                         Icon(Icons.logout),
                         SizedBox(width: 8),
@@ -255,10 +254,10 @@ class _DashboardState extends State<Dashboard> {
           index: _currentIndex,
           children: <Widget>[
             CountPage(),
-            FloorPage(),
-            TenentPage(),
-            FlatPage(),
-            MonthlyRent(),
+            const FloorPage(),
+            const TenentPage(),
+            const FlatPage(),
+            const MonthlyRent(),
           ],
         ),
       );

@@ -14,7 +14,6 @@ import 'package:rent_management/shared_data/floor_data.dart';
 import 'package:rent_management/shared_data/tenent_data.dart';
 
 import '../insert_data/flat.dart';
-import '../shared_data/flat_data.dart';
 
 class FlatPage extends StatefulWidget {
   const FlatPage({Key? key}) : super(key: key);
@@ -85,10 +84,10 @@ class _FlatPageState extends State<FlatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(color: const Color.fromARGB(255, 49, 49, 49)),
+        iconTheme: const IconThemeData(color: Color.fromARGB(255, 49, 49, 49)),
         backgroundColor: Colors.white,
         elevation: 0,
-        title: Center(
+        title: const Center(
             child: Text(
           "Flats",
           style: TextStyle(color: Colors.black),
@@ -128,7 +127,7 @@ class _FlatPageState extends State<FlatPage> {
                             getLocalInfo();
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
-                              return Center(child: CircularProgressIndicator());
+                              return const Center(child: CircularProgressIndicator());
                             } else if (snapshot.hasData &&
                                 snapshot.data != null &&
                                 snapshot.data!.isNotEmpty) {
@@ -401,525 +400,502 @@ class _FlatPageState extends State<FlatPage> {
                                                       builder: (BuildContext
                                                           context) {
                                                         return SingleChildScrollView(
-                                                          child: Container(
-                                                            height: 900,
-                                                            color: const Color
-                                                                .fromARGB(255,
-                                                                255, 255, 255),
-                                                            child: Center(
-                                                              child: Column(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .start,
-                                                                children: <Widget>[
-                                                                  const Padding(
-                                                                    padding:
-                                                                        EdgeInsets.all(
-                                                                            20.0),
-                                                                    child: Text(
-                                                                        'Update Your Information'),
-                                                                  ),
-                                                                  Padding(
-                                                                    padding:
-                                                                        const EdgeInsets
-                                                                            .all(
-                                                                            14.0),
-                                                                    child:
-                                                                        Column(
-                                                                      children: [
-                                                                        Row(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.spaceBetween,
-                                                                          children: [
-                                                                            const SizedBox(
-                                                                              child: Text(
-                                                                                'Flat Name',
-                                                                                style: TextStyle(
-                                                                                  fontSize: 16,
-                                                                                  color: Color.fromARGB(255, 78, 78, 78),
-                                                                                  fontStyle: FontStyle.normal,
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                            const SizedBox(height: 8),
-                                                                            SizedBox(
-                                                                              width: 250,
-                                                                              height: 50,
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsets.all(8.0),
-                                                                                child: TextFormField(
-                                                                                  keyboardType: TextInputType.name,
-                                                                                  controller: _newFlatNameController,
-                                                                                  decoration: InputDecoration(
-                                                                                    border: OutlineInputBorder(
-                                                                                      borderRadius: BorderRadius.circular(10),
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                        SizedBox(
-                                                                            height:
-                                                                                10),
-                                                                        SizedBox(
-                                                                          height:
-                                                                              60,
-                                                                          child:
-                                                                              Consumer<FloorData>(
-                                                                            builder: (context,
-                                                                                floorData,
-                                                                                child) {
-                                                                              getLocalInfo();
-                                                                              floorData.getFloorList();
-                                                                              selectedFloorId = flat.floorId;
-                                                                              List<FloorModel> floorList = floorData.floorList.where((e) => e.buildingId == buildingId).toList();
-
-                                                                              return DropdownButtonFormField<int>(
-                                                                                isExpanded: true,
-                                                                                decoration: InputDecoration(
-                                                                                  labelText: 'Floor',
-                                                                                  border: OutlineInputBorder(
-                                                                                    borderRadius: BorderRadius.circular(10),
-                                                                                  ),
-                                                                                ),
-                                                                                disabledHint: const Text('Add Floor First'),
-                                                                                value: selectedFloorId,
-                                                                                onChanged: (int? value) {
-                                                                                  setState(() {
-                                                                                    selectedFloorId = value!;
-                                                                                    // selectedFloorName = floorList
-                                                                                    //     .firstWhere((floor) => floor.id == selectedFloorId)
-                                                                                    //     .name;
-                                                                                  });
-                                                                                },
-                                                                                items: floorList.map<DropdownMenuItem<int>>((FloorModel floor) {
-                                                                                  return DropdownMenuItem<int>(
-                                                                                    value: floor.id,
-                                                                                    child: Text(floor.name!),
-                                                                                  );
-                                                                                }).toList(),
-                                                                              );
-                                                                            },
-                                                                          ),
-                                                                        ),
-                                                                        SizedBox(
-                                                                            height:
-                                                                                10),
-                                                                        SizedBox(
-                                                                          height:
-                                                                              60,
-                                                                          child:
-                                                                              Consumer<TenantData>(
-                                                                            builder: (context,
-                                                                                tenant,
-                                                                                child) {
-                                                                              getLocalInfo();
-                                                                              selectedTenantId = flat.tenantId;
-                                                                              List<TenantModel> tenantList = tenant.tenantListCache.where((element) => element.buildingId == buildingId).toList();
-                                                                              return DropdownButtonFormField<int>(
-                                                                                isExpanded: true,
-                                                                                decoration: InputDecoration(
-                                                                                  labelText: 'Tenant',
-                                                                                  border: OutlineInputBorder(
-                                                                                    borderRadius: BorderRadius.circular(10),
-                                                                                  ),
-                                                                                ),
-                                                                                disabledHint: const Text('Add Tenant First'),
-                                                                                value: selectedTenantId,
-                                                                                onChanged: (int? value) {
-                                                                                  setState(() {
-                                                                                    selectedTenantId = value!;
-                                                                                    // selectedFloorName = floorList
-                                                                                    //     .firstWhere((floor) => floor.id == selectedFloorId)
-                                                                                    //     .name;
-                                                                                  });
-                                                                                },
-                                                                                items: tenantList.map<DropdownMenuItem<int>>((TenantModel tenant) {
-                                                                                  return DropdownMenuItem<int>(
-                                                                                    value: tenant.id,
-                                                                                    child: Text(tenant.name!),
-                                                                                  );
-                                                                                }).toList(),
-                                                                              );
-                                                                            },
-                                                                          ),
-                                                                        ),
-                                                                        Row(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.spaceBetween,
-                                                                          children: [
-                                                                            const SizedBox(
-                                                                              child: Text(
-                                                                                'No. Of Master \nBedroom',
-                                                                                style: TextStyle(
-                                                                                  fontSize: 16,
-                                                                                  color: Color.fromARGB(255, 78, 78, 78),
-                                                                                  fontStyle: FontStyle.normal,
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                            SizedBox(
-                                                                              width: 250,
-                                                                              height: 50,
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsets.all(8.0),
-                                                                                child: TextFormField(
-                                                                                  keyboardType: TextInputType.number,
-                                                                                  controller: _newNoOfMasterbedRoomController,
-                                                                                  decoration: InputDecoration(
-                                                                                    border: OutlineInputBorder(
-                                                                                      borderRadius: BorderRadius.circular(10),
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                        Row(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.spaceBetween,
-                                                                          children: [
-                                                                            const SizedBox(
-                                                                              child: Text(
-                                                                                'No. Of \nBedroom',
-                                                                                style: TextStyle(
-                                                                                  fontSize: 16,
-                                                                                  color: Color.fromARGB(255, 78, 78, 78),
-                                                                                  fontStyle: FontStyle.normal,
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                            SizedBox(
-                                                                              width: 250,
-                                                                              height: 50,
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsets.all(8.0),
-                                                                                child: TextFormField(
-                                                                                  keyboardType: TextInputType.number,
-                                                                                  controller: _newNoOfBedroomController,
-                                                                                  decoration: InputDecoration(
-                                                                                    border: OutlineInputBorder(
-                                                                                      borderRadius: BorderRadius.circular(10),
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                        Row(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.spaceBetween,
-                                                                          children: [
-                                                                            const SizedBox(
-                                                                              child: Text(
-                                                                                'No. Of \nWashroom',
-                                                                                style: TextStyle(
-                                                                                  fontSize: 16,
-                                                                                  color: Color.fromARGB(255, 78, 78, 78),
-                                                                                  fontStyle: FontStyle.normal,
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                            SizedBox(
-                                                                              width: 250,
-                                                                              height: 50,
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsets.all(8.0),
-                                                                                child: TextFormField(
-                                                                                  keyboardType: TextInputType.number,
-                                                                                  controller: _newNoOfWashroomController,
-                                                                                  decoration: InputDecoration(
-                                                                                    border: OutlineInputBorder(
-                                                                                      borderRadius: BorderRadius.circular(10),
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                        Row(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.spaceBetween,
-                                                                          children: [
-                                                                            const SizedBox(
-                                                                              child: Text(
-                                                                                'Flat Side',
-                                                                                style: TextStyle(
-                                                                                  fontSize: 16,
-                                                                                  color: Color.fromARGB(255, 78, 78, 78),
-                                                                                  fontStyle: FontStyle.normal,
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                            SizedBox(
-                                                                              width: 250,
-                                                                              height: 50,
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsets.all(8.0),
-                                                                                child: TextFormField(
-                                                                                  keyboardType: TextInputType.name,
-                                                                                  controller: _newFlatSideController,
-                                                                                  decoration: InputDecoration(
-                                                                                    border: OutlineInputBorder(
-                                                                                      borderRadius: BorderRadius.circular(10),
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                        Row(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.spaceBetween,
-                                                                          children: [
-                                                                            const SizedBox(
-                                                                              child: Text(
-                                                                                'Flat Size',
-                                                                                style: TextStyle(
-                                                                                  fontSize: 16,
-                                                                                  color: Color.fromARGB(255, 78, 78, 78),
-                                                                                  fontStyle: FontStyle.normal,
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                            SizedBox(
-                                                                              width: 250,
-                                                                              height: 50,
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsets.all(8.0),
-                                                                                child: TextFormField(
-                                                                                  keyboardType: TextInputType.number,
-                                                                                  controller: _newFlatSizeController,
-                                                                                  decoration: InputDecoration(
-                                                                                    border: OutlineInputBorder(
-                                                                                      borderRadius: BorderRadius.circular(10),
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                        Row(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.spaceBetween,
-                                                                          children: [
-                                                                            const SizedBox(
-                                                                              child: Text(
-                                                                                'Rent Amount',
-                                                                                style: TextStyle(
-                                                                                  fontSize: 16,
-                                                                                  color: Color.fromARGB(255, 78, 78, 78),
-                                                                                  fontStyle: FontStyle.normal,
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                            SizedBox(
-                                                                              width: 250,
-                                                                              height: 50,
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsets.all(8.0),
-                                                                                child: TextFormField(
-                                                                                  keyboardType: TextInputType.number,
-                                                                                  controller: _rentAmountController,
-                                                                                  decoration: InputDecoration(
-                                                                                    border: OutlineInputBorder(
-                                                                                      borderRadius: BorderRadius.circular(10),
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                        Row(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.spaceBetween,
-                                                                          children: [
-                                                                            const SizedBox(
-                                                                              child: Text(
-                                                                                'Water Bill',
-                                                                                style: TextStyle(
-                                                                                  fontSize: 16,
-                                                                                  color: Color.fromARGB(255, 78, 78, 78),
-                                                                                  fontStyle: FontStyle.normal,
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                            SizedBox(
-                                                                              width: 250,
-                                                                              height: 50,
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsets.all(8.0),
-                                                                                child: TextFormField(
-                                                                                  keyboardType: TextInputType.number,
-                                                                                  controller: _waterBillController,
-                                                                                  decoration: InputDecoration(
-                                                                                    border: OutlineInputBorder(
-                                                                                      borderRadius: BorderRadius.circular(10),
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                        Row(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.spaceBetween,
-                                                                          children: [
-                                                                            const SizedBox(
-                                                                              child: Text(
-                                                                                'Gas Bill',
-                                                                                style: TextStyle(
-                                                                                  fontSize: 16,
-                                                                                  color: Color.fromARGB(255, 78, 78, 78),
-                                                                                  fontStyle: FontStyle.normal,
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                            SizedBox(
-                                                                              width: 250,
-                                                                              height: 50,
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsets.all(8.0),
-                                                                                child: TextFormField(
-                                                                                  keyboardType: TextInputType.number,
-                                                                                  controller: _gasBillController,
-                                                                                  decoration: InputDecoration(
-                                                                                    border: OutlineInputBorder(
-                                                                                      borderRadius: BorderRadius.circular(10),
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                        Row(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.spaceBetween,
-                                                                          children: [
-                                                                            const SizedBox(
-                                                                              child: Text(
-                                                                                'Service Charge',
-                                                                                style: TextStyle(
-                                                                                  fontSize: 16,
-                                                                                  color: Color.fromARGB(255, 78, 78, 78),
-                                                                                  fontStyle: FontStyle.normal,
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                            SizedBox(
-                                                                              width: 250,
-                                                                              height: 50,
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsets.all(8.0),
-                                                                                child: TextFormField(
-                                                                                  keyboardType: TextInputType.number,
-                                                                                  controller: _serviceChargeController,
-                                                                                  decoration: InputDecoration(
-                                                                                    border: OutlineInputBorder(
-                                                                                      borderRadius: BorderRadius.circular(10),
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ],
+                                                          child:
+                                                              StatefulBuilder(
+                                                            builder: (context,
+                                                                    setState) =>
+                                                                Container(
+                                                              height: 900,
+                                                              color: const Color
+                                                                  .fromARGB(
+                                                                  255,
+                                                                  255,
+                                                                  255,
+                                                                  255),
+                                                              child: Center(
+                                                                child: Column(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .start,
+                                                                  children: <Widget>[
+                                                                    const Padding(
+                                                                      padding:
+                                                                          EdgeInsets.all(
+                                                                              20.0),
+                                                                      child: Text(
+                                                                          'Update Your Information'),
                                                                     ),
-                                                                  ),
-                                                                  Padding(
-                                                                    padding:
-                                                                        const EdgeInsets
-                                                                            .all(
-                                                                            8.0),
-                                                                    child: Row(
-                                                                      mainAxisAlignment:
-                                                                          MainAxisAlignment
-                                                                              .end,
-                                                                      children: [
-                                                                        ElevatedButton(
-                                                                          child:
-                                                                              const Text('update'),
-                                                                          onPressed:
-                                                                              () async {
-                                                                            getLocalInfo();
+                                                                    Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .all(
+                                                                          14.0),
+                                                                      child:
+                                                                          Column(
+                                                                        children: [
+                                                                          Row(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.spaceBetween,
+                                                                            children: [
+                                                                              const SizedBox(
+                                                                                child: Text(
+                                                                                  'Flat Name',
+                                                                                  style: TextStyle(
+                                                                                    fontSize: 16,
+                                                                                    color: Color.fromARGB(255, 78, 78, 78),
+                                                                                    fontStyle: FontStyle.normal,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                              const SizedBox(height: 8),
+                                                                              SizedBox(
+                                                                                width: 250,
+                                                                                height: 50,
+                                                                                child: Padding(
+                                                                                  padding: const EdgeInsets.all(8.0),
+                                                                                  child: TextFormField(
+                                                                                    keyboardType: TextInputType.name,
+                                                                                    controller: _newFlatNameController,
+                                                                                    decoration: InputDecoration(
+                                                                                      border: OutlineInputBorder(
+                                                                                        borderRadius: BorderRadius.circular(10),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                          const SizedBox(
+                                                                              height: 10),
+                                                                          SizedBox(
+                                                                            height:
+                                                                                60,
+                                                                            child:
+                                                                                Consumer<FloorData>(
+                                                                              builder: (context, floorData, child) {
+                                                                                getLocalInfo();
+                                                                                floorData.getFloorList();
+                                                                                selectedFloorId = flat.floorId;
+                                                                                List<FloorModel> floorList = floorData.floorList.where((e) => e.buildingId == buildingId).toList();
 
-                                                                            int?
-                                                                                flatId =
-                                                                                flat.id;
-
-                                                                            String
-                                                                                updatedflatName =
-                                                                                _newFlatNameController.text;
-                                                                            int updatedNoOfMasterBedroom =
-                                                                                int.parse(_newNoOfMasterbedRoomController.text);
-
-                                                                            int updatedNoOfBedroom =
-                                                                                int.parse(_newNoOfBedroomController.text);
-
-                                                                            int updatedNoOfWashroom =
-                                                                                int.parse(_newNoOfWashroomController.text);
-
-                                                                            String
-                                                                                updatedFlatSide =
-                                                                                _newFlatSideController.text;
-
-                                                                            int updatedFlatSize =
-                                                                                int.parse(_newFlatSizeController.text);
-
-                                                                            FlatModel updatedFlat = FlatModel(
-                                                                                id: flat.id,
-                                                                                name: updatedflatName,
-                                                                                masterbedRoom: updatedNoOfMasterBedroom,
-                                                                                bedroom: updatedNoOfBedroom,
-                                                                                washroom: updatedNoOfWashroom,
-                                                                                flatSide: updatedFlatSide,
-                                                                                flatSize: updatedFlatSize,
-                                                                                floorId: flat.floorId,
-                                                                                buildingId: flat.buildingId,
-                                                                                isActive: isActive,
-                                                                                tenantId: selectedTenantId ?? flat.tenantId,
-                                                                                userId: flat.userId,
-                                                                                gasBill: int.parse(_gasBillController.text),
-                                                                                rentAmount: int.parse(_rentAmountController.text),
-                                                                                serviceCharge: int.parse(_serviceChargeController.text),
-                                                                                waterBill: int.parse(_waterBillController.text));
-                                                                            await flatApiService.updateFlat(
-                                                                                flat: updatedFlat,
-                                                                                id: flatId!);
-                                                                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("updated successfully")));
-
-                                                                            setState(() {
-                                                                              _fetchData();
-
-                                                                              Navigator.pop(context);
-                                                                            });
-                                                                          },
-                                                                        ),
-                                                                        const SizedBox(
-                                                                          width:
-                                                                              20,
-                                                                        ),
-                                                                        ElevatedButton(
-                                                                          child:
-                                                                              const Text('Cancel'),
-                                                                          onPressed: () =>
-                                                                              Navigator.pop(context),
-                                                                        ),
-                                                                      ],
+                                                                                return DropdownButtonFormField<int>(
+                                                                                  isExpanded: true,
+                                                                                  decoration: InputDecoration(
+                                                                                    labelText: 'Floor',
+                                                                                    border: OutlineInputBorder(
+                                                                                      borderRadius: BorderRadius.circular(10),
+                                                                                    ),
+                                                                                  ),
+                                                                                  disabledHint: const Text('Add Floor First'),
+                                                                                  value: selectedFloorId,
+                                                                                  onChanged: (int? value) {
+                                                                                    setState(() {
+                                                                                      selectedFloorId = value!;
+                                                                                      // selectedFloorName = floorList
+                                                                                      //     .firstWhere((floor) => floor.id == selectedFloorId)
+                                                                                      //     .name;
+                                                                                    });
+                                                                                  },
+                                                                                  items: floorList.map<DropdownMenuItem<int>>((FloorModel floor) {
+                                                                                    return DropdownMenuItem<int>(
+                                                                                      value: floor.id,
+                                                                                      child: Text(floor.name!),
+                                                                                    );
+                                                                                  }).toList(),
+                                                                                );
+                                                                              },
+                                                                            ),
+                                                                          ),
+                                                                          const SizedBox(
+                                                                              height: 10),
+                                                                          SizedBox(
+                                                                            height:
+                                                                                60,
+                                                                            child:
+                                                                                Consumer<TenantData>(
+                                                                              builder: (context, tenant, child) {
+                                                                                getLocalInfo();
+                                                                                selectedTenantId = flat.tenantId;
+                                                                                tenant.returnTenantList();
+                                                                                List<TenantModel> tenantList = tenant.tenantList.where((element) => element.buildingId == buildingId).toList();
+                                                                                return DropdownButtonFormField<int>(
+                                                                                  isExpanded: true,
+                                                                                  decoration: InputDecoration(
+                                                                                    labelText: 'Tenant',
+                                                                                    border: OutlineInputBorder(
+                                                                                      borderRadius: BorderRadius.circular(10),
+                                                                                    ),
+                                                                                  ),
+                                                                                  disabledHint: const Text('Add Tenant First'),
+                                                                                  value: selectedTenantId,
+                                                                                  onChanged: (int? value) {
+                                                                                    setState(() {
+                                                                                      selectedTenantId = value!;
+                                                                                      // selectedFloorName = floorList
+                                                                                      //     .firstWhere((floor) => floor.id == selectedFloorId)
+                                                                                      //     .name;
+                                                                                    });
+                                                                                  },
+                                                                                  items: tenantList.map<DropdownMenuItem<int>>((TenantModel tenant) {
+                                                                                    return DropdownMenuItem<int>(
+                                                                                      value: tenant.id,
+                                                                                      child: Text(tenant.name!),
+                                                                                    );
+                                                                                  }).toList(),
+                                                                                );
+                                                                              },
+                                                                            ),
+                                                                          ),
+                                                                          Row(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.spaceBetween,
+                                                                            children: [
+                                                                              const SizedBox(
+                                                                                child: Text(
+                                                                                  'No. Of Master \nBedroom',
+                                                                                  style: TextStyle(
+                                                                                    fontSize: 16,
+                                                                                    color: Color.fromARGB(255, 78, 78, 78),
+                                                                                    fontStyle: FontStyle.normal,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                              SizedBox(
+                                                                                width: 250,
+                                                                                height: 50,
+                                                                                child: Padding(
+                                                                                  padding: const EdgeInsets.all(8.0),
+                                                                                  child: TextFormField(
+                                                                                    keyboardType: TextInputType.number,
+                                                                                    controller: _newNoOfMasterbedRoomController,
+                                                                                    decoration: InputDecoration(
+                                                                                      border: OutlineInputBorder(
+                                                                                        borderRadius: BorderRadius.circular(10),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                          Row(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.spaceBetween,
+                                                                            children: [
+                                                                              const SizedBox(
+                                                                                child: Text(
+                                                                                  'No. Of \nBedroom',
+                                                                                  style: TextStyle(
+                                                                                    fontSize: 16,
+                                                                                    color: Color.fromARGB(255, 78, 78, 78),
+                                                                                    fontStyle: FontStyle.normal,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                              SizedBox(
+                                                                                width: 250,
+                                                                                height: 50,
+                                                                                child: Padding(
+                                                                                  padding: const EdgeInsets.all(8.0),
+                                                                                  child: TextFormField(
+                                                                                    keyboardType: TextInputType.number,
+                                                                                    controller: _newNoOfBedroomController,
+                                                                                    decoration: InputDecoration(
+                                                                                      border: OutlineInputBorder(
+                                                                                        borderRadius: BorderRadius.circular(10),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                          Row(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.spaceBetween,
+                                                                            children: [
+                                                                              const SizedBox(
+                                                                                child: Text(
+                                                                                  'No. Of \nWashroom',
+                                                                                  style: TextStyle(
+                                                                                    fontSize: 16,
+                                                                                    color: Color.fromARGB(255, 78, 78, 78),
+                                                                                    fontStyle: FontStyle.normal,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                              SizedBox(
+                                                                                width: 250,
+                                                                                height: 50,
+                                                                                child: Padding(
+                                                                                  padding: const EdgeInsets.all(8.0),
+                                                                                  child: TextFormField(
+                                                                                    keyboardType: TextInputType.number,
+                                                                                    controller: _newNoOfWashroomController,
+                                                                                    decoration: InputDecoration(
+                                                                                      border: OutlineInputBorder(
+                                                                                        borderRadius: BorderRadius.circular(10),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                          Row(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.spaceBetween,
+                                                                            children: [
+                                                                              const SizedBox(
+                                                                                child: Text(
+                                                                                  'Flat Side',
+                                                                                  style: TextStyle(
+                                                                                    fontSize: 16,
+                                                                                    color: Color.fromARGB(255, 78, 78, 78),
+                                                                                    fontStyle: FontStyle.normal,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                              SizedBox(
+                                                                                width: 250,
+                                                                                height: 50,
+                                                                                child: Padding(
+                                                                                  padding: const EdgeInsets.all(8.0),
+                                                                                  child: TextFormField(
+                                                                                    keyboardType: TextInputType.name,
+                                                                                    controller: _newFlatSideController,
+                                                                                    decoration: InputDecoration(
+                                                                                      border: OutlineInputBorder(
+                                                                                        borderRadius: BorderRadius.circular(10),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                          Row(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.spaceBetween,
+                                                                            children: [
+                                                                              const SizedBox(
+                                                                                child: Text(
+                                                                                  'Flat Size',
+                                                                                  style: TextStyle(
+                                                                                    fontSize: 16,
+                                                                                    color: Color.fromARGB(255, 78, 78, 78),
+                                                                                    fontStyle: FontStyle.normal,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                              SizedBox(
+                                                                                width: 250,
+                                                                                height: 50,
+                                                                                child: Padding(
+                                                                                  padding: const EdgeInsets.all(8.0),
+                                                                                  child: TextFormField(
+                                                                                    keyboardType: TextInputType.number,
+                                                                                    controller: _newFlatSizeController,
+                                                                                    decoration: InputDecoration(
+                                                                                      border: OutlineInputBorder(
+                                                                                        borderRadius: BorderRadius.circular(10),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                          Row(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.spaceBetween,
+                                                                            children: [
+                                                                              const SizedBox(
+                                                                                child: Text(
+                                                                                  'Rent Amount',
+                                                                                  style: TextStyle(
+                                                                                    fontSize: 16,
+                                                                                    color: Color.fromARGB(255, 78, 78, 78),
+                                                                                    fontStyle: FontStyle.normal,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                              SizedBox(
+                                                                                width: 250,
+                                                                                height: 50,
+                                                                                child: Padding(
+                                                                                  padding: const EdgeInsets.all(8.0),
+                                                                                  child: TextFormField(
+                                                                                    keyboardType: TextInputType.number,
+                                                                                    controller: _rentAmountController,
+                                                                                    decoration: InputDecoration(
+                                                                                      border: OutlineInputBorder(
+                                                                                        borderRadius: BorderRadius.circular(10),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                          Row(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.spaceBetween,
+                                                                            children: [
+                                                                              const SizedBox(
+                                                                                child: Text(
+                                                                                  'Water Bill',
+                                                                                  style: TextStyle(
+                                                                                    fontSize: 16,
+                                                                                    color: Color.fromARGB(255, 78, 78, 78),
+                                                                                    fontStyle: FontStyle.normal,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                              SizedBox(
+                                                                                width: 250,
+                                                                                height: 50,
+                                                                                child: Padding(
+                                                                                  padding: const EdgeInsets.all(8.0),
+                                                                                  child: TextFormField(
+                                                                                    keyboardType: TextInputType.number,
+                                                                                    controller: _waterBillController,
+                                                                                    decoration: InputDecoration(
+                                                                                      border: OutlineInputBorder(
+                                                                                        borderRadius: BorderRadius.circular(10),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                          Row(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.spaceBetween,
+                                                                            children: [
+                                                                              const SizedBox(
+                                                                                child: Text(
+                                                                                  'Gas Bill',
+                                                                                  style: TextStyle(
+                                                                                    fontSize: 16,
+                                                                                    color: Color.fromARGB(255, 78, 78, 78),
+                                                                                    fontStyle: FontStyle.normal,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                              SizedBox(
+                                                                                width: 250,
+                                                                                height: 50,
+                                                                                child: Padding(
+                                                                                  padding: const EdgeInsets.all(8.0),
+                                                                                  child: TextFormField(
+                                                                                    keyboardType: TextInputType.number,
+                                                                                    controller: _gasBillController,
+                                                                                    decoration: InputDecoration(
+                                                                                      border: OutlineInputBorder(
+                                                                                        borderRadius: BorderRadius.circular(10),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                          Row(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.spaceBetween,
+                                                                            children: [
+                                                                              const SizedBox(
+                                                                                child: Text(
+                                                                                  'Service Charge',
+                                                                                  style: TextStyle(
+                                                                                    fontSize: 16,
+                                                                                    color: Color.fromARGB(255, 78, 78, 78),
+                                                                                    fontStyle: FontStyle.normal,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                              SizedBox(
+                                                                                width: 250,
+                                                                                height: 50,
+                                                                                child: Padding(
+                                                                                  padding: const EdgeInsets.all(8.0),
+                                                                                  child: TextFormField(
+                                                                                    keyboardType: TextInputType.number,
+                                                                                    controller: _serviceChargeController,
+                                                                                    decoration: InputDecoration(
+                                                                                      border: OutlineInputBorder(
+                                                                                        borderRadius: BorderRadius.circular(10),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ],
+                                                                      ),
                                                                     ),
-                                                                  ),
-                                                                ],
+                                                                    Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .all(
+                                                                          8.0),
+                                                                      child:
+                                                                          Row(
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.end,
+                                                                        children: [
+                                                                          isLoading == false
+                                                                              ? ElevatedButton(
+                                                                                  child: const Text('update'),
+                                                                                  onPressed: () async {
+                                                                                    setState(() {
+                                                                                      isLoading = true;
+                                                                                    });
+                                                                                    getLocalInfo();
+
+                                                                                    int? flatId = flat.id;
+
+                                                                                    String updatedflatName = _newFlatNameController.text;
+                                                                                    int updatedNoOfMasterBedroom = int.parse(_newNoOfMasterbedRoomController.text);
+
+                                                                                    int updatedNoOfBedroom = int.parse(_newNoOfBedroomController.text);
+
+                                                                                    int updatedNoOfWashroom = int.parse(_newNoOfWashroomController.text);
+
+                                                                                    String updatedFlatSide = _newFlatSideController.text;
+
+                                                                                    int updatedFlatSize = int.parse(_newFlatSizeController.text);
+
+                                                                                    FlatModel updatedFlat = FlatModel(id: flat.id, name: updatedflatName, masterbedRoom: updatedNoOfMasterBedroom, bedroom: updatedNoOfBedroom, washroom: updatedNoOfWashroom, flatSide: updatedFlatSide, flatSize: updatedFlatSize, floorId: flat.floorId, buildingId: flat.buildingId, isActive: isActive, tenantId: selectedTenantId ?? flat.tenantId, userId: flat.userId, gasBill: int.parse(_gasBillController.text), rentAmount: int.parse(_rentAmountController.text), serviceCharge: int.parse(_serviceChargeController.text), waterBill: int.parse(_waterBillController.text));
+                                                                                    await flatApiService.updateFlat(flat: updatedFlat, id: flatId!);
+                                                                                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("updated successfully")));
+
+                                                                                    setState(() {
+                                                                                      isLoading = false;
+                                                                                      _fetchData();
+
+                                                                                      Navigator.pop(context);
+                                                                                    });
+                                                                                  },
+                                                                                )
+                                                                              : const CircularProgressIndicator(),
+                                                                          const SizedBox(
+                                                                            width:
+                                                                                20,
+                                                                          ),
+                                                                          ElevatedButton(
+                                                                            child:
+                                                                                const Text('Cancel'),
+                                                                            onPressed: () =>
+                                                                                Navigator.pop(context),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
                                                               ),
                                                             ),
                                                           ),
@@ -949,7 +925,7 @@ class _FlatPageState extends State<FlatPage> {
                                                         .deleteFlat(id!);
                                                     ScaffoldMessenger.of(
                                                             context)
-                                                        .showSnackBar(SnackBar(
+                                                        .showSnackBar(const SnackBar(
                                                             content: Text(
                                                                 "deleted successfully")));
                                                     setState(() {

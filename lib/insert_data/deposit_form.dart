@@ -8,7 +8,6 @@ import 'package:rent_management/models/flat_model.dart';
 import 'package:rent_management/models/rent_model.dart';
 import 'package:rent_management/models/tenant_model.dart';
 import 'package:rent_management/models/user_model.dart';
-import 'package:rent_management/screens/all_rent.dart';
 import 'package:rent_management/screens/dashboard_page.dart';
 import 'package:rent_management/screens/login_screen.dart';
 import 'package:rent_management/services/deposite_service.dart';
@@ -218,12 +217,12 @@ class _DepositDataPageState extends State<DepositDataPage> {
                               );
                             },
                           ),
-                          SizedBox(height: 16),
+                          const SizedBox(height: 16),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               isLoading == true
-                                  ? Center(child: CircularProgressIndicator())
+                                  ? const Center(child: CircularProgressIndicator())
                                   : ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.teal,
@@ -316,16 +315,16 @@ class _DepositDataPageState extends State<DepositDataPage> {
                                             setState(() {
                                               _fetchDeposite();
                                             }),
-                                            Get.offAll(() => Dashboard()),
+                                            Get.offAll(() => const Dashboard()),
                                             ScaffoldMessenger.of(context)
-                                                .showSnackBar(SnackBar(
+                                                .showSnackBar(const SnackBar(
                                                     content: Text(
                                                         "saved successfully")))
                                           }
                                         else
                                           {
                                             ScaffoldMessenger.of(context)
-                                                .showSnackBar(SnackBar(
+                                                .showSnackBar(const SnackBar(
                                                     content: Text(
                                                         "provide deposit amount")))
                                           },

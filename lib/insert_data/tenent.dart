@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:image/image.dart' as img;
 import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -282,7 +281,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
                           );
                         },
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       DateTimeField(
@@ -307,7 +306,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
                           );
                         },
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       Center(
@@ -321,15 +320,15 @@ class _TenentDataPageState extends State<TenentDataPage> {
                                 height: 100,
                               )
                             else
-                              Icon(Icons.image, size: 100),
-                            SizedBox(height: 20),
+                              const Icon(Icons.image, size: 100),
+                            const SizedBox(height: 20),
                             TextButton(
                               child: _tenantImage == null
-                                  ? Text(
+                                  ? const Text(
                                       "choose tenant image",
                                       style: TextStyle(fontSize: 20),
                                     )
-                                  : Text(
+                                  : const Text(
                                       "change tenant image",
                                       style: TextStyle(fontSize: 20),
                                     ),
@@ -338,7 +337,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
                           ],
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       Center(
@@ -352,15 +351,15 @@ class _TenentDataPageState extends State<TenentDataPage> {
                                 height: 100,
                               )
                             else
-                              Icon(Icons.image, size: 100),
-                            SizedBox(width: 20),
+                              const Icon(Icons.image, size: 100),
+                            const SizedBox(width: 20),
                             TextButton(
                               child: _nidImage == null
-                                  ? Text(
+                                  ? const Text(
                                       "choose NID image",
                                       style: TextStyle(fontSize: 20),
                                     )
-                                  : Text(
+                                  : const Text(
                                       "change NID image",
                                       style: TextStyle(fontSize: 20),
                                     ),
@@ -369,7 +368,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
                           ],
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                     ],
@@ -379,7 +378,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       isLoading == true
-                          ? Center(child: CircularProgressIndicator())
+                          ? const Center(child: CircularProgressIndicator())
                           : ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.teal,
@@ -391,7 +390,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
                                   vertical: 12,
                                 ),
                               ),
-                              child: Text(
+                              child: const Text(
                                 'Save',
                                 style: TextStyle(
                                   color: Colors.white,
@@ -467,7 +466,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
                                     }),
                                     context.read<TenantData>().getTenantList(),
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
+                                        const SnackBar(
                                             content:
                                                 Text("saved successfully"))),
                                     Get.back(),
@@ -475,7 +474,7 @@ class _TenentDataPageState extends State<TenentDataPage> {
                                 else
                                   {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
+                                        const SnackBar(
                                             content: Text(
                                                 "enter required information")))
                                   },

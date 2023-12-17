@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import 'package:rent_management/classes/deposit.dart';
-import 'package:rent_management/db_helper.dart';
 import 'package:rent_management/models/deposit_model.dart';
 import 'package:rent_management/models/flat_model.dart';
 import 'package:rent_management/models/rent_model.dart';
@@ -14,10 +10,6 @@ import 'package:rent_management/services/deposite_service.dart';
 import 'package:rent_management/services/flat_service.dart';
 import 'package:rent_management/services/rent_service.dart';
 import 'package:rent_management/services/tenant_service.dart';
-import 'package:rent_management/shared_data/deposit_data.dart';
-import 'package:rent_management/shared_data/flat_data.dart';
-import 'package:rent_management/shared_data/rent_data.dart';
-import 'package:rent_management/shared_data/tenent_data.dart';
 import 'package:rxdart/rxdart.dart';
 
 class DepositPage extends StatefulWidget {
@@ -98,7 +90,7 @@ class _DepositPageState extends State<DepositPage> {
                 }
 
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 }
 
                 List<DepositeModel> deposits = snapshot.data?[0] ?? [];
@@ -111,7 +103,7 @@ class _DepositPageState extends State<DepositPage> {
                     .toList();
 
                 return DataTable(
-                  columns: [
+                  columns: const [
                     DataColumn(
                       label: Text('No.'),
                     ),

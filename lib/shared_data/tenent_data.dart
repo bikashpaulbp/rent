@@ -27,6 +27,11 @@ class TenantData extends ChangeNotifier {
   //   } catch (_) {}
   // }
 
+  Future<List<TenantModel>> returnTenantList() async {
+    await getTenantList();
+    return tenantList;
+  }
+
   tenantListNew() {
     return tenantList.length;
   }

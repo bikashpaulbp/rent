@@ -310,7 +310,7 @@ class _FlatDataPageState extends State<FlatDataPage> {
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               const SizedBox(height: 16),
@@ -318,7 +318,7 @@ class _FlatDataPageState extends State<FlatDataPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   isLoading == true
-                      ? Center(child: CircularProgressIndicator())
+                      ? const Center(child: CircularProgressIndicator())
                       : ElevatedButton(
                           onPressed: () async {
                             setState(() {
@@ -378,7 +378,7 @@ class _FlatDataPageState extends State<FlatDataPage> {
                               Get.back();
 
                               ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
+                                  const SnackBar(
                                       content: Text("saved successfully")));
 
                               setState(() {
@@ -396,7 +396,7 @@ class _FlatDataPageState extends State<FlatDataPage> {
                               });
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
+                                  const SnackBar(
                                       content:
                                           Text("enter required information")));
                             }

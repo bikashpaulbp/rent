@@ -3,8 +3,6 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import 'dart:async';
-import 'package:bluetooth_print/bluetooth_print.dart';
-import 'package:bluetooth_print/bluetooth_print_model.dart';
 import 'package:provider/provider.dart';
 import 'package:rent_management/models/building_model.dart';
 import 'package:rent_management/models/flat_model.dart';
@@ -104,22 +102,22 @@ class _PrintRentState extends State<PrintRent> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Choose Rent to Print")),
+      appBar: AppBar(title: const Text("Choose Rent to Print")),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(10.0),
+            const Padding(
+              padding: EdgeInsets.all(10.0),
               child: Text(
                 'Selected Month and Year:',
               ),
             ),
             Text(
               DateFormat('MMM yyyy').format(selectedDate),
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
                 DateTime? picked = await showDatePicker(
@@ -132,9 +130,9 @@ class _PrintRentState extends State<PrintRent> {
                       data: ThemeData.light().copyWith(
                         primaryColor: Colors.blue,
                         hintColor: Colors.blue,
-                        colorScheme: ColorScheme.light(primary: Colors.blue),
+                        colorScheme: const ColorScheme.light(primary: Colors.blue),
                         buttonTheme:
-                            ButtonThemeData(textTheme: ButtonTextTheme.primary),
+                            const ButtonThemeData(textTheme: ButtonTextTheme.primary),
                       ),
                       child: child!,
                     );
@@ -147,7 +145,7 @@ class _PrintRentState extends State<PrintRent> {
                   });
                 }
               },
-              child: Text('Select Month and Year'),
+              child: const Text('Select Month and Year'),
             ),
             Column(
               children: [
@@ -167,7 +165,7 @@ class _PrintRentState extends State<PrintRent> {
                     builder: (BuildContext context,
                         AsyncSnapshot<List<RentModel>> snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(child: CircularProgressIndicator());
+                        return const Center(child: CircularProgressIndicator());
                       }
                       if (snapshot.hasData &&
                           snapshot.data != null &&
@@ -268,12 +266,12 @@ class _PrintRentState extends State<PrintRent> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Padding(
+                                            const Padding(
                                               padding:
-                                                  const EdgeInsets.all(5.0),
+                                                  EdgeInsets.all(5.0),
                                               child: Text(
                                                 'Receipt No:',
-                                                style: const TextStyle(
+                                                style: TextStyle(
                                                   color: Color.fromARGB(
                                                       255, 0, 0, 0),
                                                   fontSize: 16,
@@ -431,7 +429,7 @@ class _PrintRentState extends State<PrintRent> {
                                                 style: ButtonStyle(
                                                     backgroundColor:
                                                         MaterialStateProperty
-                                                            .all(Color.fromARGB(
+                                                            .all(const Color.fromARGB(
                                                                 255,
                                                                 12,
                                                                 188,
@@ -448,8 +446,8 @@ class _PrintRentState extends State<PrintRent> {
                                                   ));
                                                 },
                                                 child: rent.isPrinted == false
-                                                    ? Text('Print') 
-                                                    : Text('Re-print'))
+                                                    ? const Text('Print') 
+                                                    : const Text('Re-print'))
                                           ]),
                                     ],
                                   ),

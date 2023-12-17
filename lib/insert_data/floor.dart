@@ -101,17 +101,17 @@ class _FloorDataPageState extends State<FloorDataPage> {
                                   Get.back();
                                   _floorController.clear();
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
+                                      const SnackBar(
                                           content: Text("saved successfully")));
                                 });
                               } else if (buildingId == null) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
+                                    const SnackBar(
                                         content:
                                             Text("please add building first")));
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
+                                    const SnackBar(
                                         content:
                                             Text("please provide floor name")));
                               }
@@ -137,7 +137,7 @@ class _FloorDataPageState extends State<FloorDataPage> {
                               ),
                             ),
                           )
-                        : Center(child: CircularProgressIndicator()),
+                        : const Center(child: CircularProgressIndicator()),
                     ElevatedButton(
                       onPressed: () {
                         Get.back();
