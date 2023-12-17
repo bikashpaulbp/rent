@@ -105,6 +105,10 @@ class _DepositPageState extends State<DepositPage> {
                 List<TenantModel> tenants = snapshot.data?[1] ?? [];
                 List<FlatModel> flats = snapshot.data?[2] ?? [];
                 List<RentModel> rents = snapshot.data?[3] ?? [];
+                List<DepositeModel> depositsList = deposits
+                    .where(
+                        (e) => e.buildingId == buildingId && e.userId == userId)
+                    .toList();
 
                 return DataTable(
                   columns: [
@@ -133,7 +137,7 @@ class _DepositPageState extends State<DepositPage> {
                       label: Text('Deposit Date'),
                     ),
                   ],
-                  rows: deposits.map((deposit) {
+                  rows: depositsList.map((deposit) {
                     no = no! + 1;
 
                     try {
@@ -142,6 +146,8 @@ class _DepositPageState extends State<DepositPage> {
                               element.id == deposit.rentId &&
                               element.buildingId == buildingId)
                           .rentMonth;
+                      //     ??
+                      // DateTime.now();
                     } catch (_) {}
 
                     try {

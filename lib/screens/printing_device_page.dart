@@ -243,7 +243,7 @@ class _PrintingPageState extends State<PrintingPage> {
                               list.add(LineText(
                                   type: LineText.TYPE_TEXT,
                                   content:
-                                      "       Tenant Name   :   ${widget.tenantName}",
+                                      "         Tenant Name   :   ${widget.tenantName}",
                                   relativeX: 2,
                                   weight: 30,
                                   align: LineText.ALIGN_LEFT,
@@ -252,7 +252,7 @@ class _PrintingPageState extends State<PrintingPage> {
                               list.add(LineText(
                                   type: LineText.TYPE_TEXT,
                                   content:
-                                      "       Floor Name    :   ${widget.floorName}",
+                                      "         Floor Name    :   ${widget.floorName}",
                                   weight: 30,
                                   align: LineText.ALIGN_LEFT,
                                   linefeed: 1,
@@ -260,7 +260,7 @@ class _PrintingPageState extends State<PrintingPage> {
                               list.add(LineText(
                                   type: LineText.TYPE_TEXT,
                                   content:
-                                      "       Flat Name     :   ${widget.flatName}",
+                                      "         Flat Name     :   ${widget.flatName}",
                                   weight: 30,
                                   align: LineText.ALIGN_LEFT,
                                   linefeed: 1,
@@ -268,7 +268,7 @@ class _PrintingPageState extends State<PrintingPage> {
                               list.add(LineText(
                                   type: LineText.TYPE_TEXT,
                                   content:
-                                      "       Rent Amount   :   ${formatter.format(widget.rent.rentAmount)} BDT",
+                                      "         Rent Amount   :   ${formatter.format(widget.rent.rentAmount)} BDT",
                                   weight: 30,
                                   align: LineText.ALIGN_LEFT,
                                   linefeed: 1,
@@ -276,7 +276,7 @@ class _PrintingPageState extends State<PrintingPage> {
                               list.add(LineText(
                                   type: LineText.TYPE_TEXT,
                                   content:
-                                      "       Water Bill    :   ${formatter.format(widget.rent.waterBill)} BDT",
+                                      "         Water Bill    :   ${formatter.format(widget.rent.waterBill)} BDT",
                                   weight: 30,
                                   align: LineText.ALIGN_LEFT,
                                   linefeed: 1,
@@ -284,7 +284,7 @@ class _PrintingPageState extends State<PrintingPage> {
                               list.add(LineText(
                                   type: LineText.TYPE_TEXT,
                                   content:
-                                      "       Gas Bill      :   ${formatter.format(widget.rent.gasBill)} BDT",
+                                      "         Gas Bill      :   ${formatter.format(widget.rent.gasBill)} BDT",
                                   weight: 30,
                                   align: LineText.ALIGN_LEFT,
                                   linefeed: 1,
@@ -292,7 +292,7 @@ class _PrintingPageState extends State<PrintingPage> {
                               list.add(LineText(
                                   type: LineText.TYPE_TEXT,
                                   content:
-                                      "       Service Charge:   ${formatter.format(widget.rent.serviceCharge)} BDT",
+                                      "         Service Charge:   ${formatter.format(widget.rent.serviceCharge)} BDT",
                                   weight: 30,
                                   align: LineText.ALIGN_LEFT,
                                   linefeed: 1,
@@ -300,7 +300,7 @@ class _PrintingPageState extends State<PrintingPage> {
                               list.add(LineText(
                                   type: LineText.TYPE_TEXT,
                                   content:
-                                      "       Total Amount  :   ${formatter.format(widget.rent.totalAmount)} BDT",
+                                      "         Total Amount  :   ${formatter.format(widget.rent.totalAmount)} BDT",
                                   weight: 30,
                                   align: LineText.ALIGN_LEFT,
                                   linefeed: 1,
@@ -309,7 +309,7 @@ class _PrintingPageState extends State<PrintingPage> {
                               list.add(LineText(
                                   type: LineText.TYPE_TEXT,
                                   content:
-                                      "Rent Month:    ${DateFormat(' MMM yyy').format(widget.rent.rentMonth!)}",
+                                      "Rent Month :  ${DateFormat(' MMM yyy').format(widget.rent.rentMonth!)}",
                                   weight: 30,
                                   align: LineText.ALIGN_CENTER,
                                   linefeed: 1,
@@ -358,8 +358,21 @@ class _PrintingPageState extends State<PrintingPage> {
                               list.add(LineText(linefeed: 1));
                               list.add(LineText(linefeed: 1));
                               await bluetoothPrint.printReceipt(config, list);
-                              RentModel updatedRent =
-                                  RentModel(isPrinted: true);
+                              RentModel updatedRent = RentModel(
+                                  buildingId: widget.rent.buildingId,
+                                  flatId: widget.rent.flatId,
+                                  tenantId: widget.rent.tenantId,
+                                  userId: widget.rent.userId,
+                                  id: widget.rent.id,
+                                  isPrinted: true,
+                                  dueAmount: widget.rent.dueAmount,
+                                  gasBill: widget.rent.gasBill,
+                                  isPaid: widget.rent.isPaid,
+                                  rentAmount: widget.rent.rentAmount,
+                                  rentMonth: widget.rent.rentMonth,
+                                  serviceCharge: widget.rent.serviceCharge,
+                                  waterBill: widget.rent.waterBill,
+                                  totalAmount: widget.rent.totalAmount);
 
                               await rentApiService.updateRent(
                                   id: widget.rent.id!, rent: updatedRent);

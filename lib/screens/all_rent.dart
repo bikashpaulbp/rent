@@ -4,17 +4,22 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import 'package:rent_management/insert_data/deposit_form.dart';
+import 'package:rent_management/models/building_model.dart';
 import 'package:rent_management/models/deposit_model.dart';
 import 'package:rent_management/models/flat_model.dart';
+import 'package:rent_management/models/floor_model.dart';
 import 'package:rent_management/models/rent_model.dart';
 import 'package:rent_management/models/tenant_model.dart';
 import 'package:rent_management/models/user_model.dart';
 import 'package:rent_management/screens/login_screen.dart';
+import 'package:rent_management/screens/printing_device_page.dart';
 import 'package:rent_management/services/deposite_service.dart';
 import 'package:rent_management/services/flat_service.dart';
 import 'package:rent_management/services/rent_service.dart';
 import 'package:rent_management/services/tenant_service.dart';
+import 'package:rent_management/shared_data/building_provider.dart';
 import 'package:rent_management/shared_data/flat_data.dart';
+import 'package:rent_management/shared_data/floor_data.dart';
 import 'package:rent_management/shared_data/tenent_data.dart';
 
 import '../shared_data/rent_data.dart';
@@ -62,6 +67,7 @@ class _AllRentState extends State<AllRent> {
   DateTime? selectedDate;
   int? year;
   int? month;
+  String? buildingAddress;
 
   @override
   void initState() {
@@ -211,29 +217,70 @@ class _AllRentState extends State<AllRent> {
                               itemCount: rentList.length,
                               itemBuilder: (BuildContext context, int index) {
                                 RentModel rent = rentList[index];
-                                List<TenantModel> tenants =
-                                    context.watch<TenantData>().tenantList;
-                                List<FlatModel> flats =
-                                    context.watch<FlatData>().flatList;
-                                if (flats.isNotEmpty) {
-                                  try {
-                                    flatName = flats
-                                        .firstWhere((e) => e.id == rent.flatId)
-                                        .name;
-                                  } catch (_) {}
-                                } else {
-                                  flatName = "flat not found";
+                                List<String> getRentItemValues() {
+                                  String? tenantName;
+                                  String? flatName;
+                                  String? floorName;
+
+                                  List<TenantModel> tenants =
+                                      context.watch<TenantData>().tenantList;
+                                  List<FlatModel> flats =
+                                      context.watch<FlatData>().flatList;
+                                  List<FloorModel> floors =
+                                      context.watch<FloorData>().floorList;
+                                  List<BuildingModel> buildings = context
+                                      .watch<BuildingProvider>()
+                                      .buildingList;
+
+                                  if (floors.isNotEmpty) {
+                                    try {
+                                      int? flatId = flats
+                                          .firstWhere(
+                                              (e) => e.id == rent.flatId)
+                                          .id;
+                                      int? floorId = flats
+                                          .firstWhere((e) => e.id == flatId)
+                                          .floorId;
+                                      floorName = floors
+                                          .firstWhere((e) => e.id == floorId)
+                                          .name;
+                                      buildingAddress = buildings
+                                          .firstWhere((element) =>
+                                              element.id == buildingId)
+                                          .address;
+                                    } catch (_) {}
+                                  } else {
+                                    flatName = "floor not found";
+                                  }
+                                  if (flats.isNotEmpty) {
+                                    try {
+                                      flatName = flats
+                                          .firstWhere(
+                                              (e) => e.id == rent.flatId)
+                                          .name;
+                                    } catch (_) {}
+                                  } else {
+                                    flatName = "flat not found";
+                                  }
+                                  if (tenants.isNotEmpty) {
+                                    try {
+                                      tenantName = tenants
+                                          .firstWhere(
+                                              (e) => e.id == rent.tenantId)
+                                          .name;
+                                    } catch (_) {}
+                                  } else {
+                                    tenantName = "tenant not found";
+                                  }
+
+                                  return [
+                                    floorName ?? 'Unknown Floor',
+                                    flatName ?? 'Unknown Flat',
+                                    tenantName ?? 'Unknown Tenant',
+                                  ];
                                 }
-                                if (tenants.isNotEmpty) {
-                                  try {
-                                    tenantName = tenants
-                                        .firstWhere(
-                                            (e) => e.id == rent.tenantId)
-                                        .name;
-                                  } catch (_) {}
-                                } else {
-                                  tenantName = "tenant not found";
-                                }
+
+                                var values = getRentItemValues();
 
                                 return ListTile(
                                   title: Card(
@@ -257,7 +304,7 @@ class _AllRentState extends State<AllRent> {
                                                   padding:
                                                       const EdgeInsets.all(5.0),
                                                   child: Text(
-                                                    'Tenant Name: $tenantName',
+                                                    'Tenant Name:  ${values[2]}',
                                                     style: const TextStyle(
                                                       color: Color.fromARGB(
                                                           255, 0, 0, 0),
@@ -271,7 +318,21 @@ class _AllRentState extends State<AllRent> {
                                                   padding:
                                                       const EdgeInsets.all(5.0),
                                                   child: Text(
-                                                    'Flat Name: $flatName',
+                                                    'Floor Name: ${values[0]}',
+                                                    style: const TextStyle(
+                                                      color: Color.fromARGB(
+                                                          255, 0, 0, 0),
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(5.0),
+                                                  child: Text(
+                                                    'Flat Name: ${values[1]}',
                                                     style: const TextStyle(
                                                       color: Color.fromARGB(
                                                           255, 0, 0, 0),
@@ -622,7 +683,32 @@ class _AllRentState extends State<AllRent> {
                                                                             0));
                                                               }
                                                             : null,
-                                                    child: Text('Deposit'))
+                                                    child: Text('Deposit')),
+                                                ElevatedButton(
+                                                    style: ButtonStyle(
+                                                        backgroundColor:
+                                                            MaterialStateProperty
+                                                                .all(Color
+                                                                    .fromARGB(
+                                                                        255,
+                                                                        12,
+                                                                        91,
+                                                                        219))),
+                                                    onPressed: () async {
+                                                      Get.to(PrintingPage(
+                                                        rent: rent,
+                                                        floorName: values[0],
+                                                        tenantName: values[2],
+                                                        flatName: values[1],
+                                                        buildingAddress:
+                                                            buildingAddress,
+                                                        refresh: refresh,
+                                                      ));
+                                                    },
+                                                    child:
+                                                        rent.isPrinted == false
+                                                            ? Text('   Print  ')
+                                                            : Text('Re-print'))
                                               ]),
                                         ],
                                       ),

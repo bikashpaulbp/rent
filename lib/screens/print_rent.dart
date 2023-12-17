@@ -448,7 +448,7 @@ class _PrintRentState extends State<PrintRent> {
                                                   ));
                                                 },
                                                 child: rent.isPrinted == false
-                                                    ? Text('Print')
+                                                    ? Text('Print') 
                                                     : Text('Re-print'))
                                           ]),
                                     ],
