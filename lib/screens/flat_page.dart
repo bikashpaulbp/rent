@@ -45,12 +45,14 @@ class _FlatPageState extends State<FlatPage> {
   final _serviceChargeController = TextEditingController();
   int? selectedTenantId;
   int? selectedFloorId;
+
   int? buildingId;
 
   bool isLoading = false;
   UserModel user = UserModel();
   AuthStateManager authStateManager = AuthStateManager();
   bool isActive = true;
+
   @override
   void initState() {
     getLocalInfo();
@@ -127,7 +129,8 @@ class _FlatPageState extends State<FlatPage> {
                             getLocalInfo();
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
-                              return const Center(child: CircularProgressIndicator());
+                              return const Center(
+                                  child: CircularProgressIndicator());
                             } else if (snapshot.hasData &&
                                 snapshot.data != null &&
                                 snapshot.data!.isNotEmpty) {
@@ -395,6 +398,10 @@ class _FlatPageState extends State<FlatPage> {
                                                             .text =
                                                         flat.serviceCharge
                                                             .toString();
+                                                    selectedFloorId =
+                                                        flat.floorId;
+                                                    selectedTenantId =
+                                                        flat.tenantId;
                                                     showModalBottomSheet<void>(
                                                       context: context,
                                                       builder: (BuildContext
@@ -475,7 +482,7 @@ class _FlatPageState extends State<FlatPage> {
                                                                               builder: (context, floorData, child) {
                                                                                 getLocalInfo();
                                                                                 floorData.getFloorList();
-                                                                                selectedFloorId = flat.floorId;
+
                                                                                 List<FloorModel> floorList = floorData.floorList.where((e) => e.buildingId == buildingId).toList();
 
                                                                                 return DropdownButtonFormField<int>(
@@ -515,7 +522,7 @@ class _FlatPageState extends State<FlatPage> {
                                                                                 Consumer<TenantData>(
                                                                               builder: (context, tenant, child) {
                                                                                 getLocalInfo();
-                                                                                selectedTenantId = flat.tenantId;
+
                                                                                 tenant.returnTenantList();
                                                                                 List<TenantModel> tenantList = tenant.tenantList.where((element) => element.buildingId == buildingId).toList();
                                                                                 return DropdownButtonFormField<int>(
@@ -868,13 +875,12 @@ class _FlatPageState extends State<FlatPage> {
 
                                                                                     int updatedFlatSize = int.parse(_newFlatSizeController.text);
 
-                                                                                    FlatModel updatedFlat = FlatModel(id: flat.id, name: updatedflatName, masterbedRoom: updatedNoOfMasterBedroom, bedroom: updatedNoOfBedroom, washroom: updatedNoOfWashroom, flatSide: updatedFlatSide, flatSize: updatedFlatSize, floorId: flat.floorId, buildingId: flat.buildingId, isActive: isActive, tenantId: selectedTenantId ?? flat.tenantId, userId: flat.userId, gasBill: int.parse(_gasBillController.text), rentAmount: int.parse(_rentAmountController.text), serviceCharge: int.parse(_serviceChargeController.text), waterBill: int.parse(_waterBillController.text));
+                                                                                    FlatModel updatedFlat = FlatModel(id: flat.id, name: updatedflatName, masterbedRoom: updatedNoOfMasterBedroom, bedroom: updatedNoOfBedroom, washroom: updatedNoOfWashroom, flatSide: updatedFlatSide, flatSize: updatedFlatSize, floorId: selectedFloorId ?? flat.floorId, buildingId: flat.buildingId, isActive: isActive, tenantId: selectedTenantId ?? flat.tenantId, userId: flat.userId, gasBill: int.parse(_gasBillController.text), rentAmount: int.parse(_rentAmountController.text), serviceCharge: int.parse(_serviceChargeController.text), waterBill: int.parse(_waterBillController.text));
                                                                                     await flatApiService.updateFlat(flat: updatedFlat, id: flatId!);
                                                                                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("updated successfully")));
-
+                                                                                    refresh();
                                                                                     setState(() {
                                                                                       isLoading = false;
-                                                                                      _fetchData();
 
                                                                                       Navigator.pop(context);
                                                                                     });
@@ -925,9 +931,10 @@ class _FlatPageState extends State<FlatPage> {
                                                         .deleteFlat(id!);
                                                     ScaffoldMessenger.of(
                                                             context)
-                                                        .showSnackBar(const SnackBar(
-                                                            content: Text(
-                                                                "deleted successfully")));
+                                                        .showSnackBar(
+                                                            const SnackBar(
+                                                                content: Text(
+                                                                    "deleted successfully")));
                                                     setState(() {
                                                       _fetchData();
                                                     });

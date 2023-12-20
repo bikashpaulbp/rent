@@ -310,7 +310,7 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                 padding:
                                                     const EdgeInsets.all(5.0),
                                                 child: Text(
-                                                  'Month: ${rent.rentMonth != null ? DateFormat('dd MMM yy').format(rent.rentMonth!) : "N/A"}',
+                                                  'Month: ${rent.rentMonth != null ? DateFormat('MMM yy').format(rent.rentMonth!) : "N/A"}',
                                                   style: const TextStyle(
                                                     color: Color.fromARGB(
                                                         255, 0, 0, 0),

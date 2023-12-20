@@ -22,7 +22,6 @@ import 'package:rent_management/shared_data/flat_data.dart';
 import 'package:rent_management/shared_data/floor_data.dart';
 import 'package:rent_management/shared_data/tenent_data.dart';
 
-
 class AllRent extends StatefulWidget {
   const AllRent({super.key});
 
@@ -70,7 +69,10 @@ class _AllRentState extends State<AllRent> {
 
   @override
   void initState() {
-    _fetchRentData();
+    setState(() {
+      _fetchRentData();
+    });
+
     getUser();
     getBuildingId();
     super.initState();
@@ -160,8 +162,8 @@ class _AllRentState extends State<AllRent> {
                                   data: ThemeData.light().copyWith(
                                     primaryColor: Colors.blue,
                                     hintColor: Colors.blue,
-                                    colorScheme:
-                                        const ColorScheme.light(primary: Colors.blue),
+                                    colorScheme: const ColorScheme.light(
+                                        primary: Colors.blue),
                                     buttonTheme: const ButtonThemeData(
                                         textTheme: ButtonTextTheme.primary),
                                   ),
@@ -191,7 +193,8 @@ class _AllRentState extends State<AllRent> {
                           _fetchRentData();
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return const Center(child: CircularProgressIndicator());
+                            return const Center(
+                                child: CircularProgressIndicator());
                           }
 
                           if (snapshot.hasData &&
@@ -212,6 +215,28 @@ class _AllRentState extends State<AllRent> {
                                         month = selectedDate!.month,
                                       ))
                                   .toList();
+                            } else if (selectedDate == null) {
+                              DateTime now = DateTime.now();
+                              // DateTime firstDayOfCurrentMonth =
+                              //     DateTime(now.year, now.month, 1);
+                              DateTime previousMonth =
+                                  DateTime(now.year, now.month - 1);
+
+                              // DateTime firstDayOfPreviousMonth =
+                              //     firstDayOfCurrentMonth
+                              //         .subtract(Duration(days: 1));
+
+                              rentList = List.from(allRentList.where(
+                                (element) =>
+                                    element.rentMonth!.year ==
+                                        previousMonth.year &&
+                                    element.rentMonth!.month ==
+                                        previousMonth.month,
+                                // element.rentMonth!
+                                //     .isAfter(firstDayOfPreviousMonth) &&
+                                // element.rentMonth!
+                                //     .isBefore(firstDayOfCurrentMonth)
+                              ));
                             } else {
                               rentList = List.from(allRentList);
                             }
@@ -376,7 +401,7 @@ class _AllRentState extends State<AllRent> {
                                                   padding:
                                                       const EdgeInsets.all(5.0),
                                                   child: Text(
-                                                    'Month: ${rent.rentMonth != null ? DateFormat('dd MMM yy').format(rent.rentMonth!) : "N/A"}',
+                                                    'Month: ${rent.rentMonth != null ? DateFormat('MMM yy').format(rent.rentMonth!) : "N/A"}',
                                                     style: const TextStyle(
                                                       color: Color.fromARGB(
                                                           255, 0, 0, 0),
@@ -643,7 +668,8 @@ class _AllRentState extends State<AllRent> {
                                                       CircleAvatar(
                                                         radius: 15,
                                                         backgroundColor:
-                                                            const Color.fromARGB(255,
+                                                            const Color
+                                                                .fromARGB(255,
                                                                 240, 46, 46),
                                                         child: IconButton(
                                                             iconSize: 15,
@@ -680,10 +706,10 @@ class _AllRentState extends State<AllRent> {
                                                             MaterialStateProperty
                                                                 .all(const Color
                                                                     .fromARGB(
-                                                                        255,
-                                                                        171,
-                                                                        12,
-                                                                        219))),
+                                                                    255,
+                                                                    171,
+                                                                    12,
+                                                                    219))),
                                                     onPressed:
                                                         rent.isPaid == false
                                                             ? () {
@@ -695,17 +721,18 @@ class _AllRentState extends State<AllRent> {
                                                                             0));
                                                               }
                                                             : null,
-                                                    child: const Text('Deposit')),
+                                                    child:
+                                                        const Text('Deposit')),
                                                 ElevatedButton(
                                                     style: ButtonStyle(
                                                         backgroundColor:
                                                             MaterialStateProperty
                                                                 .all(const Color
                                                                     .fromARGB(
-                                                                        255,
-                                                                        12,
-                                                                        91,
-                                                                        219))),
+                                                                    255,
+                                                                    12,
+                                                                    91,
+                                                                    219))),
                                                     onPressed: () async {
                                                       Get.to(PrintingPage(
                                                         rent: rent,
@@ -719,8 +746,10 @@ class _AllRentState extends State<AllRent> {
                                                     },
                                                     child:
                                                         rent.isPrinted == false
-                                                            ? const Text('   Print  ')
-                                                            : const Text('Re-print'))
+                                                            ? const Text(
+                                                                '   Print  ')
+                                                            : const Text(
+                                                                'Re-print'))
                                               ]),
                                         ],
                                       ),

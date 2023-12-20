@@ -160,7 +160,8 @@ class _TenentPageState extends State<TenentPage> {
                             AsyncSnapshot<List<TenantModel>> snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return const Center(child: CircularProgressIndicator());
+                            return const Center(
+                                child: CircularProgressIndicator());
                           } else if (snapshot.hasData &&
                               snapshot.data != null &&
                               snapshot.data!.isNotEmpty) {
@@ -369,8 +370,7 @@ class _TenentPageState extends State<TenentPage> {
                                                       children: [
                                                         const Text(
                                                           "Tenant Image",
-                                                          style:
-                                                              TextStyle(
+                                                          style: TextStyle(
                                                             color:
                                                                 Color.fromARGB(
                                                                     255,
@@ -400,8 +400,7 @@ class _TenentPageState extends State<TenentPage> {
                                                         ),
                                                         const Text(
                                                           "NID Image",
-                                                          style:
-                                                              TextStyle(
+                                                          style: TextStyle(
                                                             color:
                                                                 Color.fromARGB(
                                                                     255,
@@ -951,9 +950,8 @@ class _TenentPageState extends State<TenentPage> {
                                                                                     await tenantApiService.updateTenant(tenant: updatedTenant, id: id).whenComplete(() {});
                                                                                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("updated successfully")));
                                                                                     context.read<TenantData>().getTenantList();
+                                                                                    refresh();
                                                                                     setState(() {
-                                                                                      refresh();
-
                                                                                       Navigator.pop(context);
                                                                                       isLoading = false;
                                                                                     });
@@ -999,9 +997,10 @@ class _TenentPageState extends State<TenentPage> {
                                                             tenent.id!);
                                                     ScaffoldMessenger.of(
                                                             context)
-                                                        .showSnackBar(const SnackBar(
-                                                            content: Text(
-                                                                "deleted successfully")));
+                                                        .showSnackBar(
+                                                            const SnackBar(
+                                                                content: Text(
+                                                                    "deleted successfully")));
                                                     context
                                                         .read<TenantData>()
                                                         .getTenantList();
