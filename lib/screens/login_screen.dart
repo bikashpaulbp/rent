@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:rent_management/main.dart';
 
 import 'package:rent_management/models/user_model.dart';
 import 'package:rent_management/screens/dashboard_page.dart';
@@ -195,8 +196,8 @@ class _LoginAndRegisterScreenState extends State<LoginAndRegisterScreen> {
         cursorColor: const Color.fromARGB(255, 144, 144, 144),
         decoration: InputDecoration(
             focusedBorder: const UnderlineInputBorder(
-                borderSide: BorderSide(
-                    color: Color.fromARGB(255, 121, 121, 121))),
+                borderSide:
+                    BorderSide(color: Color.fromARGB(255, 121, 121, 121))),
             hintText:
                 fieldType == 'email' ? 'Enter email...' : 'Enter password...',
             hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14)),
@@ -234,7 +235,7 @@ class _LoginAndRegisterScreenState extends State<LoginAndRegisterScreen> {
                         await authStateManager
                             .saveLoggedInUser(loggedInUser)
                             .then((_) {
-                          print(loggedInUser.name);
+                         
                           Navigator.of(context)
                               .pushReplacement(MaterialPageRoute(
                             builder: (context) => const Dashboard(),
@@ -245,8 +246,9 @@ class _LoginAndRegisterScreenState extends State<LoginAndRegisterScreen> {
                       print(loggedInUser.email);
                     } catch (e) {
                       if (userApiService.isLoggedIn == false) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                            content: Text('Invalid email or password')));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Invalid email or password')));
                       }
                     }
                     setState(() {
@@ -388,8 +390,8 @@ class _SignUpState extends State<SignUp> {
         decoration: InputDecoration(
             semanticCounterText: "*",
             focusedBorder: const UnderlineInputBorder(
-                borderSide: BorderSide(
-                    color: Color.fromARGB(255, 121, 121, 121))),
+                borderSide:
+                    BorderSide(color: Color.fromARGB(255, 121, 121, 121))),
             hintText: hintText(),
             hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14)),
       ),
@@ -407,8 +409,8 @@ class _SignUpState extends State<SignUp> {
                   showLoading = true;
 
                   if (password != confirmPassword) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('confirm password mismatch')));
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text('confirm password mismatch')));
                     setState(() {
                       showLoading = false;
                     });
@@ -445,7 +447,8 @@ class _SignUpState extends State<SignUp> {
                             .then((_) {
                           Navigator.of(context)
                               .pushReplacement(MaterialPageRoute(
-                            builder: (context) => const LoginAndRegisterScreen(),
+                            builder: (context) =>
+                                const LoginAndRegisterScreen(),
                           ));
                         });
 

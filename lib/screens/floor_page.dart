@@ -154,7 +154,7 @@ class _FloorPageState extends State<FloorPage> {
                                                               width: 15),
                                                           SizedBox(
                                                             width: 220,
-                                                            child: RichText(
+                                                            child: RichText( 
                                                               text: TextSpan(
                                                                 children: [
                                                                   const TextSpan(

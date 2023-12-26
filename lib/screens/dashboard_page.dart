@@ -9,7 +9,6 @@ import 'package:rent_management/screens/flat_page.dart';
 import 'package:rent_management/screens/login_screen.dart';
 import 'package:rent_management/screens/print_rent.dart';
 import 'package:rent_management/screens/tenent_page.dart';
-
 import 'floor_page.dart';
 import 'monthly_rent_page.dart';
 
@@ -78,8 +77,8 @@ class _DashboardState extends State<Dashboard> {
             Container(
               width: MediaQuery.sizeOf(context).width * 1,
               height: MediaQuery.sizeOf(context).height * 0.15,
-              decoration:
-                  const BoxDecoration(color: Color.fromARGB(255, 218, 218, 218)),
+              decoration: const BoxDecoration(
+                  color: Color.fromARGB(255, 218, 218, 218)),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
@@ -224,11 +223,11 @@ class _DashboardState extends State<Dashboard> {
                     onPressed: () async {
                       await authStateManager.removeBuildingId();
                       await authStateManager.removeBuildingName();
-                      await authStateManager.removeLoggedInUser().then((_) {
-                        Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const ChooseScreen(),
-                        ));
-                      });
+                      await authStateManager.removeLoggedInUser();
+
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (context) => const ChooseScreen(),
+                      ));
                     },
                     child: const Row(
                       children: [

@@ -173,181 +173,196 @@ class _FlatPageState extends State<FlatPage> {
                                         children: [
                                           Padding(
                                             padding: const EdgeInsets.all(5.0),
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(5.0),
-                                                  child: Text(
-                                                    'Flat Name: ${flat.name.toString()}',
-                                                    style: const TextStyle(
-                                                      color: Color.fromARGB(
-                                                          255, 0, 0, 0),
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w500,
+                                            child: Container(
+                                              width: 240,
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            5.0),
+                                                    child: Text(
+                                                      'Flat Name: ${flat.name.toString()}',
+                                                      style: const TextStyle(
+                                                        color: Color.fromARGB(
+                                                            255, 0, 0, 0),
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(5.0),
-                                                  child: Text(
-                                                    'Floor Name: $floorName',
-                                                    style: const TextStyle(
-                                                      color: Color.fromARGB(
-                                                          255, 0, 0, 0),
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w500,
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            5.0),
+                                                    child: Text(
+                                                      'Floor Name: $floorName',
+                                                      style: const TextStyle(
+                                                        color: Color.fromARGB(
+                                                            255, 0, 0, 0),
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(5.0),
-                                                  child: Text(
-                                                    'Tenant Name: $tenantName',
-                                                    style: const TextStyle(
-                                                      color: Color.fromARGB(
-                                                          255, 0, 0, 0),
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w500,
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            5.0),
+                                                    child: Text(
+                                                      'Tenant Name: $tenantName',
+                                                      style: const TextStyle(
+                                                        color: Color.fromARGB(
+                                                            255, 0, 0, 0),
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(5.0),
-                                                  child: Text(
-                                                    'No. Of Master Bedroom: ${flat.masterbedRoom.toString()}',
-                                                    style: const TextStyle(
-                                                      color: Color.fromARGB(
-                                                          255, 0, 0, 0),
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w500,
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            5.0),
+                                                    child: Text(
+                                                      'No. Of Master Bedroom: ${flat.masterbedRoom.toString()}',
+                                                      style: const TextStyle(
+                                                        color: Color.fromARGB(
+                                                            255, 0, 0, 0),
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(5.0),
-                                                  child: Text(
-                                                    'No. Of Bedroom: ${flat.bedroom.toString()}',
-                                                    style: const TextStyle(
-                                                      color: Color.fromARGB(
-                                                          255, 0, 0, 0),
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w500,
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            5.0),
+                                                    child: Text(
+                                                      'No. Of Bedroom: ${flat.bedroom.toString()}',
+                                                      style: const TextStyle(
+                                                        color: Color.fromARGB(
+                                                            255, 0, 0, 0),
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(5.0),
-                                                  child: Text(
-                                                    'No. Of Washroom: ${flat.washroom.toString()}',
-                                                    style: const TextStyle(
-                                                      color: Color.fromARGB(
-                                                          255, 0, 0, 0),
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w500,
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            5.0),
+                                                    child: Text(
+                                                      'No. Of Washroom: ${flat.washroom.toString()}',
+                                                      style: const TextStyle(
+                                                        color: Color.fromARGB(
+                                                            255, 0, 0, 0),
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(5.0),
-                                                  child: Text(
-                                                    'Flat Side: ${flat.flatSide!.isEmpty ? "" : flat.flatSide.toString()}',
-                                                    style: const TextStyle(
-                                                      color: Color.fromARGB(
-                                                          255, 0, 0, 0),
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w500,
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            5.0),
+                                                    child: Text(
+                                                      'Flat Side: ${flat.flatSide!.isEmpty ? "" : flat.flatSide.toString()}',
+                                                      style: const TextStyle(
+                                                        color: Color.fromARGB(
+                                                            255, 0, 0, 0),
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(5.0),
-                                                  child: Text(
-                                                    'Flat Size(Sqf): ${flat.flatSize == null ? 0.0 : flat.flatSize.toString()}',
-                                                    style: const TextStyle(
-                                                      color: Color.fromARGB(
-                                                          255, 0, 0, 0),
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w500,
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            5.0),
+                                                    child: Text(
+                                                      'Flat Size(Sqf): ${flat.flatSize == null ? 0.0 : flat.flatSize.toString()}',
+                                                      style: const TextStyle(
+                                                        color: Color.fromARGB(
+                                                            255, 0, 0, 0),
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(5.0),
-                                                  child: Text(
-                                                    'Rent Amount: ${flat.rentAmount.toString()}',
-                                                    style: const TextStyle(
-                                                      color: Color.fromARGB(
-                                                          255, 0, 0, 0),
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w500,
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            5.0),
+                                                    child: Text(
+                                                      'Rent Amount: ${flat.rentAmount.toString()}',
+                                                      style: const TextStyle(
+                                                        color: Color.fromARGB(
+                                                            255, 0, 0, 0),
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(5.0),
-                                                  child: Text(
-                                                    'Water Bill: ${flat.waterBill.toString()}',
-                                                    style: const TextStyle(
-                                                      color: Color.fromARGB(
-                                                          255, 0, 0, 0),
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w500,
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            5.0),
+                                                    child: Text(
+                                                      'Water Bill: ${flat.waterBill.toString()}',
+                                                      style: const TextStyle(
+                                                        color: Color.fromARGB(
+                                                            255, 0, 0, 0),
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(5.0),
-                                                  child: Text(
-                                                    'Gas Bill: ${flat.gasBill.toString()}',
-                                                    style: const TextStyle(
-                                                      color: Color.fromARGB(
-                                                          255, 0, 0, 0),
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w500,
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            5.0),
+                                                    child: Text(
+                                                      'Gas Bill: ${flat.gasBill.toString()}',
+                                                      style: const TextStyle(
+                                                        color: Color.fromARGB(
+                                                            255, 0, 0, 0),
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(5.0),
-                                                  child: Text(
-                                                    'Service Charge: ${flat.serviceCharge.toString()}',
-                                                    style: const TextStyle(
-                                                      color: Color.fromARGB(
-                                                          255, 0, 0, 0),
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w500,
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            5.0),
+                                                    child: Text(
+                                                      'Service Charge: ${flat.serviceCharge.toString()}',
+                                                      style: const TextStyle(
+                                                        color: Color.fromARGB(
+                                                            255, 0, 0, 0),
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                              ],
+                                                ],
+                                              ),
                                             ),
                                           ),
                                           const Spacer(),

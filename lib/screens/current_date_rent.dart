@@ -21,7 +21,6 @@ import 'package:rent_management/shared_data/flat_data.dart';
 import 'package:rent_management/shared_data/floor_data.dart';
 import 'package:rent_management/shared_data/tenent_data.dart';
 
-
 class CurrentMonthRent extends StatefulWidget {
   const CurrentMonthRent({super.key});
 
@@ -139,7 +138,8 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                           AsyncSnapshot<List<RentModel>> snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return const Center(child: CircularProgressIndicator());
+                          return const Center(
+                              child: CircularProgressIndicator());
                         }
                         if (snapshot.hasData &&
                             snapshot.data != null &&
@@ -597,10 +597,10 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                           MaterialStateProperty
                                                               .all(const Color
                                                                   .fromARGB(
-                                                                      255,
-                                                                      171,
-                                                                      12,
-                                                                      219))),
+                                                                  255,
+                                                                  171,
+                                                                  12,
+                                                                  219))),
                                                   onPressed:
                                                       rent.isPaid == false
                                                           ? () {
@@ -619,10 +619,10 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
                                                           MaterialStateProperty
                                                               .all(const Color
                                                                   .fromARGB(
-                                                                      255,
-                                                                      12,
-                                                                      91,
-                                                                      219))),
+                                                                  255,
+                                                                  12,
+                                                                  91,
+                                                                  219))),
                                                   onPressed: () async {
                                                     Get.to(PrintingPage(
                                                       rent: rent,

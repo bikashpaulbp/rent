@@ -198,7 +198,7 @@ class _TenentPageState extends State<TenentPage> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Container(
+                                            Container( 
                                               width: 250,
                                               child: Column(
                                                 mainAxisAlignment:
