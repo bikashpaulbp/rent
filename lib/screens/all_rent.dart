@@ -115,353 +115,327 @@ class _AllRentState extends State<AllRent> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Container(
-          height: MediaQuery.of(context).size.height * 1,
-          child: SingleChildScrollView(
-            child: Column(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Column(
               children: [
-                Column(
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    const SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        const Text(
-                          'Rent',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Color.fromARGB(255, 78, 78, 78),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        selectedDate != null
-                            ? ElevatedButton(
-                                style: ButtonStyle(
-                                    backgroundColor: MaterialStateProperty.all(
-                                        const Color.fromARGB(255, 230, 1, 1))),
-                                onPressed: () {
-                                  setState(() {
-                                    selectedDate = null;
-                                  });
-                                },
-                                child: const Text("Reset"))
-                            : const SizedBox(
-                                width: 100,
-                              ),
-                        ElevatedButton(
-                          onPressed: () async {
-                            DateTime? picked = await showDatePicker(
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime(2000),
-                              lastDate: DateTime(2101),
-                              builder: (BuildContext context, Widget? child) {
-                                return Theme(
-                                  data: ThemeData.light().copyWith(
-                                    primaryColor: Colors.blue,
-                                    hintColor: Colors.blue,
-                                    colorScheme: const ColorScheme.light(
-                                        primary: Colors.blue),
-                                    buttonTheme: const ButtonThemeData(
-                                        textTheme: ButtonTextTheme.primary),
-                                  ),
-                                  child: child!,
-                                );
-                              },
-                            );
-
-                            if (picked != null && picked != selectedDate) {
-                              setState(() {
-                                selectedDate =
-                                    DateTime(picked.year, picked.month);
-                              });
-                            }
-                          },
-                          child: const Text('Choose Rent Month'),
-                        ),
-                      ],
+                    const Text(
+                      'Rent',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Color.fromARGB(255, 78, 78, 78),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.57,
-                      child: StreamBuilder<List<RentModel>>(
-                        stream: rentStream,
-                        builder: (BuildContext context,
-                            AsyncSnapshot<List<RentModel>> snapshot) {
-                          getBuildingId();
-                          _fetchRentData();
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          }
+                    selectedDate != null
+                        ? ElevatedButton(
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                    const Color.fromARGB(255, 230, 1, 1))),
+                            onPressed: () {
+                              setState(() {
+                                selectedDate = null;
+                              });
+                            },
+                            child: const Text("Reset"))
+                        : const SizedBox(
+                            width: 100,
+                          ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        DateTime? picked = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2101),
+                          builder: (BuildContext context, Widget? child) {
+                            return Theme(
+                              data: ThemeData.light().copyWith(
+                                primaryColor: Colors.blue,
+                                hintColor: Colors.blue,
+                                colorScheme: const ColorScheme.light(
+                                    primary: Colors.blue),
+                                buttonTheme: const ButtonThemeData(
+                                    textTheme: ButtonTextTheme.primary),
+                              ),
+                              child: child!,
+                            );
+                          },
+                        );
 
-                          if (snapshot.hasData &&
-                              snapshot.data != null &&
-                              snapshot.data!.isNotEmpty) {
-                            List<RentModel> allRentList = snapshot.data!
-                                .where((element) =>
-                                    element.buildingId == buildingId)
-                                .toList();
+                        if (picked != null && picked != selectedDate) {
+                          setState(() {
+                            selectedDate = DateTime(picked.year, picked.month);
+                          });
+                        }
+                      },
+                      child: const Text('Choose Rent Month'),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: MediaQuery.sizeOf(context).height * .585,
+                  child: StreamBuilder<List<RentModel>>(
+                    stream: rentStream,
+                    builder: (BuildContext context,
+                        AsyncSnapshot<List<RentModel>> snapshot) {
+                      getBuildingId();
+                      _fetchRentData();
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
 
-                            List<RentModel> rentList;
+                      if (snapshot.hasData &&
+                          snapshot.data != null &&
+                          snapshot.data!.isNotEmpty) {
+                        List<RentModel> allRentList = snapshot.data!
+                            .where(
+                                (element) => element.buildingId == buildingId)
+                            .toList();
 
-                            if (selectedDate != null) {
-                              rentList = allRentList
-                                  .where((rent) => isRentCurrentMonth(
-                                        rent,
-                                        year = selectedDate!.year,
-                                        month = selectedDate!.month,
-                                      ))
-                                  .toList();
-                            } else if (selectedDate == null) {
-                              DateTime now = DateTime.now();
-                              // DateTime firstDayOfCurrentMonth =
-                              //     DateTime(now.year, now.month, 1);
-                              DateTime previousMonth =
-                                  DateTime(now.year, now.month - 1);
+                        List<RentModel> rentList;
 
-                              // DateTime firstDayOfPreviousMonth =
-                              //     firstDayOfCurrentMonth
-                              //         .subtract(Duration(days: 1));
+                        if (selectedDate != null) {
+                          rentList = allRentList
+                              .where((rent) => isRentCurrentMonth(
+                                    rent,
+                                    year = selectedDate!.year,
+                                    month = selectedDate!.month,
+                                  ))
+                              .toList();
+                        } else if (selectedDate == null) {
+                          DateTime now = DateTime.now();
+                          // DateTime firstDayOfCurrentMonth =
+                          //     DateTime(now.year, now.month, 1);
+                          DateTime previousMonth =
+                              DateTime(now.year, now.month - 1);
 
-                              rentList = List.from(allRentList.where(
-                                (element) =>
-                                    element.rentMonth!.year ==
-                                        previousMonth.year &&
-                                    element.rentMonth!.month ==
-                                        previousMonth.month,
-                                // element.rentMonth!
-                                //     .isAfter(firstDayOfPreviousMonth) &&
-                                // element.rentMonth!
-                                //     .isBefore(firstDayOfCurrentMonth)
-                              ));
-                            } else {
-                              rentList = List.from(allRentList);
+                          // DateTime firstDayOfPreviousMonth =
+                          //     firstDayOfCurrentMonth
+                          //         .subtract(Duration(days: 1));
+
+                          rentList = List.from(allRentList.where(
+                            (element) =>
+                                element.rentMonth!.year == previousMonth.year &&
+                                element.rentMonth!.month == previousMonth.month,
+                            // element.rentMonth!
+                            //     .isAfter(firstDayOfPreviousMonth) &&
+                            // element.rentMonth!
+                            //     .isBefore(firstDayOfCurrentMonth)
+                          ));
+                        } else {
+                          rentList = List.from(allRentList);
+                        }
+                        return ListView.builder(
+                          itemCount: rentList.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            RentModel rent = rentList[index];
+                            List<String> getRentItemValues() {
+                              String? tenantName;
+                              String? flatName;
+                              String? floorName;
+
+                              List<TenantModel> tenants =
+                                  context.watch<TenantData>().tenantList;
+                              List<FlatModel> flats =
+                                  context.watch<FlatData>().flatList;
+                              List<FloorModel> floors =
+                                  context.watch<FloorData>().floorList;
+                              List<BuildingModel> buildings = context
+                                  .watch<BuildingProvider>()
+                                  .buildingList;
+
+                              if (floors.isNotEmpty) {
+                                try {
+                                  int? flatId = flats
+                                      .firstWhere((e) => e.id == rent.flatId)
+                                      .id;
+                                  int? floorId = flats
+                                      .firstWhere((e) => e.id == flatId)
+                                      .floorId;
+                                  floorName = floors
+                                      .firstWhere((e) => e.id == floorId)
+                                      .name;
+                                  buildingAddress = buildings
+                                      .firstWhere(
+                                          (element) => element.id == buildingId)
+                                      .address;
+                                } catch (_) {}
+                              } else {
+                                flatName = "floor not found";
+                              }
+                              if (flats.isNotEmpty) {
+                                try {
+                                  flatName = flats
+                                      .firstWhere((e) => e.id == rent.flatId)
+                                      .name;
+                                } catch (_) {}
+                              } else {
+                                flatName = "flat not found";
+                              }
+                              if (tenants.isNotEmpty) {
+                                try {
+                                  tenantName = tenants
+                                      .firstWhere((e) => e.id == rent.tenantId)
+                                      .name;
+                                } catch (_) {}
+                              } else {
+                                tenantName = "tenant not found";
+                              }
+
+                              return [
+                                floorName ?? 'Unknown Floor',
+                                flatName ?? 'Unknown Flat',
+                                tenantName ?? 'Unknown Tenant',
+                              ];
                             }
-                            return ListView.builder(
-                              itemCount: rentList.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                RentModel rent = rentList[index];
-                                List<String> getRentItemValues() {
-                                  String? tenantName;
-                                  String? flatName;
-                                  String? floorName;
 
-                                  List<TenantModel> tenants =
-                                      context.watch<TenantData>().tenantList;
-                                  List<FlatModel> flats =
-                                      context.watch<FlatData>().flatList;
-                                  List<FloorModel> floors =
-                                      context.watch<FloorData>().floorList;
-                                  List<BuildingModel> buildings = context
-                                      .watch<BuildingProvider>()
-                                      .buildingList;
+                            var values = getRentItemValues();
 
-                                  if (floors.isNotEmpty) {
-                                    try {
-                                      int? flatId = flats
-                                          .firstWhere(
-                                              (e) => e.id == rent.flatId)
-                                          .id;
-                                      int? floorId = flats
-                                          .firstWhere((e) => e.id == flatId)
-                                          .floorId;
-                                      floorName = floors
-                                          .firstWhere((e) => e.id == floorId)
-                                          .name;
-                                      buildingAddress = buildings
-                                          .firstWhere((element) =>
-                                              element.id == buildingId)
-                                          .address;
-                                    } catch (_) {}
-                                  } else {
-                                    flatName = "floor not found";
-                                  }
-                                  if (flats.isNotEmpty) {
-                                    try {
-                                      flatName = flats
-                                          .firstWhere(
-                                              (e) => e.id == rent.flatId)
-                                          .name;
-                                    } catch (_) {}
-                                  } else {
-                                    flatName = "flat not found";
-                                  }
-                                  if (tenants.isNotEmpty) {
-                                    try {
-                                      tenantName = tenants
-                                          .firstWhere(
-                                              (e) => e.id == rent.tenantId)
-                                          .name;
-                                    } catch (_) {}
-                                  } else {
-                                    tenantName = "tenant not found";
-                                  }
-
-                                  return [
-                                    floorName ?? 'Unknown Floor',
-                                    flatName ?? 'Unknown Flat',
-                                    tenantName ?? 'Unknown Tenant',
-                                  ];
-                                }
-
-                                var values = getRentItemValues();
-
-                                return ListTile(
-                                  title: Card(
-                                    elevation: 10,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Flexible(
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(5.0),
-                                                  child: Text(
-                                                    'Tenant Name:  ${values[2]}',
-                                                    style: const TextStyle(
-                                                      color: Color.fromARGB(
-                                                          255, 0, 0, 0),
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
+                            return ListTile(
+                              title: Card(
+                                elevation: 10,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Flexible(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(5.0),
+                                              child: Text(
+                                                'Tenant Name:  ${values[2]}',
+                                                style: const TextStyle(
+                                                  color: Color.fromARGB(
+                                                      255, 0, 0, 0),
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
                                                 ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(5.0),
-                                                  child: Text(
-                                                    'Floor Name: ${values[0]}',
-                                                    style: const TextStyle(
-                                                      color: Color.fromARGB(
-                                                          255, 0, 0, 0),
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(5.0),
-                                                  child: Text(
-                                                    'Flat Name: ${values[1]}',
-                                                    style: const TextStyle(
-                                                      color: Color.fromARGB(
-                                                          255, 0, 0, 0),
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(5.0),
-                                                  child: Text(
-                                                    'Total Amount: ${rent.totalAmount}',
-                                                    style: const TextStyle(
-                                                      color: Color.fromARGB(
-                                                          255, 0, 0, 0),
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(5.0),
-                                                  child: Text(
-                                                    'Due Amount: ${rent.dueAmount == 0 || rent.dueAmount == null ? rent.totalAmount : rent.dueAmount}',
-                                                    style: const TextStyle(
-                                                      color: Color.fromARGB(
-                                                          255, 0, 0, 0),
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(5.0),
-                                                  child: Text(
-                                                    'Month: ${rent.rentMonth != null ? DateFormat('MMM yy').format(rent.rentMonth!) : "N/A"}',
-                                                    style: const TextStyle(
-                                                      color: Color.fromARGB(
-                                                          255, 0, 0, 0),
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(5.0),
-                                                  child: Text(
-                                                    rent.isPaid == false
-                                                        ? "Status: Unpaid"
-                                                        : "Status: Paid",
-                                                    style: const TextStyle(
-                                                      color: Color.fromARGB(
-                                                          255, 0, 0, 0),
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
+                                              ),
                                             ),
-                                          ),
-                                          const SizedBox(width: 50),
-                                          Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceEvenly,
-                                                    children: [
-                                                      CircleAvatar(
-                                                        radius: 16,
-                                                        backgroundColor:
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(5.0),
+                                              child: Text(
+                                                'Floor Name: ${values[0]}',
+                                                style: const TextStyle(
+                                                  color: Color.fromARGB(
+                                                      255, 0, 0, 0),
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(5.0),
+                                              child: Text(
+                                                'Flat Name: ${values[1]}',
+                                                style: const TextStyle(
+                                                  color: Color.fromARGB(
+                                                      255, 0, 0, 0),
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(5.0),
+                                              child: Text(
+                                                'Total Amount: ${rent.totalAmount}',
+                                                style: const TextStyle(
+                                                  color: Color.fromARGB(
+                                                      255, 0, 0, 0),
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(5.0),
+                                              child: Text(
+                                                'Due Amount: ${rent.dueAmount == 0 || rent.dueAmount == null ? rent.totalAmount : rent.dueAmount}',
+                                                style: const TextStyle(
+                                                  color: Color.fromARGB(
+                                                      255, 0, 0, 0),
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(5.0),
+                                              child: Text(
+                                                'Month: ${rent.rentMonth != null ? DateFormat('MMM yy').format(rent.rentMonth!) : "N/A"}',
+                                                style: const TextStyle(
+                                                  color: Color.fromARGB(
+                                                      255, 0, 0, 0),
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(5.0),
+                                              child: Text(
+                                                rent.isPaid == false
+                                                    ? "Status: Unpaid"
+                                                    : "Status: Paid",
+                                                style: const TextStyle(
+                                                  color: Color.fromARGB(
+                                                      255, 0, 0, 0),
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(width: 50),
+                                      Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                children: [
+                                                  CircleAvatar(
+                                                    radius: 16,
+                                                    backgroundColor: rent
+                                                                .isPaid ==
+                                                            true
+                                                        ? const Color.fromARGB(
+                                                            255, 8, 240, 8)
+                                                        : const Color.fromARGB(
+                                                            255, 246, 59, 59),
+                                                    child: IconButton(
+                                                        iconSize: 16,
+                                                        color:
                                                             rent.isPaid == true
-                                                                ? const Color
-                                                                    .fromARGB(
-                                                                    255,
-                                                                    8,
-                                                                    240,
-                                                                    8)
-                                                                : const Color
-                                                                    .fromARGB(
-                                                                    255,
-                                                                    246,
-                                                                    59,
-                                                                    59),
-                                                        child: IconButton(
-                                                            iconSize: 16,
-                                                            color: rent.isPaid ==
-                                                                    true
                                                                 ? const Color
                                                                     .fromARGB(
                                                                     255,
@@ -469,307 +443,292 @@ class _AllRentState extends State<AllRent> {
                                                                     255,
                                                                     255)
                                                                 : Colors.white,
-                                                            onPressed:
-                                                                rent.isPaid ==
-                                                                        false
-                                                                    ? () async {
-                                                                        showDialog(
-                                                                          context:
-                                                                              context,
-                                                                          builder: (BuildContext context) =>
-                                                                              AlertDialog(
-                                                                            actions: <Widget>[
-                                                                              Center(
-                                                                                child: Container(
-                                                                                  width: 250,
-                                                                                  height: 100,
-                                                                                  color: Colors.white,
-                                                                                  child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                                                                    const Padding(
-                                                                                      padding: EdgeInsets.all(8.0),
-                                                                                      child: Center(child: Text('click confirm')),
-                                                                                    ),
-                                                                                    const SizedBox(height: 15),
-                                                                                    Row(
-                                                                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                                                      children: [
-                                                                                        ElevatedButton(
-                                                                                            style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.red)),
-                                                                                            onPressed: () async {
-                                                                                              getBuildingId();
-                                                                                              getUser();
-                                                                                              isPaid = true;
-                                                                                              RentModel updatedRent = RentModel(id: rent.id, buildingId: buildingId, dueAmount: 0, gasBill: rent.gasBill, isPrinted: false, rentAmount: rent.rentAmount, serviceCharge: rent.serviceCharge, waterBill: rent.waterBill, userId: rent.userId, rentMonth: rent.rentMonth, totalAmount: rent.totalAmount, isPaid: isPaid, flatId: rent.flatId, tenantId: rent.tenantId);
-                                                                                              DepositeModel deposit = DepositeModel(rentId: rent.id, totalAmount: rent.totalAmount, depositeAmount: rent.totalAmount, dueAmount: 0, tranDate: dateofPayment, buildingId: buildingId, flatId: rent.flatId, tenantId: rent.tenantId, userId: userId);
-
-                                                                                              await rentApiService.updateRent(id: rent.id!, rent: updatedRent);
-                                                                                              await depositeApiService.createDeposite(deposit);
-
-                                                                                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("status has been changed to paid")));
-
-                                                                                              setState(() {
-                                                                                                _fetchRentData();
-                                                                                              });
-                                                                                              Navigator.of(context).pop();
-                                                                                            },
-                                                                                            child: const Text('confirm')),
-                                                                                        ElevatedButton(
-                                                                                            onPressed: () {
-                                                                                              Navigator.of(context).pop();
-                                                                                            },
-                                                                                            child: const Text('cancel')),
-                                                                                      ],
-                                                                                    )
-                                                                                  ]),
+                                                        onPressed:
+                                                            rent.isPaid == false
+                                                                ? () async {
+                                                                    showDialog(
+                                                                      context:
+                                                                          context,
+                                                                      builder: (BuildContext
+                                                                              context) =>
+                                                                          AlertDialog(
+                                                                        actions: <Widget>[
+                                                                          Center(
+                                                                            child:
+                                                                                Container(
+                                                                              width: 250,
+                                                                              height: 100,
+                                                                              color: Colors.white,
+                                                                              child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                                                                const Padding(
+                                                                                  padding: EdgeInsets.all(8.0),
+                                                                                  child: Center(child: Text('click confirm')),
                                                                                 ),
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                        );
-                                                                      }
-                                                                    : null,
-                                                            icon: const Icon(
-                                                                Icons.paid)),
-                                                      ),
-                                                      const SizedBox(width: 2),
-                                                      CircleAvatar(
-                                                        radius: 15,
-                                                        backgroundColor:
-                                                            const Color
-                                                                .fromARGB(255,
-                                                                34, 85, 251),
-                                                        child: IconButton(
-                                                            iconSize: 15,
-                                                            color: Colors.white,
-                                                            onPressed: () {
-                                                              _totalAmountController
-                                                                      .text =
-                                                                  rent.totalAmount
-                                                                      .toString();
-
-                                                              showModalBottomSheet<
-                                                                  void>(
-                                                                context:
-                                                                    context,
-                                                                builder:
-                                                                    (BuildContext
-                                                                        context) {
-                                                                  return SingleChildScrollView(
-                                                                    child:
-                                                                        StatefulBuilder(
-                                                                      builder: (context,
-                                                                              setState) =>
-                                                                          Container(
-                                                                        height:
-                                                                            400,
-                                                                        color: const Color
-                                                                            .fromARGB(
-                                                                            255,
-                                                                            255,
-                                                                            255,
-                                                                            255),
-                                                                        child:
-                                                                            Center(
-                                                                          child:
-                                                                              Column(
-                                                                            mainAxisAlignment:
-                                                                                MainAxisAlignment.start,
-                                                                            children: <Widget>[
-                                                                              const Padding(
-                                                                                padding: EdgeInsets.all(20.0),
-                                                                                child: Text('Update Your Information'),
-                                                                              ),
-                                                                              Padding(
-                                                                                padding: const EdgeInsets.all(14.0),
-                                                                                child: Column(
+                                                                                const SizedBox(height: 15),
+                                                                                Row(
+                                                                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                                                   children: [
-                                                                                    Row(
-                                                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                                      children: [
-                                                                                        const SizedBox(
-                                                                                          child: Text(
-                                                                                            'Total Amount',
-                                                                                            style: TextStyle(
-                                                                                              fontSize: 16,
-                                                                                              color: Color.fromARGB(255, 78, 78, 78),
-                                                                                              fontStyle: FontStyle.normal,
-                                                                                            ),
-                                                                                          ),
-                                                                                        ),
-                                                                                        SizedBox(
-                                                                                          width: 250,
-                                                                                          height: 50,
-                                                                                          child: Padding(
-                                                                                            padding: const EdgeInsets.all(8.0),
-                                                                                            child: TextFormField(
-                                                                                              keyboardType: TextInputType.number,
-                                                                                              controller: _totalAmountController,
-                                                                                              decoration: InputDecoration(
-                                                                                                border: OutlineInputBorder(
-                                                                                                  borderRadius: BorderRadius.circular(10),
-                                                                                                ),
-                                                                                              ),
-                                                                                            ),
-                                                                                          ),
-                                                                                        ),
-                                                                                      ],
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
-                                                                              ),
-                                                                              Padding(
-                                                                                padding: const EdgeInsets.all(8.0),
-                                                                                child: Row(
-                                                                                  mainAxisAlignment: MainAxisAlignment.end,
-                                                                                  children: [
-                                                                                    isLoading == false
-                                                                                        ? ElevatedButton(
-                                                                                            child: const Text('update'),
-                                                                                            onPressed: () async {
-                                                                                              setState(() {
-                                                                                                isLoading = true;
-                                                                                              });
-                                                                                              RentModel updatedRent = RentModel(id: rent.id, tenantId: rent.tenantId, flatId: rent.flatId, rentMonth: rent.rentMonth, totalAmount: int.parse(_totalAmountController.text), isPaid: rent.isPaid, buildingId: rent.buildingId, dueAmount: rent.dueAmount, gasBill: rent.gasBill, isPrinted: false, rentAmount: rent.rentAmount, serviceCharge: rent.serviceCharge, waterBill: rent.waterBill, userId: rent.userId);
-                                                                                              await rentApiService.updateRent(id: rent.id!, rent: updatedRent);
-                                                                                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("updated successfully")));
-
-                                                                                              setState(() {
-                                                                                                isLoading = false;
-                                                                                                refresh();
-
-                                                                                                Navigator.pop(context);
-                                                                                              });
-                                                                                            },
-                                                                                          )
-                                                                                        : const CircularProgressIndicator(),
-                                                                                    const SizedBox(
-                                                                                      width: 20,
-                                                                                    ),
                                                                                     ElevatedButton(
-                                                                                      child: const Text('Cancel'),
-                                                                                      onPressed: () => Navigator.pop(context),
+                                                                                        style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.red)),
+                                                                                        onPressed: () async {
+                                                                                          getBuildingId();
+                                                                                          getUser();
+                                                                                          isPaid = true;
+                                                                                          RentModel updatedRent = RentModel(id: rent.id, buildingId: buildingId, dueAmount: 0, gasBill: rent.gasBill, isPrinted: false, rentAmount: rent.rentAmount, serviceCharge: rent.serviceCharge, waterBill: rent.waterBill, userId: rent.userId, rentMonth: rent.rentMonth, totalAmount: rent.totalAmount, isPaid: isPaid, flatId: rent.flatId, tenantId: rent.tenantId);
+                                                                                          DepositeModel deposit = DepositeModel(rentId: rent.id, totalAmount: rent.totalAmount, depositeAmount: rent.totalAmount, dueAmount: 0, tranDate: dateofPayment, buildingId: buildingId, flatId: rent.flatId, tenantId: rent.tenantId, userId: userId);
+
+                                                                                          await rentApiService.updateRent(id: rent.id!, rent: updatedRent);
+                                                                                          await depositeApiService.createDeposite(deposit);
+
+                                                                                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("status has been changed to paid")));
+
+                                                                                          setState(() {
+                                                                                            _fetchRentData();
+                                                                                          });
+                                                                                          Navigator.of(context).pop();
+                                                                                        },
+                                                                                        child: const Text('confirm')),
+                                                                                    ElevatedButton(
+                                                                                        onPressed: () {
+                                                                                          Navigator.of(context).pop();
+                                                                                        },
+                                                                                        child: const Text('cancel')),
+                                                                                  ],
+                                                                                )
+                                                                              ]),
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    );
+                                                                  }
+                                                                : null,
+                                                        icon: const Icon(
+                                                            Icons.paid)),
+                                                  ),
+                                                  const SizedBox(width: 2),
+                                                  CircleAvatar(
+                                                    radius: 15,
+                                                    backgroundColor:
+                                                        const Color.fromARGB(
+                                                            255, 34, 85, 251),
+                                                    child: IconButton(
+                                                        iconSize: 15,
+                                                        color: Colors.white,
+                                                        onPressed: () {
+                                                          _totalAmountController
+                                                                  .text =
+                                                              rent.totalAmount
+                                                                  .toString();
+
+                                                          showModalBottomSheet<
+                                                              void>(
+                                                            context: context,
+                                                            builder:
+                                                                (BuildContext
+                                                                    context) {
+                                                              return SingleChildScrollView(
+                                                                child:
+                                                                    StatefulBuilder(
+                                                                  builder: (context,
+                                                                          setState) =>
+                                                                      Container(
+                                                                    height: 400,
+                                                                    color: const Color
+                                                                        .fromARGB(
+                                                                        255,
+                                                                        255,
+                                                                        255,
+                                                                        255),
+                                                                    child:
+                                                                        Center(
+                                                                      child:
+                                                                          Column(
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.start,
+                                                                        children: <Widget>[
+                                                                          const Padding(
+                                                                            padding:
+                                                                                EdgeInsets.all(20.0),
+                                                                            child:
+                                                                                Text('Update Your Information'),
+                                                                          ),
+                                                                          Padding(
+                                                                            padding:
+                                                                                const EdgeInsets.all(14.0),
+                                                                            child:
+                                                                                Column(
+                                                                              children: [
+                                                                                Row(
+                                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                  children: [
+                                                                                    const SizedBox(
+                                                                                      child: Text(
+                                                                                        'Total Amount',
+                                                                                        style: TextStyle(
+                                                                                          fontSize: 16,
+                                                                                          color: Color.fromARGB(255, 78, 78, 78),
+                                                                                          fontStyle: FontStyle.normal,
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                    SizedBox(
+                                                                                      width: 250,
+                                                                                      height: 50,
+                                                                                      child: Padding(
+                                                                                        padding: const EdgeInsets.all(8.0),
+                                                                                        child: TextFormField(
+                                                                                          keyboardType: TextInputType.number,
+                                                                                          controller: _totalAmountController,
+                                                                                          decoration: InputDecoration(
+                                                                                            border: OutlineInputBorder(
+                                                                                              borderRadius: BorderRadius.circular(10),
+                                                                                            ),
+                                                                                          ),
+                                                                                        ),
+                                                                                      ),
                                                                                     ),
                                                                                   ],
                                                                                 ),
-                                                                              ),
-                                                                            ],
+                                                                              ],
+                                                                            ),
                                                                           ),
-                                                                        ),
+                                                                          Padding(
+                                                                            padding:
+                                                                                const EdgeInsets.all(8.0),
+                                                                            child:
+                                                                                Row(
+                                                                              mainAxisAlignment: MainAxisAlignment.end,
+                                                                              children: [
+                                                                                isLoading == false
+                                                                                    ? ElevatedButton(
+                                                                                        child: const Text('update'),
+                                                                                        onPressed: () async {
+                                                                                          setState(() {
+                                                                                            isLoading = true;
+                                                                                          });
+                                                                                          RentModel updatedRent = RentModel(id: rent.id, tenantId: rent.tenantId, flatId: rent.flatId, rentMonth: rent.rentMonth, totalAmount: int.parse(_totalAmountController.text), isPaid: rent.isPaid, buildingId: rent.buildingId, dueAmount: rent.dueAmount, gasBill: rent.gasBill, isPrinted: false, rentAmount: rent.rentAmount, serviceCharge: rent.serviceCharge, waterBill: rent.waterBill, userId: rent.userId);
+                                                                                          await rentApiService.updateRent(id: rent.id!, rent: updatedRent);
+                                                                                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("updated successfully")));
+
+                                                                                          setState(() {
+                                                                                            isLoading = false;
+                                                                                            refresh();
+
+                                                                                            Navigator.pop(context);
+                                                                                          });
+                                                                                        },
+                                                                                      )
+                                                                                    : const CircularProgressIndicator(),
+                                                                                const SizedBox(
+                                                                                  width: 20,
+                                                                                ),
+                                                                                ElevatedButton(
+                                                                                  child: const Text('Cancel'),
+                                                                                  onPressed: () => Navigator.pop(context),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ),
+                                                                        ],
                                                                       ),
                                                                     ),
-                                                                  );
-                                                                },
+                                                                  ),
+                                                                ),
                                                               );
                                                             },
-                                                            icon: const Icon(
-                                                                Icons.edit)),
-                                                      ),
-                                                      const SizedBox(width: 2),
-                                                      CircleAvatar(
-                                                        radius: 15,
-                                                        backgroundColor:
-                                                            const Color
-                                                                .fromARGB(255,
-                                                                240, 46, 46),
-                                                        child: IconButton(
-                                                            iconSize: 15,
-                                                            color: Colors.white,
-                                                            onPressed:
-                                                                () async {
-                                                              int? id = rent.id;
-                                                              await rentApiService
-                                                                  .deleteRent(
-                                                                      id!);
-                                                              ScaffoldMessenger
-                                                                      .of(
-                                                                          context)
-                                                                  .showSnackBar(
-                                                                      const SnackBar(
-                                                                          content:
-                                                                              Text("deleted successfully")));
-                                                              setState(() {
-                                                                _fetchRentData();
-                                                              });
-                                                            },
-                                                            icon: const Icon(
-                                                                Icons.delete)),
-                                                      ),
-                                                    ]),
-                                                SizedBox(
-                                                    height: MediaQuery.sizeOf(
-                                                                context)
+                                                          );
+                                                        },
+                                                        icon: const Icon(
+                                                            Icons.edit)),
+                                                  ),
+                                                  const SizedBox(width: 2),
+                                                  CircleAvatar(
+                                                    radius: 15,
+                                                    backgroundColor:
+                                                        const Color.fromARGB(
+                                                            255, 240, 46, 46),
+                                                    child: IconButton(
+                                                        iconSize: 15,
+                                                        color: Colors.white,
+                                                        onPressed: () async {
+                                                          int? id = rent.id;
+                                                          await rentApiService
+                                                              .deleteRent(id!);
+                                                          ScaffoldMessenger.of(
+                                                                  context)
+                                                              .showSnackBar(
+                                                                  const SnackBar(
+                                                                      content: Text(
+                                                                          "deleted successfully")));
+                                                          setState(() {
+                                                            _fetchRentData();
+                                                          });
+                                                        },
+                                                        icon: const Icon(
+                                                            Icons.delete)),
+                                                  ),
+                                                ]),
+                                            SizedBox(
+                                                height:
+                                                    MediaQuery.sizeOf(context)
                                                             .height *
                                                         .09),
-                                                ElevatedButton(
-                                                    style: ButtonStyle(
-                                                        backgroundColor:
-                                                            MaterialStateProperty
-                                                                .all(const Color
-                                                                    .fromARGB(
-                                                                    255,
-                                                                    171,
-                                                                    12,
-                                                                    219))),
-                                                    onPressed:
-                                                        rent.isPaid == false
-                                                            ? () {
-                                                                Get.to(DepositDataPage(
-                                                                    refresh:
-                                                                        refresh,
-                                                                    rentID:
-                                                                        rent.id ??
-                                                                            0));
-                                                              }
-                                                            : null,
-                                                    child:
-                                                        const Text('Deposit')),
-                                                ElevatedButton(
-                                                    style: ButtonStyle(
-                                                        backgroundColor:
-                                                            MaterialStateProperty
-                                                                .all(const Color
-                                                                    .fromARGB(
-                                                                    255,
-                                                                    12,
-                                                                    91,
-                                                                    219))),
-                                                    onPressed: () async {
-                                                      Get.to(PrintingPage(
-                                                        rent: rent,
-                                                        floorName: values[0],
-                                                        tenantName: values[2],
-                                                        flatName: values[1],
-                                                        buildingAddress:
-                                                            buildingAddress,
-                                                        refresh: refresh,
-                                                      ));
-                                                    },
-                                                    child:
-                                                        rent.isPrinted == false
-                                                            ? const Text(
-                                                                '   Print  ')
-                                                            : const Text(
-                                                                'Re-print'))
-                                              ]),
-                                        ],
-                                      ),
-                                    ),
+                                            ElevatedButton(
+                                                style: ButtonStyle(
+                                                    backgroundColor:
+                                                        MaterialStateProperty
+                                                            .all(const Color
+                                                                .fromARGB(255,
+                                                                171, 12, 219))),
+                                                onPressed: rent.isPaid == false
+                                                    ? () {
+                                                        Get.to(DepositDataPage(
+                                                            refresh: refresh,
+                                                            rentID:
+                                                                rent.id ?? 0));
+                                                      }
+                                                    : null,
+                                                child: const Text('Deposit')),
+                                            ElevatedButton(
+                                                style: ButtonStyle(
+                                                    backgroundColor:
+                                                        MaterialStateProperty
+                                                            .all(const Color
+                                                                .fromARGB(255,
+                                                                12, 91, 219))),
+                                                onPressed: () async {
+                                                  Get.to(PrintingPage(
+                                                    rent: rent,
+                                                    floorName: values[0],
+                                                    tenantName: values[2],
+                                                    flatName: values[1],
+                                                    buildingAddress:
+                                                        buildingAddress,
+                                                    refresh: refresh,
+                                                  ));
+                                                },
+                                                child: rent.isPrinted == false
+                                                    ? const Text('   Print  ')
+                                                    : const Text('Re-print'))
+                                          ]),
+                                    ],
                                   ),
-                                );
-                              },
+                                ),
+                              ),
                             );
-                          } else {
-                            return const Center(
-                                child: Text('no  monthly rents available.'));
-                          }
-                        },
-                      ),
-                    ),
-                  ],
+                          },
+                        );
+                      } else {
+                        return const Center(
+                            child: Text('no  monthly rents available.'));
+                      }
+                    },
+                  ),
                 ),
               ],
             ),
-          ),
+          ],
         ),
       ),
     );
