@@ -179,7 +179,7 @@ class _AllRentState extends State<AllRent> {
                   ],
                 ),
                 SizedBox(
-                  height: MediaQuery.sizeOf(context).height * .585,
+                  height: 472,
                   child: StreamBuilder<List<RentModel>>(
                     stream: rentStream,
                     builder: (BuildContext context,

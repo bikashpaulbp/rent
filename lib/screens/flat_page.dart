@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:rent_management/services/tenant_service.dart';
 import 'package:rent_management/shared_data/floor_data.dart';
 import 'package:rent_management/shared_data/tenent_data.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 import '../insert_data/flat.dart';
 
@@ -115,9 +116,9 @@ class _FlatPageState extends State<FlatPage> {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(1.0),
-                  child: SizedBox(
+                  child: Container(
                     width: 400,
-                    height: MediaQuery.sizeOf(context).height * .718,
+                    height: 580,
                     child: StreamBuilder<List<FlatModel>>(
                       stream: flatStream,
                       builder: (BuildContext context,

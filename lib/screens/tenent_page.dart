@@ -148,7 +148,7 @@ class _TenentPageState extends State<TenentPage> {
             children: [
               const SizedBox(height: 10),
               Container(
-                height: MediaQuery.sizeOf(context).height * .707,
+                height: 568,
                 child: StreamBuilder<List<TenantModel>>(
                   stream: tenantStream,
                   builder: (BuildContext context,

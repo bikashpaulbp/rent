@@ -99,7 +99,7 @@ class _FloorPageState extends State<FloorPage> {
                   padding: const EdgeInsets.all(1.0),
                   child: Container(
                     width: 500,
-                    height: MediaQuery.sizeOf(context).height * .707,
+                    height: 580,
                     child: Consumer<FloorData>(
                       builder: (context, floor, child) {
                         floor.getFloorList();
@@ -113,8 +113,7 @@ class _FloorPageState extends State<FloorPage> {
                         return floorList.isNotEmpty
                             ? ListView.builder(
                                 itemCount: floorList.length,
-                                itemBuilder:
-                                    (BuildContext context, int index) {
+                                itemBuilder: (BuildContext context, int index) {
                                   FloorModel floor = floorList[index];
 
                                   return ListTile(
@@ -125,16 +124,14 @@ class _FloorPageState extends State<FloorPage> {
                                             MainAxisAlignment.spaceEvenly,
                                         children: [
                                           Padding(
-                                            padding:
-                                                const EdgeInsets.all(8.0),
+                                            padding: const EdgeInsets.all(8.0),
                                             child: Container(
                                               height: 60,
                                               child: Card(
                                                 elevation: 10,
                                                 child: Padding(
                                                   padding:
-                                                      const EdgeInsets.all(
-                                                          5.0),
+                                                      const EdgeInsets.all(5.0),
                                                   child: Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment
@@ -145,8 +142,7 @@ class _FloorPageState extends State<FloorPage> {
                                                           children: [],
                                                         ),
                                                       ),
-                                                      const SizedBox(
-                                                          width: 15),
+                                                      const SizedBox(width: 15),
                                                       SizedBox(
                                                         width: 220,
                                                         child: RichText(
@@ -163,22 +159,20 @@ class _FloorPageState extends State<FloorPage> {
                                                                           0,
                                                                           0,
                                                                           0),
-                                                                  fontSize:
-                                                                      16,
+                                                                  fontSize: 16,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w500,
                                                                 ),
                                                               ),
                                                               TextSpan(
-                                                                text: floor
-                                                                    .name,
+                                                                text:
+                                                                    floor.name,
                                                                 style:
                                                                     const TextStyle(
                                                                   color: Colors
                                                                       .black,
-                                                                  fontSize:
-                                                                      16,
+                                                                  fontSize: 16,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w500,
@@ -202,8 +196,7 @@ class _FloorPageState extends State<FloorPage> {
                                                                     .text =
                                                                 floor.name!;
                                                             showModalBottomSheet(
-                                                              context:
-                                                                  context,
+                                                              context: context,
                                                               builder:
                                                                   (BuildContext
                                                                       context) {
@@ -324,27 +317,23 @@ class _FloorPageState extends State<FloorPage> {
                                                               Icons.edit),
                                                         ),
                                                       ),
-                                                      const SizedBox(
-                                                          width: 10),
+                                                      const SizedBox(width: 10),
                                                       CircleAvatar(
                                                         radius: 15,
                                                         backgroundColor:
                                                             const Color
-                                                                .fromARGB(215,
-                                                                224, 2, 2),
+                                                                .fromARGB(
+                                                                215, 224, 2, 2),
                                                         child: IconButton(
                                                           iconSize: 15,
                                                           color: Colors.white,
-                                                          onPressed:
-                                                              () async {
-                                                            int? id =
-                                                                floor.id;
+                                                          onPressed: () async {
+                                                            int? id = floor.id;
                                                             await floorApiService
                                                                 .deleteFloor(
                                                                     id!);
                                                             ScaffoldMessenger
-                                                                    .of(
-                                                                        context)
+                                                                    .of(context)
                                                                 .showSnackBar(
                                                                     const SnackBar(
                                                                         content:
