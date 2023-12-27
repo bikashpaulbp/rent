@@ -224,7 +224,7 @@ class _DashboardState extends State<Dashboard> {
                       await authStateManager.removeBuildingId();
                       await authStateManager.removeBuildingName();
                       await authStateManager.removeLoggedInUser();
-
+                      setState(() {});
                       Navigator.of(context).pushReplacement(MaterialPageRoute(
                         builder: (context) => const ChooseScreen(),
                       ));

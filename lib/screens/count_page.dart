@@ -398,8 +398,7 @@ class _CountPageState extends State<CountPage> {
                                 child: Text(
                                   'Deposit History',
                                   style: TextStyle(
-                                      color: Color.fromARGB(
-                                          255, 114, 114, 114),
+                                      color: Color.fromARGB(255, 114, 114, 114),
                                       fontSize: 12),
                                 ),
                               )
@@ -428,8 +427,7 @@ class _CountPageState extends State<CountPage> {
                                 child: Text(
                                   'Not Decided',
                                   style: TextStyle(
-                                      color: Color.fromARGB(
-                                          255, 114, 114, 114),
+                                      color: Color.fromARGB(255, 114, 114, 114),
                                       fontSize: 12),
                                 ),
                               )
@@ -458,8 +456,7 @@ class _CountPageState extends State<CountPage> {
                                 child: Text(
                                   'Not Decided',
                                   style: TextStyle(
-                                      color: Color.fromARGB(
-                                          255, 114, 114, 114),
+                                      color: Color.fromARGB(255, 114, 114, 114),
                                       fontSize: 12),
                                 ),
                               )
@@ -488,8 +485,7 @@ class _CountPageState extends State<CountPage> {
                                 child: Text(
                                   'Not Decided',
                                   style: TextStyle(
-                                      color: Color.fromARGB(
-                                          255, 114, 114, 114),
+                                      color: Color.fromARGB(255, 114, 114, 114),
                                       fontSize: 12),
                                 ),
                               )
@@ -518,8 +514,7 @@ class _CountPageState extends State<CountPage> {
                                 child: Text(
                                   'Not Decided',
                                   style: TextStyle(
-                                      color: Color.fromARGB(
-                                          255, 114, 114, 114),
+                                      color: Color.fromARGB(255, 114, 114, 114),
                                       fontSize: 12),
                                 ),
                               )
@@ -548,8 +543,7 @@ class _CountPageState extends State<CountPage> {
                                 child: Text(
                                   'Not Decided',
                                   style: TextStyle(
-                                      color: Color.fromARGB(
-                                          255, 114, 114, 114),
+                                      color: Color.fromARGB(255, 114, 114, 114),
                                       fontSize: 12),
                                 ),
                               )

@@ -182,7 +182,8 @@ class _LoginAndRegisterScreenState extends State<LoginAndRegisterScreen> {
   Widget inputField(fieldType) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
-      child: TextField(
+      child: TextFormField(
+        obscureText: fieldType == 'password' ? true : false,
         onChanged: (value) {
           setState(() {
             if (fieldType == 'email') {
@@ -232,18 +233,12 @@ class _LoginAndRegisterScreenState extends State<LoginAndRegisterScreen> {
                           email: email, password: password);
 
                       if (loggedInUser.password!.isNotEmpty) {
-                        await authStateManager
-                            .saveLoggedInUser(loggedInUser)
-                            .then((_) {
-                         
-                          Navigator.of(context)
-                              .pushReplacement(MaterialPageRoute(
-                            builder: (context) => const Dashboard(),
-                          ));
-                        });
+                        await authStateManager.saveLoggedInUser(loggedInUser);
+                        setState(() {});
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => const Dashboard(),
+                        ));
                       }
-
-                      print(loggedInUser.email);
                     } catch (e) {
                       if (userApiService.isLoggedIn == false) {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -358,15 +353,12 @@ class _SignUpState extends State<SignUp> {
       }
     }
 
-    hidePassword() {
-      if (fieldType == 'password') {
-        return true;
-      }
-    }
-
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: TextField(
+        obscureText: fieldType == 'password' || fieldType == 'confirmPassword'
+            ? true
+            : false,
         onChanged: (value) {
           setState(() {
             if (fieldType == 'email') {
@@ -437,20 +429,15 @@ class _SignUpState extends State<SignUp> {
                             userList.firstWhere((e) => e.email == email).email;
                       } catch (_) {}
                       if (checkEmail == null || checkEmail.isEmpty) {
-                        await userApiService
-                            .createUser(UserModel(
+                        await userApiService.createUser(UserModel(
                           email: email,
                           password: password,
                           mobileNo: mobile,
                           name: name,
-                        ))
-                            .then((_) {
-                          Navigator.of(context)
-                              .pushReplacement(MaterialPageRoute(
-                            builder: (context) =>
-                                const LoginAndRegisterScreen(),
-                          ));
-                        });
+                        ));
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => const LoginAndRegisterScreen(),
+                        ));
 
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
