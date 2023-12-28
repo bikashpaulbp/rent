@@ -79,9 +79,12 @@ class _CurrentMonthRentState extends State<CurrentMonthRent> {
   String? buildingAddress;
   @override
   void initState() {
-    _fetchRentData();
+    setState(() {
+      _fetchRentData();
     getUser();
     getBuildingId();
+    });
+    
     super.initState();
   }
 

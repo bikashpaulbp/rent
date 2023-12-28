@@ -56,9 +56,12 @@ class _TenentPageState extends State<TenentPage> {
 
   @override
   void initState() {
-    getLocalInfo();
+    setState(() {
+        getLocalInfo();
     _fetchTenantData();
     
+    });
+  
     super.initState();
   }
 

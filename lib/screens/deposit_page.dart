@@ -44,9 +44,12 @@ class _DepositPageState extends State<DepositPage> {
   String? tenantName;
   @override
   void initState() {
-    getUser();
+    setState(() {
+       getUser();
     getBuildingId();
     _fetchData();
+    });
+   
     super.initState();
   }
 

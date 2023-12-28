@@ -56,8 +56,11 @@ class _FlatPageState extends State<FlatPage> {
 
   @override
   void initState() {
-    getLocalInfo();
+    setState(() {
+       getLocalInfo();
     _fetchData();
+    });
+   
     super.initState();
   }
 

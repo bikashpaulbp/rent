@@ -80,12 +80,12 @@ class _AllRentState extends State<AllRent> {
 
   void refresh() {
     setState(() {
+      getUser();
+      getBuildingId();
       _fetchRentData();
     });
 
     // _fetchData();
-    getUser();
-    getBuildingId();
   }
 
   bool isRentCurrentMonth(RentModel rent, int currentYear, int currentMonth) {

@@ -6,6 +6,7 @@ import 'package:rent_management/models/user_model.dart';
 import 'package:rent_management/screens/building_page.dart';
 import 'package:rent_management/screens/count_page.dart';
 import 'package:rent_management/screens/flat_page.dart';
+import 'package:rent_management/screens/incomeExpense_page.dart';
 import 'package:rent_management/screens/login_screen.dart';
 import 'package:rent_management/screens/print_rent.dart';
 import 'package:rent_management/screens/tenent_page.dart';
@@ -195,6 +196,38 @@ class _DashboardState extends State<Dashboard> {
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
                           color: Color.fromARGB(255, 30, 238, 37),
+                        ),
+                      )
+                    ]),
+                  )),
+            ),
+            // const Spacer(),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: InkWell(
+                  onTap: () {
+                    _closeDrawer();
+                    // Navigator.of(context).push(MaterialPageRoute(
+                    //     builder: (context) => BuildingPage()));
+                    Get.to(const IncomeExpense());
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Row(children: [
+                      Icon(
+                        Icons.money,
+                        color: Color.fromARGB(255, 200, 30, 238),
+                        size: 30,
+                      ),
+                      SizedBox(
+                        width: 30,
+                      ),
+                      Text(
+                        "Income & Expense",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: Color.fromARGB(255, 200, 30, 238),
                         ),
                       )
                     ]),
