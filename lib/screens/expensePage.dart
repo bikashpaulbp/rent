@@ -28,14 +28,13 @@ class _ExpensePageState extends State<ExpensePage> {
   UserModel? loggedInUser = UserModel();
   int? buildingId;
   int? userId;
- 
+
   @override
   void initState() {
-    setState(() {
-      refresh();
-      getUser();
-      getBuildingId();
-    });
+    refresh();
+    getUser();
+    getBuildingId();
+
     super.initState();
   }
 
@@ -48,7 +47,10 @@ class _ExpensePageState extends State<ExpensePage> {
   }
 
   refresh() {
-    fetchExpense();
+    setState(() {
+      fetchExpense();
+      calTotal();
+    });
   }
 
   Future<void> fetchExpense() async {
@@ -90,6 +92,7 @@ class _ExpensePageState extends State<ExpensePage> {
             color: const Color.fromARGB(255, 255, 255, 255),
           )),
       body: Container(
+        height: 580,
         child: StreamBuilder<List<IncomeExpenseTransactionModel>>(
           stream: expenseList,
           builder: (BuildContext context,
@@ -115,27 +118,59 @@ class _ExpensePageState extends State<ExpensePage> {
                   return ListTile(
                     title: Card(
                       elevation: 10,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Description: ${expense.name}",
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                          ).pOnly(bottom: 8),
-                          Text(
-                            "Amount: ${expense.amount}",
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                          ).pOnly(bottom: 8),
-                          Text(
-                            "Date: ${DateFormat("dd MMM y").format(expense.tranDate!)}",
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                          ).pOnly(bottom: 8),
-                        ],
-                      ).p(15),
+                      child: Container(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Container(
+                              width: 290,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Description: ${expense.name}",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ).pOnly(bottom: 8),
+                                  Text(
+                                    "Amount: ${expense.amount}",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ).pOnly(bottom: 8),
+                                  Text(
+                                    "Date: ${DateFormat("dd MMM y").format(expense.tranDate!)}",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ).pOnly(bottom: 8),
+                                ],
+                              ).p(15),
+                            ),
+                            CircleAvatar(
+                              radius: 15,
+                              backgroundColor:
+                                  const Color.fromARGB(215, 224, 2, 2),
+                              child: IconButton(
+                                iconSize: 15,
+                                color: Colors.white,
+                                onPressed: () async {
+                                  int? id = expense.id;
+                                  await expenseApi
+                                    ..deleteIncomeExpenseTransaction(id!);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content:
+                                              Text("deleted successfully")));
+                                },
+                                icon: const Icon(Icons.delete),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ).p(8),
                   );
                 },

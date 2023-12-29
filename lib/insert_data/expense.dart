@@ -109,6 +109,7 @@ class _ExpenseState extends State<Expense> {
                               name: expenseNameController.text);
                           await incomeExpenseApiService
                               .createIncomeExpense(expenseModel);
+                          widget.refresh;
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content:
                                   "expense added successfully".text.make()));
@@ -258,6 +259,7 @@ class _ExpenseState extends State<Expense> {
                                   name: descriptionController.text ?? "");
                           await incomeExpenseTransactionApiService
                               .createIncomeExpenseTransaction(tranModel);
+                          widget.refresh;
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content: "transaction added successfully"
                                   .text
