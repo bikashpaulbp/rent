@@ -153,7 +153,7 @@ class _TenentPageState extends State<TenentPage> {
               const SizedBox(height: 10),
               Container(
                 height: 568,
-                child: StreamBuilder<List<TenantModel>>(
+                child: StreamBuilder<List<TenantModel>>( 
                   stream: tenantStream,
                   builder: (BuildContext context,
                       AsyncSnapshot<List<TenantModel>> snapshot) {

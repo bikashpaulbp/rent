@@ -99,7 +99,7 @@ class _FloorPageState extends State<FloorPage> {
                   padding: const EdgeInsets.all(1.0),
                   child: Container(
                     width: 500,
-                    height: 580,
+                    height: 580, 
                     child: Consumer<FloorData>(
                       builder: (context, floor, child) {
                         floor.getFloorList();
