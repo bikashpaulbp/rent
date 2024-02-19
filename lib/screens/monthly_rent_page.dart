@@ -34,8 +34,8 @@ class _MonthlyRentState extends State<MonthlyRent> {
 
   @override
   void initState() {
-    refresh();
     super.initState();
+    refresh();
   }
 
   void refresh() {
@@ -83,12 +83,15 @@ class _MonthlyRentState extends State<MonthlyRent> {
               ],
             ),
             bottom: const TabBar(tabs: [
-              Tab(text: "All Rent"),
+              Tab(text: "Current Month Rent"),
               Tab(
-                text: "Current Month Rent",
+                text: "All Rent",
               )
             ])),
-        body: const TabBarView(children: [AllRent(), CurrentMonthRent()]),
+        body: const TabBarView(children: [
+          CurrentMonthRent(),
+          AllRent(),
+        ]),
       ),
     );
   }

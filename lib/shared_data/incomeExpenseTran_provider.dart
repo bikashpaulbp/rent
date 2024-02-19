@@ -14,6 +14,11 @@ class IncomeExpenseTransactionProvider extends ChangeNotifier {
   int? userId;
   int total = 0;
   int amount = 0;
+
+  double? totalExpense;
+
+  DateTime currentDate = DateTime.now();
+
   Future<void> getUser() async {
     loggedInUser = (await authStateManager.getLoggedInUser())!;
   }
@@ -42,23 +47,77 @@ class IncomeExpenseTransactionProvider extends ChangeNotifier {
     return incomeExpenseTransactionList.length;
   }
 
-  Future<void> calTotal() async {
-    await getIncomeExpenseTransactionList();
-    await getBuildingId();
-    await getUser();
-    try {
-      List<IncomeExpenseTransactionModel> allExpenseList =
-          incomeExpenseTransactionList;
+  // Future<void> calTotal() async {
+  //   await getIncomeExpenseTransactionList();
+  //   await getBuildingId();
+  //   await getUser();
+  //   try {
+  //     List<IncomeExpenseTransactionModel> allExpenseList =
+  //         incomeExpenseTransactionList;
 
-      List<IncomeExpenseTransactionModel> expensesList = allExpenseList
-          .where((element) =>
-              element.buildingId == buildingId &&
-              element.userId == loggedInUser!.id)
-          .toList();
-      for (var expense in expensesList) {
-        amount = amount + expense.amount!;
+  //     List<IncomeExpenseTransactionModel> expensesList = allExpenseList
+  //         .where((element) =>
+  //             element.buildingId == buildingId &&
+  //             element.userId == loggedInUser!.id)
+  //         .toList();
+  //     for (var expense in expensesList) {
+  //       amount = amount + expense.amount!;
+  //     }
+  //     total = amount;
+  //   } catch (_) {}
+  // }
+
+  Future<double> calTotal(DateTime selectedDate) async {
+    try {
+      await getBuildingId();
+      await getUser();
+      await getIncomeExpenseTransactionList();
+      totalExpense = 0.0;
+      List<IncomeExpenseTransactionModel> expenseListFilter;
+      List<IncomeExpenseTransactionModel> expensesList;
+
+      if (selectedDate != null) {
+        expensesList = incomeExpenseTransactionList
+            .where((element) =>
+                element.buildingId == buildingId &&
+                element.userId == loggedInUser!.id)
+            .toList();
+
+        expenseListFilter = expensesList
+            .where((expense) =>
+                expense.tranDate!.year == selectedDate!.year &&
+                expense.tranDate!.month == selectedDate!.month)
+            .toList();
+        totalExpense = expenseListFilter.fold(
+            0.0,
+            (previousValue, element) =>
+                previousValue! + (element.amount ?? 0.0));
+
+        return totalExpense!;
+      } else if (selectedDate == null) {
+        expensesList = incomeExpenseTransactionList
+            .where((element) =>
+                element.buildingId == buildingId &&
+                element.userId == loggedInUser!.id)
+            .toList();
+
+        expenseListFilter = expensesList
+            .where((expense) =>
+                expense.tranDate!.year == currentDate.year &&
+                expense.tranDate!.month == currentDate.month)
+            .toList();
+
+        totalExpense = expenseListFilter.fold(
+            0.0,
+            (previousValue, element) =>
+                previousValue! + (element.amount ?? 0.0));
+
+        return totalExpense!;
+      } else {
+        return 0;
       }
-      total = amount;
-    } catch (_) {}
+    } catch (_) {
+      return 0;
+    }
   }
 }

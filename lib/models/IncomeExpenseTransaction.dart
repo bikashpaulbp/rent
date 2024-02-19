@@ -4,7 +4,7 @@ class IncomeExpenseTransactionModel {
   int? incomeExpenseId;
   DateTime? tranDate;
   String? name;
-  int? amount;
+  double? amount;
   int? rentId;
   int? userId;
 

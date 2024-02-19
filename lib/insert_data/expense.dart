@@ -252,14 +252,16 @@ class _ExpenseState extends State<Expense> {
                               IncomeExpenseTransactionModel(
                                   userId: userId,
                                   buildingId: buildingId,
-                                  amount: int.parse(amountController.text),
+                                  amount: double.parse(amountController.text),
                                   incomeExpenseId: selectedId,
                                   rentId: 00,
                                   tranDate: tranDate,
                                   name: descriptionController.text ?? "");
                           await incomeExpenseTransactionApiService
                               .createIncomeExpenseTransaction(tranModel);
+
                           widget.refresh;
+
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content: "transaction added successfully"
                                   .text
@@ -267,7 +269,7 @@ class _ExpenseState extends State<Expense> {
                           setState(() {
                             isLoading2 = false;
                             selectedId = null;
-                            tranDate = null;
+                            // tranDate = null;
                             descriptionController.clear();
                             amountController.clear();
                           });

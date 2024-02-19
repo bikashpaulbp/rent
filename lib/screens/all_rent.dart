@@ -65,7 +65,7 @@ class _AllRentState extends State<AllRent> {
   DateTime? selectedDate;
   int? year;
   int? month;
-  String? buildingAddress;
+  String? buildingAddress; 
 
   @override
   void initState() {
