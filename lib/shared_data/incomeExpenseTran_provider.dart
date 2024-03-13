@@ -14,6 +14,7 @@ class IncomeExpenseTransactionProvider extends ChangeNotifier {
   int? userId;
   int total = 0;
   int amount = 0;
+  bool isLoading = false;
 
   double? totalExpense;
 
@@ -29,49 +30,33 @@ class IncomeExpenseTransactionProvider extends ChangeNotifier {
 
   Future<void> getIncomeExpenseTransactionList() async {
     try {
+      incomeExpenseTransactionList = [];
+      isLoading = true;
+      notifyListeners();
+
+      await getUser();
+      await getBuildingId();
+
       List<IncomeExpenseTransactionModel> allIncomeExpenseTransactionList =
           await incomeExpenseTransactionApiService
               .getAllIncomeExpenseTransaction();
-      incomeExpenseTransactionList = allIncomeExpenseTransactionList;
+      isLoading = false;
+      notifyListeners();
+      incomeExpenseTransactionList = allIncomeExpenseTransactionList
+          .where((element) =>
+              element.buildingId == buildingId &&
+              element.userId == loggedInUser!.id)
+          .toList();
       notifyListeners();
     } catch (_) {}
-  }
-
-  Future<List<IncomeExpenseTransactionModel>>
-      returnIncomeExpenseTranList() async {
-    await getIncomeExpenseTransactionList();
-    return incomeExpenseTransactionList;
   }
 
   incomeExpenseTransactionListNew() {
     return incomeExpenseTransactionList.length;
   }
 
-  // Future<void> calTotal() async {
-  //   await getIncomeExpenseTransactionList();
-  //   await getBuildingId();
-  //   await getUser();
-  //   try {
-  //     List<IncomeExpenseTransactionModel> allExpenseList =
-  //         incomeExpenseTransactionList;
-
-  //     List<IncomeExpenseTransactionModel> expensesList = allExpenseList
-  //         .where((element) =>
-  //             element.buildingId == buildingId &&
-  //             element.userId == loggedInUser!.id)
-  //         .toList();
-  //     for (var expense in expensesList) {
-  //       amount = amount + expense.amount!;
-  //     }
-  //     total = amount;
-  //   } catch (_) {}
-  // }
-
-  Future<double> calTotal(DateTime selectedDate) async {
+  void calTotal({DateTime? selectedDate}) async {
     try {
-      await getBuildingId();
-      await getUser();
-      await getIncomeExpenseTransactionList();
       totalExpense = 0.0;
       List<IncomeExpenseTransactionModel> expenseListFilter;
       List<IncomeExpenseTransactionModel> expensesList;
@@ -83,17 +68,17 @@ class IncomeExpenseTransactionProvider extends ChangeNotifier {
                 element.userId == loggedInUser!.id)
             .toList();
 
-        expenseListFilter = expensesList
+        expenseListFilter = incomeExpenseTransactionList
             .where((expense) =>
-                expense.tranDate!.year == selectedDate!.year &&
-                expense.tranDate!.month == selectedDate!.month)
+                expense.tranDate!.year == selectedDate.year &&
+                expense.tranDate!.month == selectedDate.month)
             .toList();
         totalExpense = expenseListFilter.fold(
             0.0,
             (previousValue, element) =>
                 previousValue! + (element.amount ?? 0.0));
 
-        return totalExpense!;
+        // return totalExpense!;
       } else if (selectedDate == null) {
         expensesList = incomeExpenseTransactionList
             .where((element) =>
@@ -112,12 +97,12 @@ class IncomeExpenseTransactionProvider extends ChangeNotifier {
             (previousValue, element) =>
                 previousValue! + (element.amount ?? 0.0));
 
-        return totalExpense!;
+        // return totalExpense!;
       } else {
-        return 0;
+        // return 0;
       }
     } catch (_) {
-      return 0;
+      // return 0;
     }
   }
 }

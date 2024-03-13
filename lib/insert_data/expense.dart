@@ -9,12 +9,12 @@ import 'package:rent_management/models/user_model.dart';
 import 'package:rent_management/screens/login_screen.dart';
 import 'package:rent_management/services/incomeExpenseTran_service.dart';
 import 'package:rent_management/services/incomeExpense_service.dart';
+import 'package:rent_management/shared_data/incomeExpenseTran_provider.dart';
 import 'package:rent_management/shared_data/incomeExpense_provider.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class Expense extends StatefulWidget {
-  final Function() refresh;
-  Expense({required this.refresh, super.key});
+  Expense({super.key});
 
   @override
   State<Expense> createState() => _ExpenseState();
@@ -109,7 +109,7 @@ class _ExpenseState extends State<Expense> {
                               name: expenseNameController.text);
                           await incomeExpenseApiService
                               .createIncomeExpense(expenseModel);
-                          widget.refresh;
+
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content:
                                   "expense added successfully".text.make()));
@@ -252,7 +252,7 @@ class _ExpenseState extends State<Expense> {
                               IncomeExpenseTransactionModel(
                                   userId: userId,
                                   buildingId: buildingId,
-                                  amount: double.parse(amountController.text),
+                                  amount: int.parse(amountController.text),
                                   incomeExpenseId: selectedId,
                                   rentId: 00,
                                   tranDate: tranDate,
@@ -260,7 +260,9 @@ class _ExpenseState extends State<Expense> {
                           await incomeExpenseTransactionApiService
                               .createIncomeExpenseTransaction(tranModel);
 
-                          widget.refresh;
+                          Provider.of<IncomeExpenseTransactionProvider>(context,
+                                  listen: false)
+                              .getIncomeExpenseTransactionList();
 
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content: "transaction added successfully"
