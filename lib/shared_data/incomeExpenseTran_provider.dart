@@ -6,6 +6,7 @@ import 'package:rent_management/services/incomeExpenseTran_service.dart';
 
 class IncomeExpenseTransactionProvider extends ChangeNotifier {
   List<IncomeExpenseTransactionModel> incomeExpenseTransactionList = [];
+  List<IncomeExpenseTransactionModel> allIncomeExpenseTransactionList = [];
   IncomeExpenseTransactionApiService incomeExpenseTransactionApiService =
       IncomeExpenseTransactionApiService();
   AuthStateManager authStateManager = AuthStateManager();
@@ -30,25 +31,52 @@ class IncomeExpenseTransactionProvider extends ChangeNotifier {
 
   Future<void> getIncomeExpenseTransactionList() async {
     try {
+      allIncomeExpenseTransactionList = [];
       incomeExpenseTransactionList = [];
       isLoading = true;
-      notifyListeners();
 
       await getUser();
       await getBuildingId();
+      allIncomeExpenseTransactionList = await incomeExpenseTransactionApiService
+          .getAllIncomeExpenseTransaction();
 
-      List<IncomeExpenseTransactionModel> allIncomeExpenseTransactionList =
-          await incomeExpenseTransactionApiService
-              .getAllIncomeExpenseTransaction();
-      isLoading = false;
-      notifyListeners();
       incomeExpenseTransactionList = allIncomeExpenseTransactionList
           .where((element) =>
               element.buildingId == buildingId &&
               element.userId == loggedInUser!.id)
           .toList();
+
       notifyListeners();
-    } catch (_) {}
+    } catch (_) {
+    } finally {
+      isLoading = false;
+      notifyListeners(); // Moved notifyListeners() to the finally block to ensure it's called after the async operations
+    }
+  }
+
+  Future<void> refreshList() async {
+    try {
+      allIncomeExpenseTransactionList = [];
+      incomeExpenseTransactionList = [];
+      isLoading = true;
+
+      await getUser();
+      await getBuildingId();
+      allIncomeExpenseTransactionList = await incomeExpenseTransactionApiService
+          .getAllIncomeExpenseTransaction();
+
+      incomeExpenseTransactionList = allIncomeExpenseTransactionList
+          .where((element) =>
+              element.buildingId == buildingId &&
+              element.userId == loggedInUser!.id)
+          .toList();
+
+      notifyListeners();
+    } catch (_) {
+    } finally {
+      isLoading = false;
+      notifyListeners(); // Moved notifyListeners() to the finally block to ensure it's called after the async operations
+    }
   }
 
   incomeExpenseTransactionListNew() {

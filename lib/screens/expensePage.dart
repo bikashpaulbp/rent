@@ -35,6 +35,8 @@ class _ExpensePageState extends State<ExpensePage> {
   double? totalExpense = 0.0;
   DateTime currentDate = DateTime.now();
 
+  List<IncomeExpenseTransactionModel> expenseListFilter = [];
+
   @override
   void initState() {
     super.initState();
@@ -136,7 +138,7 @@ class _ExpensePageState extends State<ExpensePage> {
               height: MediaQuery.of(context).size.height * 0.65,
               child: Consumer<IncomeExpenseTransactionProvider>(
                 builder: (context, value, child) {
-                  List<IncomeExpenseTransactionModel> expenseListFilter = [];
+                  expenseListFilter = [];
                   if (selectedDate != null) {
                     expenseListFilter = value.incomeExpenseTransactionList
                         .where((expense) =>
@@ -211,15 +213,10 @@ class _ExpensePageState extends State<ExpensePage> {
                                               onPressed: () async {
                                                 int? id = expense.id;
                                                 await expenseApi
-                                                  ..deleteIncomeExpenseTransaction(
-                                                      id!);
-                                                Provider.of<IncomeExpenseTransactionProvider>(
-                                                        context,
-                                                        listen: false)
-                                                    .getIncomeExpenseTransactionList();
-                                                setState(() {
-                                                  // refresh();
-                                                });
+                                                    .deleteIncomeExpenseTransaction(
+                                                        id!);
+
+                                                value.refreshList();
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(const SnackBar(
                                                         content: Text(
