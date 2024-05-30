@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:rent_management/main.dart';
 
 import 'package:rent_management/models/user_model.dart';
 import 'package:rent_management/screens/dashboard_page.dart';

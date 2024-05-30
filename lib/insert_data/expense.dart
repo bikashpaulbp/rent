@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:rent_management/models/IncomeExpense.dart';
 import 'package:rent_management/models/IncomeExpenseTransaction.dart';
-import 'package:rent_management/models/incomeExpenseTypeModel.dart';
 import 'package:rent_management/models/user_model.dart';
 import 'package:rent_management/screens/login_screen.dart';
 import 'package:rent_management/services/incomeExpenseTran_service.dart';
@@ -74,7 +73,7 @@ class _ExpenseState extends State<Expense> {
                     child: "Add Expense Type".text.bold.blue300.size(24).make())
                 .centered()
                 .p16(),
-            SizedBox().h(20),
+            const SizedBox().h(20),
             TextFormField(
               keyboardType: TextInputType.name,
               controller: expenseNameController,
@@ -89,7 +88,7 @@ class _ExpenseState extends State<Expense> {
                 ),
               ),
             ),
-            SizedBox().h(10),
+            const SizedBox().h(10),
             ButtonBar(children: [
               isLoading == false
                   ? ElevatedButton(
@@ -127,13 +126,13 @@ class _ExpenseState extends State<Expense> {
                         }
                       },
                       child: "Add".text.make())
-                  : Center(child: CircularProgressIndicator()),
+                  : const Center(child: CircularProgressIndicator()),
             ]),
-            SizedBox().h(40),
+            const SizedBox().h(40),
             SizedBox(child: "Add Transaction".text.bold.blue300.size(24).make())
                 .centered()
                 .p16(),
-            SizedBox().h(20),
+            const SizedBox().h(20),
             Consumer<IncomeExpenseProvider>(
               builder: (context, expenseData, child) {
                 expenseData.getIncomeExpenseList();
@@ -176,7 +175,7 @@ class _ExpenseState extends State<Expense> {
                 );
               },
             ),
-            SizedBox().h(10),
+            const SizedBox().h(10),
             TextFormField(
               keyboardType: TextInputType.number,
               controller: amountController,
@@ -191,7 +190,7 @@ class _ExpenseState extends State<Expense> {
                 ),
               ),
             ),
-            SizedBox().h(10),
+            const SizedBox().h(10),
             TextFormField(
               keyboardType: TextInputType.name,
               controller: descriptionController,
@@ -206,7 +205,7 @@ class _ExpenseState extends State<Expense> {
                 ),
               ),
             ),
-            SizedBox().h(10),
+            const SizedBox().h(10),
             DateTimeField(
               decoration: InputDecoration(
                   suffix: const Text(
@@ -232,7 +231,7 @@ class _ExpenseState extends State<Expense> {
                 );
               },
             ),
-            SizedBox().h(10),
+            const SizedBox().h(10),
             ButtonBar(children: [
               isLoading == false
                   ? ElevatedButton(
@@ -285,9 +284,9 @@ class _ExpenseState extends State<Expense> {
                         }
                       },
                       child: "Add".text.make())
-                  : Center(child: CircularProgressIndicator()),
+                  : const Center(child: CircularProgressIndicator()),
             ]),
-            SizedBox().h(40),
+            const SizedBox().h(40),
           ],
         ).p16(),
       ),

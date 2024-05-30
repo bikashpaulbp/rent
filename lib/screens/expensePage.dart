@@ -1,4 +1,3 @@
-import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,7 +5,6 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:rent_management/insert_data/expense.dart';
-import 'package:rent_management/insert_data/income.dart';
 import 'package:rent_management/models/IncomeExpenseTransaction.dart';
 import 'package:rent_management/models/user_model.dart';
 import 'package:rent_management/screens/login_screen.dart';
@@ -85,9 +83,9 @@ class _ExpensePageState extends State<ExpensePage> {
                         onPressed: () {
                           // refresh();
                         },
-                        icon: Icon(Icons.refresh),
+                        icon: const Icon(Icons.refresh),
                         color: Colors.blue)
-                    : SizedBox(),
+                    : const SizedBox(),
                 selectedDate != null
                     ? ElevatedButton(
                         style: ButtonStyle(
@@ -154,9 +152,9 @@ class _ExpensePageState extends State<ExpensePage> {
                   }
 
                   return value.isLoading
-                      ? Center(child: CircularProgressIndicator())
+                      ? const Center(child: CircularProgressIndicator())
                       : expenseListFilter.isEmpty
-                          ? Center(child: Text("no expense found"))
+                          ? const Center(child: Text("no expense found"))
                           : ListView.builder(
                               itemCount: expenseListFilter.length,
                               itemBuilder: (context, index) {
@@ -180,21 +178,21 @@ class _ExpensePageState extends State<ExpensePage> {
                                               children: [
                                                 Text(
                                                   "Description: ${expense.name}",
-                                                  style: TextStyle(
+                                                  style: const TextStyle(
                                                       fontSize: 16,
                                                       fontWeight:
                                                           FontWeight.bold),
                                                 ).pOnly(bottom: 8),
                                                 Text(
                                                   "Amount: ${expense.amount}",
-                                                  style: TextStyle(
+                                                  style: const TextStyle(
                                                       fontSize: 16,
                                                       fontWeight:
                                                           FontWeight.bold),
                                                 ).pOnly(bottom: 8),
                                                 Text(
                                                   "Tran Date: ${DateFormat("dd MMM y").format(expense.tranDate!)}",
-                                                  style: TextStyle(
+                                                  style: const TextStyle(
                                                       fontSize: 16,
                                                       fontWeight:
                                                           FontWeight.bold),
