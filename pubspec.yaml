@@ -57,6 +57,7 @@ dependencies:
   http:
   rxdart: 
   velocity_x: ^4.1.1
+  geolocator: ^11.1.0
   
   
 

@@ -78,13 +78,12 @@ class CurrentMonthRentState extends State<CurrentMonthRent> {
   String? buildingAddress;
   @override
   void initState() {
+    super.initState();
     setState(() {
       _fetchRentData();
       getUser();
       getBuildingId();
     });
-
-    super.initState();
   }
 
   void refresh() {
@@ -496,7 +495,7 @@ class CurrentMonthRentState extends State<CurrentMonthRent> {
                                                 tenantName: values[2],
                                                 flatName: values[1],
                                                 buildingAddress: buildingAddress,
-                                                refresh: refresh,
+                                                refresh: initState,
                                               ));
                                             },
                                             child: rent.isPrinted == false ? const Text('   Print  ') : const Text('Re-print'))

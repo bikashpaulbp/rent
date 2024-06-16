@@ -6,7 +6,9 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:rent_management/models/rent_model.dart';
 import 'package:rent_management/screens/current_date_rent.dart';
+import 'package:rent_management/screens/monthly_rent_page.dart';
 import 'package:rent_management/services/rent_service.dart';
+import 'package:geolocator/geolocator.dart';
 
 // ignore: must_be_immutable
 class PrintingPage extends StatefulWidget {
@@ -42,12 +44,38 @@ class _PrintingPageState extends State<PrintingPage> {
   }
 
   Future<void> initBluetooth() async {
+    // Check if location services are enabled
+    bool isLocationEnabled = await Geolocator.isLocationServiceEnabled();
+
+    if (!isLocationEnabled) {
+      // Request to enable location services
+      await Geolocator.openLocationSettings();
+      // Wait a bit to give the user time to enable location services
+      await Future.delayed(Duration(seconds: 5));
+      isLocationEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!isLocationEnabled) {
+        return;
+      }
+    }
+
+    // Check and request location permission
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+        // Permissions are denied, exit the function
+
+        return;
+      }
+    }
+
+    // Start Bluetooth scan
     bluetoothPrint.startScan(timeout: const Duration(seconds: 5));
 
     bool isConnected = await bluetoothPrint.isConnected ?? false;
 
     bluetoothPrint.state.listen((state) {
-      print('******************* cur device status: $state');
+      debugPrint('******************* cur device status: $state');
 
       switch (state) {
         case BluetoothPrint.CONNECTED:
@@ -83,7 +111,6 @@ class _PrintingPageState extends State<PrintingPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            widget.refresh;
             Get.back();
           },
         ),
@@ -189,42 +216,50 @@ class _PrintingPageState extends State<PrintingPage> {
                               //     size: 2,
                               //     align: LineText.ALIGN_CENTER,
                               //     linefeed: 1));
-                              list.add(LineText(type: LineText.TYPE_TEXT, content: "Bill Receipt", align: LineText.ALIGN_CENTER, height: 1, width: 1, linefeed: 1, underline: 1));
+                              list.add(LineText(
+                                type: LineText.TYPE_TEXT,
+                                content: "Bill Receipt",
+                                align: LineText.ALIGN_CENTER,
+                                height: 1,
+                                width: 1,
+                                linefeed: 1,
+                                underline: 1,
+                              ));
                               list.add(LineText(linefeed: 1));
-                              list.add(LineText(type: LineText.TYPE_TEXT, content: "Holding No: ${widget.buildingAddress}", align: LineText.ALIGN_CENTER, linefeed: 1, underline: 1));
+                              list.add(LineText(type: LineText.TYPE_TEXT, content: "Holding No: ${widget.buildingAddress}", weight: 100, align: LineText.ALIGN_CENTER, linefeed: 1, underline: 1));
                               list.add(LineText(linefeed: 1));
 
-                              list.add(LineText(type: LineText.TYPE_TEXT, content: "Receipt No", size: 5, weight: 30, align: LineText.ALIGN_CENTER, linefeed: 1, underline: 1));
-                              list.add(LineText(type: LineText.TYPE_TEXT, content: "${widget.rent.reciptNo}", weight: 30, align: LineText.ALIGN_CENTER, linefeed: 1, underline: 1));
+                              list.add(LineText(type: LineText.TYPE_TEXT, content: "Receipt No", size: 5, weight: 100, align: LineText.ALIGN_CENTER, linefeed: 1, underline: 1));
+                              list.add(LineText(type: LineText.TYPE_TEXT, content: "${widget.rent.reciptNo}", weight: 100, align: LineText.ALIGN_CENTER, linefeed: 1, underline: 1));
                               list.add(LineText(linefeed: 1));
-                              list.add(LineText(type: LineText.TYPE_TEXT, content: " Tenant Name   :  ${widget.tenantName}", relativeX: 2, weight: 30, align: LineText.ALIGN_LEFT, linefeed: 1, underline: 1));
-                              list.add(LineText(type: LineText.TYPE_TEXT, content: " Floor Name    :  ${widget.floorName}", weight: 30, align: LineText.ALIGN_LEFT, linefeed: 1, underline: 1));
-                              list.add(LineText(type: LineText.TYPE_TEXT, content: " Flat Name     :  ${widget.flatName}", weight: 30, align: LineText.ALIGN_LEFT, linefeed: 1, underline: 1));
-                              list.add(LineText(type: LineText.TYPE_TEXT, content: " Rent Amount   :  ${formatter.format(widget.rent.rentAmount)} BDT", weight: 30, align: LineText.ALIGN_LEFT, linefeed: 1, underline: 1));
-                              list.add(LineText(type: LineText.TYPE_TEXT, content: " Water Bill    :  ${formatter.format(widget.rent.waterBill)} BDT", weight: 30, align: LineText.ALIGN_LEFT, linefeed: 1, underline: 1));
-                              list.add(LineText(type: LineText.TYPE_TEXT, content: " Gas Bill      :  ${formatter.format(widget.rent.gasBill)} BDT", weight: 30, align: LineText.ALIGN_LEFT, linefeed: 1, underline: 1));
-                              list.add(LineText(type: LineText.TYPE_TEXT, content: " Service Charge:  ${formatter.format(widget.rent.serviceCharge)} BDT", weight: 30, align: LineText.ALIGN_LEFT, linefeed: 1, underline: 1));
-                              list.add(LineText(type: LineText.TYPE_TEXT, content: " Total Amount  :  ${formatter.format(widget.rent.totalAmount)} BDT", weight: 30, align: LineText.ALIGN_LEFT, linefeed: 1, underline: 1));
+                              list.add(LineText(type: LineText.TYPE_TEXT, content: " Tenant Name   :  ${widget.tenantName}", relativeX: 2, weight: 100, align: LineText.ALIGN_LEFT, linefeed: 1, underline: 1));
+                              list.add(LineText(type: LineText.TYPE_TEXT, content: " Floor Name    :  ${widget.floorName}", weight: 100, align: LineText.ALIGN_LEFT, linefeed: 1, underline: 1));
+                              list.add(LineText(type: LineText.TYPE_TEXT, content: " Flat Name     :  ${widget.flatName}", weight: 100, align: LineText.ALIGN_LEFT, linefeed: 1, underline: 1));
+                              list.add(LineText(type: LineText.TYPE_TEXT, content: " Rent Amount   :  ${formatter.format(widget.rent.rentAmount)} BDT", weight: 100, align: LineText.ALIGN_LEFT, linefeed: 1, underline: 1));
+                              list.add(LineText(type: LineText.TYPE_TEXT, content: " Water Bill    :  ${formatter.format(widget.rent.waterBill)} BDT", weight: 100, align: LineText.ALIGN_LEFT, linefeed: 1, underline: 1));
+                              list.add(LineText(type: LineText.TYPE_TEXT, content: " Gas Bill      :  ${formatter.format(widget.rent.gasBill)} BDT", weight: 100, align: LineText.ALIGN_LEFT, linefeed: 1, underline: 1));
+                              list.add(LineText(type: LineText.TYPE_TEXT, content: " Service Charge:  ${formatter.format(widget.rent.serviceCharge)} BDT", weight: 100, align: LineText.ALIGN_LEFT, linefeed: 1, underline: 1));
+                              list.add(LineText(type: LineText.TYPE_TEXT, content: " Total Amount  :  ${formatter.format(widget.rent.totalAmount)} BDT", weight: 100, align: LineText.ALIGN_LEFT, linefeed: 1, underline: 1));
                               list.add(LineText(linefeed: 1));
-                              list.add(LineText(type: LineText.TYPE_TEXT, content: "Rent Month : ${DateFormat(' MMM yyy').format(widget.rent.rentMonth!)}", weight: 30, align: LineText.ALIGN_CENTER, linefeed: 1, underline: 1));
+                              list.add(LineText(type: LineText.TYPE_TEXT, content: "Rent Month : ${DateFormat(' MMM yyy').format(widget.rent.rentMonth!)}", weight: 100, align: LineText.ALIGN_CENTER, linefeed: 1, underline: 1));
 
                               list.add(LineText(linefeed: 1));
-                              list.add(LineText(type: LineText.TYPE_TEXT, content: "Printing Date", weight: 30, align: LineText.ALIGN_CENTER, linefeed: 1, underline: 2));
-                              list.add(LineText(type: LineText.TYPE_TEXT, content: "${DateFormat('E d MMM y hh:mm a').format(date)}", weight: 30, align: LineText.ALIGN_CENTER, linefeed: 1, underline: 2));
+                              list.add(LineText(type: LineText.TYPE_TEXT, content: "Printing Date", weight: 100, align: LineText.ALIGN_CENTER, linefeed: 1, underline: 2));
+                              list.add(LineText(type: LineText.TYPE_TEXT, content: "${DateFormat('E d MMM y hh:mm a').format(date)}", weight: 100, align: LineText.ALIGN_CENTER, linefeed: 1, underline: 2));
                               list.add(LineText(linefeed: 1));
                               list.add(LineText(
                                 type: LineText.TYPE_TEXT,
                                 content: "This is a computer-generated document",
-                                weight: 30,
+                                weight: 100,
                                 align: LineText.ALIGN_CENTER,
                                 linefeed: 1,
                               ));
-                              list.add(LineText(type: LineText.TYPE_TEXT, content: "No signature is required", weight: 30, align: LineText.ALIGN_CENTER, linefeed: 1, underline: 1));
+                              list.add(LineText(type: LineText.TYPE_TEXT, content: "No signature is required", weight: 100, align: LineText.ALIGN_CENTER, linefeed: 1, underline: 1));
                               list.add(LineText(linefeed: 1));
                               list.add(LineText(
                                 type: LineText.TYPE_TEXT,
                                 content: "App Developed By Bikash Paul",
-                                weight: 30,
+                                weight: 100,
                                 align: LineText.ALIGN_RIGHT,
                                 linefeed: 2,
                               ));

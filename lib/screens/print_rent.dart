@@ -50,8 +50,7 @@ class _PrintRentState extends State<PrintRent> {
 
   DateTime dateofPayment = DateTime.now();
 
-  final TextEditingController confirmTextEditingController =
-      TextEditingController();
+  final TextEditingController confirmTextEditingController = TextEditingController();
 
   bool isRentCurrentMonth(RentModel rent, int currentYear, int currentMonth) {
     DateTime date = rent.rentMonth!;
@@ -89,7 +88,6 @@ class _PrintRentState extends State<PrintRent> {
     rentStream = rentApiService.getAllRents().asStream();
   }
 
- 
   @override
   void initState() {
     _fetchRentData();
@@ -131,8 +129,7 @@ class _PrintRentState extends State<PrintRent> {
                         primaryColor: Colors.blue,
                         hintColor: Colors.blue,
                         colorScheme: const ColorScheme.light(primary: Colors.blue),
-                        buttonTheme:
-                            const ButtonThemeData(textTheme: ButtonTextTheme.primary),
+                        buttonTheme: const ButtonThemeData(textTheme: ButtonTextTheme.primary),
                       ),
                       child: child!,
                     );
@@ -162,27 +159,16 @@ class _PrintRentState extends State<PrintRent> {
                   height: 510,
                   child: StreamBuilder<List<RentModel>>(
                     stream: rentStream,
-                    builder: (BuildContext context,
-                        AsyncSnapshot<List<RentModel>> snapshot) {
+                    builder: (BuildContext context, AsyncSnapshot<List<RentModel>> snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
                       }
-                      if (snapshot.hasData &&
-                          snapshot.data != null &&
-                          snapshot.data!.isNotEmpty) {
+                      if (snapshot.hasData && snapshot.data != null && snapshot.data!.isNotEmpty) {
                         getBuildingId();
                         getUser();
 
-                        List<RentModel> allRentList = snapshot.data!
-                            .where(
-                                (element) => element.buildingId == buildingId)
-                            .toList();
-                        List<RentModel> rentList = allRentList
-                            .where((rent) => isRentCurrentMonth(
-                                rent,
-                                year = selectedDate.year,
-                                month = selectedDate.month))
-                            .toList();
+                        List<RentModel> allRentList = snapshot.data!.where((element) => element.buildingId == buildingId).toList();
+                        List<RentModel> rentList = allRentList.where((rent) => isRentCurrentMonth(rent, year = selectedDate.year, month = selectedDate.month)).toList();
                         return ListView.builder(
                           itemCount: rentList.length,
                           itemBuilder: (BuildContext context, int index) {
@@ -192,49 +178,31 @@ class _PrintRentState extends State<PrintRent> {
                               String? flatName;
                               String? floorName;
 
-                              List<TenantModel> tenants =
-                                  context.watch<TenantData>().tenantList;
-                              List<FlatModel> flats =
-                                  context.watch<FlatData>().flatList;
-                              List<FloorModel> floors =
-                                  context.watch<FloorData>().floorList;
-                              List<BuildingModel> buildings = context
-                                  .watch<BuildingProvider>()
-                                  .buildingList;
+                              List<TenantModel> tenants = context.watch<TenantData>().tenantList;
+                              List<FlatModel> flats = context.watch<FlatData>().flatList;
+                              List<FloorModel> floors = context.watch<FloorData>().floorList;
+                              List<BuildingModel> buildings = context.watch<BuildingProvider>().buildingList;
 
                               if (floors.isNotEmpty) {
                                 try {
-                                  int? flatId = flats
-                                      .firstWhere((e) => e.id == rent.flatId)
-                                      .id;
-                                  int? floorId = flats
-                                      .firstWhere((e) => e.id == flatId)
-                                      .floorId;
-                                  floorName = floors
-                                      .firstWhere((e) => e.id == floorId)
-                                      .name;
-                                  buildingAddress = buildings
-                                      .firstWhere(
-                                          (element) => element.id == buildingId)
-                                      .address;
+                                  int? flatId = flats.firstWhere((e) => e.id == rent.flatId).id;
+                                  int? floorId = flats.firstWhere((e) => e.id == flatId).floorId;
+                                  floorName = floors.firstWhere((e) => e.id == floorId).name;
+                                  buildingAddress = buildings.firstWhere((element) => element.id == buildingId).address;
                                 } catch (_) {}
                               } else {
                                 flatName = "floor not found";
                               }
                               if (flats.isNotEmpty) {
                                 try {
-                                  flatName = flats
-                                      .firstWhere((e) => e.id == rent.flatId)
-                                      .name;
+                                  flatName = flats.firstWhere((e) => e.id == rent.flatId).name;
                                 } catch (_) {}
                               } else {
                                 flatName = "flat not found";
                               }
                               if (tenants.isNotEmpty) {
                                 try {
-                                  tenantName = tenants
-                                      .firstWhere((e) => e.id == rent.tenantId)
-                                      .name;
+                                  tenantName = tenants.firstWhere((e) => e.id == rent.tenantId).name;
                                 } catch (_) {}
                               } else {
                                 tenantName = "tenant not found";
@@ -255,156 +223,130 @@ class _PrintRentState extends State<PrintRent> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
                                       Flexible(
                                         child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             const Padding(
-                                              padding:
-                                                  EdgeInsets.all(5.0),
+                                              padding: EdgeInsets.all(5.0),
                                               child: Text(
                                                 'Receipt No:',
                                                 style: TextStyle(
-                                                  color: Color.fromARGB(
-                                                      255, 0, 0, 0),
+                                                  color: Color.fromARGB(255, 0, 0, 0),
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                             ),
                                             Padding(
-                                              padding:
-                                                  const EdgeInsets.all(5.0),
+                                              padding: const EdgeInsets.all(5.0),
                                               child: Text(
                                                 '${rent.reciptNo}',
                                                 style: const TextStyle(
-                                                  color: Color.fromARGB(
-                                                      255, 0, 0, 0),
+                                                  color: Color.fromARGB(255, 0, 0, 0),
                                                   fontSize: 11,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                             ),
                                             Padding(
-                                              padding:
-                                                  const EdgeInsets.all(5.0),
+                                              padding: const EdgeInsets.all(5.0),
                                               child: Text(
                                                 'Tenant Name: ${values[2]}',
                                                 style: const TextStyle(
-                                                  color: Color.fromARGB(
-                                                      255, 0, 0, 0),
+                                                  color: Color.fromARGB(255, 0, 0, 0),
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                             ),
                                             Padding(
-                                              padding:
-                                                  const EdgeInsets.all(5.0),
+                                              padding: const EdgeInsets.all(5.0),
                                               child: Text(
                                                 'Floor Name: ${values[0]}',
                                                 style: const TextStyle(
-                                                  color: Color.fromARGB(
-                                                      255, 0, 0, 0),
+                                                  color: Color.fromARGB(255, 0, 0, 0),
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                             ),
                                             Padding(
-                                              padding:
-                                                  const EdgeInsets.all(5.0),
+                                              padding: const EdgeInsets.all(5.0),
                                               child: Text(
                                                 'Flat Name: ${values[1]}',
                                                 style: const TextStyle(
-                                                  color: Color.fromARGB(
-                                                      255, 0, 0, 0),
+                                                  color: Color.fromARGB(255, 0, 0, 0),
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                             ),
                                             Padding(
-                                              padding:
-                                                  const EdgeInsets.all(5.0),
+                                              padding: const EdgeInsets.all(5.0),
                                               child: Text(
                                                 'Rent Amount: ${rent.rentAmount}',
                                                 style: const TextStyle(
-                                                  color: Color.fromARGB(
-                                                      255, 0, 0, 0),
+                                                  color: Color.fromARGB(255, 0, 0, 0),
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                             ),
                                             Padding(
-                                              padding:
-                                                  const EdgeInsets.all(5.0),
+                                              padding: const EdgeInsets.all(5.0),
                                               child: Text(
                                                 'Water Bill: ${rent.waterBill}',
                                                 style: const TextStyle(
-                                                  color: Color.fromARGB(
-                                                      255, 0, 0, 0),
+                                                  color: Color.fromARGB(255, 0, 0, 0),
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                             ),
                                             Padding(
-                                              padding:
-                                                  const EdgeInsets.all(5.0),
+                                              padding: const EdgeInsets.all(5.0),
                                               child: Text(
                                                 'Gas Bill: ${rent.gasBill}',
                                                 style: const TextStyle(
-                                                  color: Color.fromARGB(
-                                                      255, 0, 0, 0),
+                                                  color: Color.fromARGB(255, 0, 0, 0),
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                             ),
                                             Padding(
-                                              padding:
-                                                  const EdgeInsets.all(5.0),
+                                              padding: const EdgeInsets.all(5.0),
                                               child: Text(
                                                 'Service Charge: ${rent.serviceCharge}',
                                                 style: const TextStyle(
-                                                  color: Color.fromARGB(
-                                                      255, 0, 0, 0),
+                                                  color: Color.fromARGB(255, 0, 0, 0),
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                             ),
                                             Padding(
-                                              padding:
-                                                  const EdgeInsets.all(5.0),
+                                              padding: const EdgeInsets.all(5.0),
                                               child: Text(
                                                 'Total Amount: ${rent.totalAmount}',
                                                 style: const TextStyle(
-                                                  color: Color.fromARGB(
-                                                      255, 0, 0, 0),
+                                                  color: Color.fromARGB(255, 0, 0, 0),
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                             ),
-                                         
                                             Padding(
-                                              padding:
-                                                  const EdgeInsets.all(5.0),
+                                              padding: const EdgeInsets.all(5.0),
                                               child: Text(
                                                 'Rent Month: ${rent.rentMonth != null ? DateFormat(' MMM yyy').format(rent.rentMonth!) : "N/A"}',
                                                 style: const TextStyle(
-                                                  color: Color.fromARGB(
-                                                      255, 0, 0, 0),
+                                                  color: Color.fromARGB(255, 0, 0, 0),
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.bold,
                                                 ),
@@ -414,41 +356,22 @@ class _PrintRentState extends State<PrintRent> {
                                         ),
                                       ),
                                       const SizedBox(width: 50),
-                                      Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            SizedBox(
-                                                height:
-                                                    MediaQuery.sizeOf(context)
-                                                            .height *
-                                                        .09),
-                                            ElevatedButton(
-                                                style: ButtonStyle(
-                                                    backgroundColor:
-                                                        MaterialStateProperty
-                                                            .all(const Color.fromARGB(
-                                                                255,
-                                                                12,
-                                                                188,
-                                                                219))),
-                                                onPressed: () async {
-                                                  Get.to(PrintingPage(
-                                                    rent: rent,
-                                                    floorName: values[0],
-                                                    tenantName: values[2],
-                                                    flatName: values[1],
-                                                    buildingAddress:
-                                                        buildingAddress,
-                                                    refresh: refresh,
-                                                  ));
-                                                },
-                                                child: rent.isPrinted == false
-                                                    ? const Text('Print') 
-                                                    : const Text('Re-print'))
-                                          ]),
+                                      Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                        SizedBox(height: MediaQuery.sizeOf(context).height * .09),
+                                        ElevatedButton(
+                                            style: ButtonStyle(backgroundColor: MaterialStateProperty.all(const Color.fromARGB(255, 12, 188, 219))),
+                                            onPressed: () async {
+                                              Get.to(PrintingPage(
+                                                rent: rent,
+                                                floorName: values[0],
+                                                tenantName: values[2],
+                                                flatName: values[1],
+                                                buildingAddress: buildingAddress,
+                                                refresh: initState,
+                                              ));
+                                            },
+                                            child: rent.isPrinted == false ? const Text('Print') : const Text('Re-print'))
+                                      ]),
                                     ],
                                   ),
                                 ),
@@ -457,8 +380,7 @@ class _PrintRentState extends State<PrintRent> {
                           },
                         );
                       } else {
-                        return const Center(
-                            child: Text('no  monthly rent available.'));
+                        return const Center(child: Text('no  monthly rent available.'));
                       }
                     },
                   ),
